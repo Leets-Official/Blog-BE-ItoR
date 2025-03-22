@@ -19,9 +19,20 @@ public class User extends BaseDomain {
 
     private final Social social;
 
-    /// 생성자
+    /// 서비스 내부 생성자
     public User(String email, String nickname, String password, String imageUrl, Social social, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.imageUrl = imageUrl;
+        this.social = social;
+    }
+
+    /// JDBC에서 Domain으로 변환할 때 생성자
+    public User(Long id, String email, String nickname, String password, String imageUrl, Social social, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(createdAt, updatedAt);
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
@@ -54,5 +65,5 @@ public class User extends BaseDomain {
         return social;
     }
 
-    // 비즈니스 로직
+    /// 비즈니스 로직
 }

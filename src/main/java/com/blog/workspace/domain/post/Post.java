@@ -11,9 +11,18 @@ public class Post extends BaseDomain {
     private final String title;
     private final String content;
 
-    /// 생성자
+    /// 서비스 내부 생성자
     public Post(Long userId, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
+        this.userId = userId;
+        this.title = title;
+        this.content = content;
+    }
+
+    /// JDBC에서 Domain으로 변환할 때 생성자
+    public Post(Long id, Long userId, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(createdAt, updatedAt);
+        this.id = id;
         this.userId = userId;
         this.title = title;
         this.content = content;
@@ -32,10 +41,11 @@ public class Post extends BaseDomain {
         return title;
     }
 
-
-    /// 비즈니스 로직
-
     public String getContent() {
         return content;
     }
+
+    /// 비즈니스 로직
+
+
 }

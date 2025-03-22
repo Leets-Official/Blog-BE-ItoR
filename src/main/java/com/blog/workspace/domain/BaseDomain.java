@@ -11,4 +11,15 @@ public abstract class BaseDomain {
         this.created = created;
         this.updated = updated;
     }
+
+
+    /// @Getter
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
 }
