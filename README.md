@@ -1,59 +1,120 @@
-# Blog-BE-ItoR
+# Blog-BE-ItoR 이도연
 
 # Blog 만들기
+- 헥사곤 아키텍쳐에 대해 연습하고 있어서, 과제 또한 헥사곤 아키텍쳐로 구성 해보았습니다!
+- 공통 로직(시큐리티, 응답객체, 예외핸들링)은 common으로 정했습니다.
+- 도메인 관련 내용은 workspace로 정했습니다.
 
-## 미션 요구사항
-
-1. 미션 진행 방법을 꼭 읽고 진행해주세요
-   [미션 진행 방법](https://www.notion.so/46dbd9440a4f4d5e97228011dff70f5a?pvs=21)
-2. 해당 ReadMe 를 지우고 erd 및 디렉토리 구조를 작성해주세요
-    1. erd를 그리는 방법은 자유입니다
-    2. 디렉토리 구조도 자유롭게 설정하셔도 좋습니다
-3. 아래 API 요구사항은 API URI를 포함하고 있습니다. 반드시 URI를 지켜서 구현해주세요
-
-`ex) GET posts/all`
+## ERD
+![Leets](https://github.com/user-attachments/assets/f8443409-4a54-4bfd-8c44-20b0457c43d2)
 
 
-## API 요구사항
 
-### 회원가입(/auth)
+## 프로젝트 구조
+```
+├── README.md
+├── build.gradle
+├── docker
+│   └── docker-compose.yml
+├── settings.gradle
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── com
+    │   │       └── blog
+    │   │           ├── BlogApplication.java
+    │   │           ├── common
+    │   │           │   ├── config
+    │   │           │   │   └── JdbcConfig.java
+    │   │           │   └── security
+    │   │           │       ├── jwt
+    │   │           │       │   ├── domain
+    │   │           │       │   │   └── JwtToken.java
+    │   │           │       │   ├── filter
+    │   │           │       │   │   └── JwtAuthenticationFilter.java
+    │   │           │       │   ├── handler
+    │   │           │       │   │   └── JwtAccessDeniedHandler.java
+    │   │           │       │   └── provider
+    │   │           │       │       └── JwtTokenProvider.java
+    │   │           │       └── oauth
+    │   │           │           ├── controller
+    │   │           │           │   └── OAuthController.java
+    │   │           │           ├── domain
+    │   │           │           │   └── OAuthUserInfo.java
+    │   │           │           ├── handler
+    │   │           │           │   ├── OAuth2AuthenticationFailureHandler.java
+    │   │           │           │   └── OAuth2AuthenticationSuccessHandler.java
+    │   │           │           └── service
+    │   │           │               └── CustomOAuth2UserService.java
+    │   │           └── workspace
+    │   │               ├── adapter
+    │   │               │   ├── in
+    │   │               │   │   └── web
+    │   │               │   │       ├── AuthController.java
+    │   │               │   │       ├── CommentController.java
+    │   │               │   │       ├── LoginController.java
+    │   │               │   │       ├── PostController.java
+    │   │               │   │       ├── UserController.java
+    │   │               │   │       └── dto
+    │   │               │   └── out
+    │   │               │       ├── CommentPersistenceAdapter.java
+    │   │               │       ├── PostPersistenceAdapter.java
+    │   │               │       ├── UserPersistenceAdapter.java
+    │   │               │       └── jdbc
+    │   │               │           ├── BaseJdbc.java
+    │   │               │           ├── comment
+    │   │               │           │   ├── CommentJdbc.java
+    │   │               │           │   └── CommentJdbcRepository.java
+    │   │               │           ├── post
+    │   │               │           │   ├── PostJdbc.java
+    │   │               │           │   └── PostJdbcRepository.java
+    │   │               │           └── user
+    │   │               │               ├── UserJdbc.java
+    │   │               │               └── UserJdbcRepository.java
+    │   │               ├── application
+    │   │               │   ├── in
+    │   │               │   │   ├── AuthUseCase.java
+    │   │               │   │   ├── CommentUseCase.java
+    │   │               │   │   ├── LoginUseCase.java
+    │   │               │   │   ├── PostUseCase.java
+    │   │               │   │   └── UserUseCase.java
+    │   │               │   ├── out
+    │   │               │   │   ├── comment
+    │   │               │   │   │   ├── DeleteCommentPort.java
+    │   │               │   │   │   ├── LoadCommentPort.java
+    │   │               │   │   │   └── SaveCommentPort.java
+    │   │               │   │   ├── post
+    │   │               │   │   │   ├── DeletePostPort.java
+    │   │               │   │   │   ├── LoadPostPort.java
+    │   │               │   │   │   └── SavePostPort.java
+    │   │               │   │   └── user
+    │   │               │   │       └── UserPort.java
+    │   │               │   └── service
+    │   │               │       ├── CommentService.java
+    │   │               │       ├── LoginService.java
+    │   │               │       ├── PostService.java
+    │   │               │       └── UserService.java
+    │   │               └── domain
+    │   │                   ├── BaseDomain.java
+    │   │                   ├── comment
+    │   │                   │   └── Comment.java
+    │   │                   ├── post
+    │   │                   │   └── Post.java
+    │   │                   └── user
+    │   │                       ├── Social.java
+    │   │                       └── User.java
+    │   └── resources
+    │       ├── application.yml
+    │       └── sql
+    │           └── schema.sql
+    └── test
+        └── java
+            └── com
+                └── blog
+                    └── BlogApplicationTests.java
+```
 
-- 사용자는 이메일 주소 또는 카카오 OAuth를 통해 회원가입을 진행할 수 있어야 합니다.
-- 사용자는 비밀번호를 생성하여 회원가입을 진행할 수 있어야 합니다.
-- 사용자는 프로필사진을 등록하며 회원가입을 진행할 수 있어야합니다(이메일 로그인에 한함)
-- 사용자가 입력한 이메일 주소와 닉네임은 시스템에 이미 등록되어 있지 않아야 합니다.
+## 헥사곤 아키텍쳐
+![image](https://github.com/user-attachments/assets/58b48da8-6da1-4075-b263-e2c3a51543e8)
 
-### 로그인(/login)
-
-- 사용자는 등록한 이메일 주소 또는 카카오 로그인을 이용하여 로그인할 수 있어야 합니다.
-- (토큰 방식으로 구현시) refresh token을 통해 새로운 access token을 발급받을 수 있어야 합니다.
-
-### 게시물 (/posts)
-
-- 사용자는 로그인을 하지 않고도 게시물을 조회할 수 있어야 합니다.
-- 사용자는 로그인을 진행해야 게시물을 작성할 수 있어야 합니다.
-- 사용자는 자신의 게시물만 수정, 삭제할 수 있어야 합니다.
-- 게시물은 페이지네이션이 가능해야 합니다.
-  - 페이지네이션은 클라이언트에서 입력 받을 수 있게 구현해야 합니다.
-- 게시물의 목록 조회와 게시물 내용을 보는 API는 별도로 구현되어야 합니다.
-- 게시물 조회시 댓글도 모두 조회할 수 있어야 합니다.
-
-### 댓글(/comments)
-
-- 사용자는 로그인을 하지 않고도 댓글을 확인할 수 있어야 합니다.
-- 사용자는 자신의 댓글만 수정, 삭제할 수 있어야 합니다.
-- 댓글에는 댓글을 달수 없습니다(단 원하는 경우 구현해도 괜찮습니다)
-
-### 유저(/users)
-
-- 사용자는 닉네임, 비밀번호, 프로필 사진을 변경할 수 있어야 합니다.
-- 사용자는 자신의 정보를 조회할 수 있어야 합니다.
-
-### 이미지
-- 이미지는 Pre-Signed Url 방식으로 업로드 할 수 있어야 합니다.
-
-### 참고
-
-- 모든 댓글, 게시물은 조회시 자신의 소유 여부를 응답으로 반환해야 합니다.
-- 카카오 로그인과 이메일 로그인은 별도의 API로 구현되어야 합니다.
-
+- 사진 출처 : https://wikilog.tistory.com/entry/Today-I-Learned-24-240315-Hexagonal-Architecture를-바탕으로-한-기획을-하는-방법
