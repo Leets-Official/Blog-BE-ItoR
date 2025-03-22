@@ -1,6 +1,5 @@
 package com.blog.workspace.adapter.out.jdbc.user;
 
-import com.blog.workspace.domain.user.Social;
 import com.blog.workspace.domain.user.User;
 
 import java.time.LocalDateTime;
@@ -12,12 +11,12 @@ public class UserJdbc  {
     private final String nickname;
     private final String password;
     private final String imageUrl;
-    private final Social social;
+    private final boolean social;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
     // 생성자, Id는 MYSQL 내부에서 자동으로 증가되기에 제거
-    public UserJdbc(String email, String nickname, String password, String imageUrl, Social social, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserJdbc(String email, String nickname, String password, String imageUrl, boolean social, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
