@@ -6,7 +6,8 @@
 - 도메인 관련 내용은 workspace로 정했습니다.
 
 ## ERD
-![Leets](https://github.com/user-attachments/assets/355b0a36-ac83-4c71-bfa4-ed4a57a711dc)
+![Leets](https://github.com/user-attachments/assets/f8443409-4a54-4bfd-8c44-20b0457c43d2)
+
 
 
 ## 프로젝트 구조
