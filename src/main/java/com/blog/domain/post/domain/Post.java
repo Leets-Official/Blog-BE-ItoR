@@ -1,4 +1,4 @@
 package com.blog.domain.post.domain;
 
-public class post {
+public class Post {
 }
