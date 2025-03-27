@@ -5,6 +5,7 @@ import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
 import com.blog.common.response.ExceptionDto;
 import com.blog.workspace.application.service.exception.DuplicationUserException;
+import com.blog.workspace.application.service.exception.NotSamePasswordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,13 +25,6 @@ public class GlobalExceptionHandler {
     public ApiResponse<ExceptionDto> handleException(Exception e) {
 
         return ApiResponse.fail(new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, null));
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DuplicationUserException.class)
-    public ApiResponse<ExceptionDto> handleException(DuplicationUserException e) {
-
-        return ApiResponse.fail(new CustomException(ErrorCode.USER_BAD_REQUEST, e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -55,4 +49,21 @@ public class GlobalExceptionHandler {
 
         return ApiResponse.fail(exception);
     }
+
+    /// 회원가입 관련 에러 처리
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicationUserException.class)
+    public ApiResponse<ExceptionDto> handleException(DuplicationUserException e) {
+
+        return ApiResponse.fail(new CustomException(ErrorCode.USER_BAD_REQUEST, e.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotSamePasswordException.class)
+    public ApiResponse<ExceptionDto> handlePasswordException(NotSamePasswordException e) {
+
+        return ApiResponse.fail(new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, e.getMessage()));
+    }
+
+
 }

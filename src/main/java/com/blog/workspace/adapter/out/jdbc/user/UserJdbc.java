@@ -126,4 +126,20 @@ public class UserJdbc  {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public static UserJdbc forUpdate(User user) {
+        return new UserJdbc(
+                user.getId(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getNickname(),
+                user.getPassword(),
+                user.getImageUrl(),
+                user.isSocial(),
+                user.getDescription(),
+                user.getBirthday(),
+                user.getCreated(),
+                user.getUpdated()
+        );
+    }
 }

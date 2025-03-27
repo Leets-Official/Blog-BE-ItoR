@@ -49,7 +49,7 @@ public class UserRegisterRequest {
     }
 
     public String getPasswordCheck() {
-        return password;
+        return passwordCheck;
     }
 
     public String getImageUrl() {

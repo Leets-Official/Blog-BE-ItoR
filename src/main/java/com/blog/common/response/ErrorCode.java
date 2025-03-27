@@ -12,6 +12,7 @@ public enum ErrorCode {
 
     // User 이메일 중복
     USER_BAD_REQUEST(1001, HttpStatus.BAD_REQUEST, "사용중인 이메일입니다"),
+    USER_PASSWORD_BAD_REQUEST(1002, HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다"),
 
 
     // 403 Bad Reques

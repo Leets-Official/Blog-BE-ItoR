@@ -50,6 +50,33 @@ public class UserJdbcRepository {
         return count != null && count > 0;
     }
 
+    public Optional<UserJdbc> findByEmail(String email) {
+        String sql = "SELECT * FROM User WHERE email = ?";
+        return jdbcTemplate.query(sql, userRowMapper(), email)
+                .stream()
+                .findFirst();
+    }
+
+    public void updateUser(UserJdbc userJdbc) {
+
+        String sql = "UPDATE User SET " +
+                "email = ?, username = ?, nickname = ?, password = ?, image_url = ?, social = ?, description = ?, birthday = ?, updated_at = ? " +
+                "WHERE id = ?";
+
+        jdbcTemplate.update(sql,
+                userJdbc.getEmail(),
+                userJdbc.getUsername(),
+                userJdbc.getNickname(),
+                userJdbc.getPassword(),
+                userJdbc.getImageUrl(),
+                userJdbc.isSocial(),
+                userJdbc.getDescription(),
+                userJdbc.getBirthday(),
+                userJdbc.getUpdatedAt(),
+                userJdbc.getId());
+    }
+
+
     private RowMapper<UserJdbc> userRowMapper() {
         return (rs, rowNum) -> {
             return new UserJdbc(

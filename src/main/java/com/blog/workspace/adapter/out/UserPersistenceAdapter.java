@@ -32,8 +32,10 @@ public class UserPersistenceAdapter implements UserPort {
     }
 
     @Override
-    public User updateUser(User user) {
-        return null;
+    public void updateUser(User user) {
+        var entity = UserJdbc.forUpdate(user);
+        repository.updateUser(entity);
+
     }
 
     @Override
@@ -44,6 +46,12 @@ public class UserPersistenceAdapter implements UserPort {
     @Override
     public Optional<User> findMe(Long userId) {
         return repository.findById(userId)
+                .map(UserJdbc::toDomain);
+    }
+
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        return repository.findByEmail(email)
                 .map(UserJdbc::toDomain);
     }
 }

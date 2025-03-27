@@ -12,17 +12,17 @@ public class User extends BaseDomain {
 
     private final String username;
 
-    private final String nickname;
+    private String nickname;
 
-    private final String password;
+    private String password;
 
-    private final String imageUrl;
+    private String imageUrl;
 
     private final boolean social;
 
-    private final String description;
+    private String description;
 
-    private final String birthday;
+    private String birthday;
 
     /// 서비스 내부 생성자
     public User(String email, String nickname, String username, String password, String imageUrl, boolean social, String description, String birthday, LocalDateTime createdAt, LocalDateTime updatedAt) {
@@ -51,9 +51,28 @@ public class User extends BaseDomain {
         this.description = description;
         this.birthday = birthday;
     }
+
     /// 비즈니스 로직
 
+    public void changePassword(String password) {
+        this.password = password;
+    }
 
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changeImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    public void changeBirthday(String birthday) {
+        this.birthday = birthday;
+    }
 
     /// @Getter
     public Long getId() {

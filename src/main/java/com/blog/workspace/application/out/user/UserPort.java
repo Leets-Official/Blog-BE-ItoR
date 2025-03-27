@@ -11,11 +11,12 @@ public interface UserPort {
     User saveUser(User user);
 
     // 수정하기
-    User updateUser(User user);
+    void updateUser(User user);
 
     /// 조회하기
-
     boolean loadExistingEmail(String email);
 
     Optional<User> findMe(Long userId);
+
+    Optional<User> findUserByEmail(String email);
 }
