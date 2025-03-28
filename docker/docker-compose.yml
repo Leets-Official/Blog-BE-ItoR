@@ -1,0 +1,9 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: leets-mysql
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
