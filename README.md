@@ -6,9 +6,14 @@
 
 1. 미션 진행 방법을 꼭 읽고 진행해주세요
    [미션 진행 방법](https://www.notion.so/46dbd9440a4f4d5e97228011dff70f5a?pvs=21)
-2. 해당 ReadMe 를 지우고 erd 및 디렉토리 구조를 작성해주세요
-    1. erd를 그리는 방법은 자유입니다
-    2. 디렉토리 구조도 자유롭게 설정하셔도 좋습니다
+2.  erd 및 디렉토리 구조를 작성해주세요
+    1. erd 구조
+    ![img_1.png](img_1.png)
+
+    2. 디렉토리 구조
+    
+    ![img.png](img.png)
+
 3. 아래 API 요구사항은 API URI를 포함하고 있습니다. 반드시 URI를 지켜서 구현해주세요
 
 `ex) GET posts/all`
