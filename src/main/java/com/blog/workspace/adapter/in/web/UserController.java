@@ -4,7 +4,6 @@ import com.blog.common.response.ApiResponse;
 import com.blog.workspace.adapter.in.web.dto.request.UserUpdateRequest;
 import com.blog.workspace.adapter.in.web.dto.response.UserResponse;
 import com.blog.workspace.application.in.user.GetUserUseCase;
-import com.blog.workspace.application.in.user.RegisterUserUseCase;
 import com.blog.workspace.application.in.user.UpdateUserUseCase;
 import com.blog.workspace.domain.user.User;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,7 @@ public class UserController {
     private final UpdateUserUseCase updateService;
 
     /// 생성자
-    public UserController(GetUserUseCase getService, RegisterUserUseCase registerService, UpdateUserUseCase updateService) {
+    public UserController(GetUserUseCase getService, UpdateUserUseCase updateService) {
         this.getService = getService;
         this.updateService = updateService;
     }

@@ -32,9 +32,11 @@ public class UserPersistenceAdapter implements UserPort {
     }
 
     @Override
-    public void updateUser(User user) {
+    public User updateUser(User user) {
         var entity = UserJdbc.forUpdate(user);
-        repository.updateUser(entity);
+
+        return repository.updateUser(entity)
+                .toDomain();
 
     }
 

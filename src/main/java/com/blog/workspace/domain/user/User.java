@@ -24,7 +24,7 @@ public class User extends BaseDomain {
 
     private String birthday;
 
-    /// 서비스 내부 생성자
+    /// 자체 회원가입 생성자
     public User(String email, String nickname, String username, String password, String imageUrl, boolean social, String description, String birthday, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
         this.email = email;
@@ -35,6 +35,16 @@ public class User extends BaseDomain {
         this.social = social;
         this.description = description;
         this.birthday = birthday;
+    }
+
+    /// 소셜로그인 생성자
+    public User(String email, String username, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(createdAt, updatedAt);
+        this.email = email;
+        this.username = username;
+        this.imageUrl = imageUrl;
+        this.password = "password";
+        this.social = true;
     }
 
     /// JDBC에서 Domain으로 변환할 때 생성자

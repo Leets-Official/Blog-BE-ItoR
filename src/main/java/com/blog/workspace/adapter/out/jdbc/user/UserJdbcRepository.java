@@ -57,7 +57,7 @@ public class UserJdbcRepository {
                 .findFirst();
     }
 
-    public void updateUser(UserJdbc userJdbc) {
+    public UserJdbc updateUser(UserJdbc userJdbc) {
 
         String sql = "UPDATE User SET " +
                 "email = ?, username = ?, nickname = ?, password = ?, image_url = ?, social = ?, description = ?, birthday = ?, updated_at = ? " +
@@ -74,6 +74,8 @@ public class UserJdbcRepository {
                 userJdbc.getBirthday(),
                 userJdbc.getUpdatedAt(),
                 userJdbc.getId());
+
+        return userJdbc;
     }
 
 

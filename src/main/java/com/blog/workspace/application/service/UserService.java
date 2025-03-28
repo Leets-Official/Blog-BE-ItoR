@@ -3,7 +3,7 @@ package com.blog.workspace.application.service;
 import com.blog.workspace.adapter.in.web.dto.request.UserRegisterRequest;
 import com.blog.workspace.adapter.in.web.dto.request.UserUpdateRequest;
 import com.blog.workspace.application.in.user.GetUserUseCase;
-import com.blog.workspace.application.in.user.RegisterUserUseCase;
+import com.blog.workspace.application.in.auth.RegisterUserUseCase;
 import com.blog.workspace.application.in.user.UpdateUserUseCase;
 import com.blog.workspace.application.out.user.UserPort;
 import com.blog.workspace.application.service.exception.DuplicationUserException;

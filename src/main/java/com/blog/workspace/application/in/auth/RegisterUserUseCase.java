@@ -1,4 +1,4 @@
-package com.blog.workspace.application.in.user;
+package com.blog.workspace.application.in.auth;
 
 import com.blog.workspace.adapter.in.web.dto.request.UserRegisterRequest;
 import com.blog.workspace.domain.user.User;
@@ -12,6 +12,7 @@ public interface RegisterUserUseCase {
        중복된 이메일 사용 불가
      */
 
+    // 자체 회원가입
     User registerUser(UserRegisterRequest request);
 
 }

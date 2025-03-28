@@ -11,7 +11,7 @@ public interface UserPort {
     User saveUser(User user);
 
     // 수정하기
-    void updateUser(User user);
+    User updateUser(User user);
 
     /// 조회하기
     boolean loadExistingEmail(String email);
