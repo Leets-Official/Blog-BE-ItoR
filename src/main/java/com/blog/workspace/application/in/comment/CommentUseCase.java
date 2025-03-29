@@ -1,4 +1,4 @@
-package com.blog.workspace.application.in;
+package com.blog.workspace.application.in.comment;
 
 public interface CommentUseCase {
 
