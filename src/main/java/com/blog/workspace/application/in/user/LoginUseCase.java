@@ -2,6 +2,7 @@ package com.blog.workspace.application.in.user;
 
 import com.blog.workspace.adapter.in.web.dto.request.UserLoginRequest;
 import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface LoginUseCase {
 
@@ -11,6 +12,6 @@ public interface LoginUseCase {
      */
 
     // 토큰과 유저 정보를 같이 넘기기 위해 DTO 반환
-    UserLoginResponse login(UserLoginRequest request);
+    UserLoginResponse login(HttpServletResponse response, UserLoginRequest request);
 
 }

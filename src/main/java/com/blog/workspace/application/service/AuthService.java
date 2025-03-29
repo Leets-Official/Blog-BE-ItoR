@@ -7,14 +7,21 @@ import com.blog.workspace.adapter.out.oauth.OAuthUserInfo;
 import com.blog.workspace.adapter.out.oauth.kakao.KaKaoApiClient;
 import com.blog.workspace.application.in.auth.AuthUserUseCase;
 import com.blog.workspace.application.out.auth.OAuthLoginParams;
+import com.blog.workspace.application.out.token.TokenPort;
 import com.blog.workspace.application.out.user.UserPort;
+import com.blog.workspace.domain.token.JwtToken;
 import com.blog.workspace.domain.user.User;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static com.blog.common.security.jwt.provider.JwtTokenProvider.REFRESH_TOKEN_EXPIRATION_TIME;
+
 
 @Service
 @Transactional
@@ -23,17 +30,19 @@ public class AuthService implements AuthUserUseCase {
     private final KaKaoApiClient clients;
     private final UserPort userPort;
 
-    ///  JWT 저장
+    ///  JWT 발급
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenPort tokenPort;
 
-    public AuthService(KaKaoApiClient clients, UserPort userPort, JwtTokenProvider jwtTokenProvider) {
+    public AuthService(KaKaoApiClient clients, UserPort userPort, JwtTokenProvider jwtTokenProvider, TokenPort tokenPort) {
         this.clients = clients;
         this.userPort = userPort;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenPort = tokenPort;
     }
 
     @Override
-    public UserLoginResponse login(OAuthLoginParams params) {
+    public UserLoginResponse login(HttpServletResponse httpServletResponse, OAuthLoginParams params) {
 
         // 토큰 정보 받아오기
         String accessToken = clients.requestAccessToken(params);
@@ -42,11 +51,15 @@ public class AuthService implements AuthUserUseCase {
         OAuthUserInfo oAuthUserInfo = clients.requestOAuthInfo(accessToken);
 
         // 최초 로그인이 아니라면, 정보 반환
-        if (!checkFirstLogin(oAuthUserInfo)){
+        if (!checkFirstLogin(oAuthUserInfo)) {
             User user = loadUser(oAuthUserInfo);// 기존 로그인 처리
 
-            // JWT를 제공한다.
-            String token = jwtTokenProvider.createJwt(user);
+            // accessToken을 생성한다.
+            String token = jwtTokenProvider.createAccessToken(user);
+
+            // refreshToken을 생성한다.
+            createRefreshToken(httpServletResponse, user);
+
             return new UserLoginResponse(user, token, false);
 
         } else {
@@ -54,7 +67,9 @@ public class AuthService implements AuthUserUseCase {
             User user = newUser(oAuthUserInfo);
 
             // JWT를 제공한다.
-            String token = jwtTokenProvider.createJwt(user);
+            String token = jwtTokenProvider.createAccessToken(user);
+            createRefreshToken(httpServletResponse, user);
+
             return new UserLoginResponse(user, token, true);
         }
 
@@ -112,4 +127,17 @@ public class AuthService implements AuthUserUseCase {
 
         return userPort.saveUser(user);
     }
+
+    // 리프레쉬 토큰 생성 및 저장
+    private void createRefreshToken(HttpServletResponse response, User user) {
+
+        String refreshToken = jwtTokenProvider.createRefreshToken(response, user);
+
+        // RefreshToken 만료 시간을 계산 (현재 시간 + REFRESH_TOKEN_EXPIRATION_TIME)
+        LocalDateTime expiredAt = LocalDateTime.now().plusSeconds(REFRESH_TOKEN_EXPIRATION_TIME);
+
+        JwtToken jwtToken = new JwtToken(user.getId(), refreshToken, expiredAt);
+        tokenPort.saveToken(jwtToken);
+    }
+
 }
