@@ -1,6 +1,6 @@
 package com.blog.workspace.adapter.in.web;
 
-import com.blog.workspace.application.in.PostUseCase;
+import com.blog.workspace.application.in.post.PostUseCase;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

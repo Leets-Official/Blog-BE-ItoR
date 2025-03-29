@@ -1,6 +1,6 @@
 package com.blog.workspace.application.service;
 
-import com.blog.workspace.application.in.PostUseCase;
+import com.blog.workspace.application.in.post.PostUseCase;
 import com.blog.workspace.application.out.post.DeletePostPort;
 import com.blog.workspace.application.out.post.LoadPostPort;
 import com.blog.workspace.application.out.post.SavePostPort;

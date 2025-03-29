@@ -1,6 +1,6 @@
 package com.blog.workspace.application.service;
 
-import com.blog.workspace.application.in.CommentUseCase;
+import com.blog.workspace.application.in.comment.CommentUseCase;
 import com.blog.workspace.application.out.comment.DeleteCommentPort;
 import com.blog.workspace.application.out.comment.LoadCommentPort;
 import com.blog.workspace.application.out.comment.SaveCommentPort;
