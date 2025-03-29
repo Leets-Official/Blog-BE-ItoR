@@ -1,6 +1,8 @@
 package com.blog.workspace.application.service;
 
+import com.blog.common.security.jwt.provider.JwtTokenProvider;
 import com.blog.workspace.adapter.in.web.dto.request.AuthFirstTimeRequest;
+import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 import com.blog.workspace.adapter.out.oauth.OAuthUserInfo;
 import com.blog.workspace.adapter.out.oauth.kakao.KaKaoApiClient;
 import com.blog.workspace.application.in.auth.AuthUserUseCase;
@@ -21,13 +23,17 @@ public class AuthService implements AuthUserUseCase {
     private final KaKaoApiClient clients;
     private final UserPort userPort;
 
-    public AuthService(KaKaoApiClient clients, UserPort userPort) {
+    ///  JWT 저장
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public AuthService(KaKaoApiClient clients, UserPort userPort, JwtTokenProvider jwtTokenProvider) {
         this.clients = clients;
         this.userPort = userPort;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
-    public String login(OAuthLoginParams params) {
+    public UserLoginResponse login(OAuthLoginParams params) {
 
         // 토큰 정보 받아오기
         String accessToken = clients.requestAccessToken(params);
@@ -37,11 +43,19 @@ public class AuthService implements AuthUserUseCase {
 
         // 최초 로그인이 아니라면, 정보 반환
         if (!checkFirstLogin(oAuthUserInfo)){
-            return loadUser(oAuthUserInfo).getId().toString(); // 기존 로그인 처리
+            User user = loadUser(oAuthUserInfo);// 기존 로그인 처리
+
+            // JWT를 제공한다.
+            String token = jwtTokenProvider.createJwt(user);
+            return new UserLoginResponse(user, token, false);
+
         } else {
             // 저장하는 로직은 수행한다.
             User user = newUser(oAuthUserInfo);
-            return "최초 로그인 추가정보 기입 필요: " + user.getEmail();
+
+            // JWT를 제공한다.
+            String token = jwtTokenProvider.createJwt(user);
+            return new UserLoginResponse(user, token, true);
         }
 
     }
@@ -82,11 +96,13 @@ public class AuthService implements AuthUserUseCase {
         return !user.isPresent();
     }
 
+    // 유저 정보 가져오기
     private User loadUser(OAuthUserInfo oAuthUserInfo) {
         return userPort.findUserByEmail(oAuthUserInfo.getEmail())
                 .orElse(null);
     }
 
+    // 새롭게 생성
     private User newUser(OAuthUserInfo oAuthUserInfo) {
         // 생성시간 수정
         LocalDateTime now = LocalDateTime.now();

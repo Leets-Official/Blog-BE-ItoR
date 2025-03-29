@@ -5,6 +5,8 @@ import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
 import com.blog.common.response.ExceptionDto;
 import com.blog.workspace.application.service.exception.DuplicationUserException;
+import com.blog.workspace.application.service.exception.NotEmailException;
+import com.blog.workspace.application.service.exception.NotEqualLoginPassword;
 import com.blog.workspace.application.service.exception.NotSamePasswordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,5 +67,19 @@ public class GlobalExceptionHandler {
         return ApiResponse.fail(new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, e.getMessage()));
     }
 
+    /// 로그인 관련 에러처리
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotEqualLoginPassword.class)
+    public ApiResponse<ExceptionDto> handlePasswordException(NotEqualLoginPassword e) {
+
+        return ApiResponse.fail(new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, null));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotEmailException.class)
+    public ApiResponse<ExceptionDto> handlePasswordException(NotEmailException e) {
+
+        return ApiResponse.fail(new CustomException(ErrorCode.NO_EMAIL, null));
+    }
 
 }

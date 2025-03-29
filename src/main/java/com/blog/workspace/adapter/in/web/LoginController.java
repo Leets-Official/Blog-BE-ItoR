@@ -2,6 +2,7 @@ package com.blog.workspace.adapter.in.web;
 
 import com.blog.common.response.ApiResponse;
 import com.blog.workspace.adapter.in.web.dto.request.UserLoginRequest;
+import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 import com.blog.workspace.application.in.user.LoginUseCase;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,9 @@ public class LoginController {
     }
 
     @PostMapping
-    public ApiResponse<String> login(@RequestBody UserLoginRequest request) {
+    public ApiResponse<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
 
-        boolean login = loginService.login(request);
-
-        return ApiResponse.ok("로그인 되었습니다.");
+        return ApiResponse.ok(loginService.login(request));
     }
+
 }

@@ -1,43 +1,46 @@
 package com.blog.workspace.application.service;
 
+import com.blog.common.security.jwt.provider.JwtTokenProvider;
 import com.blog.workspace.adapter.in.web.dto.request.UserLoginRequest;
+import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 import com.blog.workspace.application.in.user.LoginUseCase;
 import com.blog.workspace.application.out.user.UserPort;
+import com.blog.workspace.application.service.exception.NotEmailException;
+import com.blog.workspace.application.service.exception.NotEqualLoginPassword;
 import com.blog.workspace.domain.user.User;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 @Transactional
 public class LoginService implements LoginUseCase {
 
     private final UserPort userPort;
-    private final HttpSession session;
+
+    /// 토큰 제공
+    private final JwtTokenProvider jwtTokenProvider;
 
     /// 생성자
-    public LoginService(UserPort userPort, HttpSession session) {
+    public LoginService(UserPort userPort, JwtTokenProvider jwtTokenProvider) {
         this.userPort = userPort;
-        this.session = session;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
-    public boolean login(UserLoginRequest request) {
+    public UserLoginResponse login(UserLoginRequest request) {
 
         /// 예외처리
         User user = userPort.findUserByEmail(request.getEmail())
-                .orElseThrow(() -> new NoSuchElementException("가입되지 않은 이메일 입니다”"));
+                .orElseThrow(() -> new NotEmailException("가입되지 않은 이메일 입니다”"));
 
         /// 비밀번호 검증하기
         if (!user.getPassword().equals(request.getPassword())) {
-            return false;
+            throw new NotEqualLoginPassword("“비밀번호가 일치하지 않습니다”");
         }
 
-        // 세션에 사용자 정보 저장
-        session.setAttribute("user", user);  // 세션에 로그인한 사용자 정보 저장
+        // 토큰을 넘겨준다.
+        String accessToken = jwtTokenProvider.createJwt(user);
 
-        return true;
+        return new UserLoginResponse(user, accessToken, false);
     }
 }

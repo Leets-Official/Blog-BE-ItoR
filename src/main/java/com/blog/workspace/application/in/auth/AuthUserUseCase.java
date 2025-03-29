@@ -1,6 +1,7 @@
 package com.blog.workspace.application.in.auth;
 
 import com.blog.workspace.adapter.in.web.dto.request.AuthFirstTimeRequest;
+import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 import com.blog.workspace.application.out.auth.OAuthLoginParams;
 import com.blog.workspace.domain.user.User;
 
@@ -12,7 +13,7 @@ public interface AuthUserUseCase {
      */
 
     // 소셜 로그인 (회원 가입 혹은 로그인 기능 수행)
-    String login(OAuthLoginParams params);
+    UserLoginResponse login(OAuthLoginParams params);
 
     // 최초 가입 유저 추가정보 기입
     User updateInfo(String email, AuthFirstTimeRequest request);

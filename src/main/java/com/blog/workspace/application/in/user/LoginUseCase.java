@@ -1,6 +1,7 @@
 package com.blog.workspace.application.in.user;
 
 import com.blog.workspace.adapter.in.web.dto.request.UserLoginRequest;
+import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 
 public interface LoginUseCase {
 
@@ -9,6 +10,7 @@ public interface LoginUseCase {
         (토큰 방식으로 구현시) refresh token을 통해 새로운 access token을 발급받을 수 있어야 합니다.
      */
 
-    boolean login(UserLoginRequest request);
+    // 토큰과 유저 정보를 같이 넘기기 위해 DTO 반환
+    UserLoginResponse login(UserLoginRequest request);
 
 }
