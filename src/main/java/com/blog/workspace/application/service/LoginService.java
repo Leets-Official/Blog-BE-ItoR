@@ -10,6 +10,8 @@ import com.blog.workspace.application.service.exception.NotEmailException;
 import com.blog.workspace.application.service.exception.NotEqualLoginPassword;
 import com.blog.workspace.domain.token.JwtToken;
 import com.blog.workspace.domain.user.User;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,20 @@ public class LoginService implements LoginUseCase {
         return new UserLoginResponse(user, accessToken, false);
     }
 
+    @Override
+    public void logout(HttpServletResponse response, HttpServletRequest request) {
+
+        // 토큰에서 id정보 가져오기
+        String refreshToken = getRefreshTokenFromCookie(request);
+
+        // 쿠키에서 리프레시 토큰을 삭제
+        deleteRefreshTokenFromCookies(response);
+
+        // 서버에서 리프레시 토큰을 삭제
+        tokenPort.deleteByToken(refreshToken);
+
+    }
+
 
     // 리프레쉬 토큰 생성 및 저장
     private void createRefreshToken(HttpServletResponse response, User user) {
@@ -66,5 +82,26 @@ public class LoginService implements LoginUseCase {
 
         JwtToken jwtToken = new JwtToken(user.getId(), refreshToken, expiredAt);
         tokenPort.saveToken(jwtToken);
+    }
+
+    // 쿠키에서 리프레시 토큰 삭제
+    private void deleteRefreshTokenFromCookies(HttpServletResponse response) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setMaxAge(0); // 쿠키 만료 시간을 0으로 설정하여 삭제
+        refreshTokenCookie.setPath("/"); // 쿠키의 경로를 지정
+        response.addCookie(refreshTokenCookie); // 응답에 추가하여 클라이언트에게 전송
+    }
+
+    // 쿠키에서 refreshToken 추출하는 메서드
+    private String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue(); // refreshToken 값을 반환
+                }
+            }
+        }
+        return null; // 쿠키에 refreshToken이 없으면 null 반환
     }
 }

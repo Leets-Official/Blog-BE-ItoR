@@ -35,11 +35,10 @@ public class JwtTokenJdbcRepository {
         return jwtTokenJdbc;
     }
 
-    // 사용자 ID로 조회
-    public Optional<JwtTokenJdbc> findByUserId(Long userId) {
-        String sql = "SELECT * FROM Token WHERE user_id = ?";
-        return jdbcTemplate.query(sql, tokenRowMapper(), userId)
-                .stream().findFirst();
+    // 토큰 삭제
+    public void deleteByRefreshToken(String refreshToken) {
+        String sql = "DELETE FROM Token WHERE refresh_token = ?";
+        jdbcTemplate.update(sql, refreshToken);
     }
 
     // 존재 여부 확인: 사용자 ID로 토큰 존재 여부 확인

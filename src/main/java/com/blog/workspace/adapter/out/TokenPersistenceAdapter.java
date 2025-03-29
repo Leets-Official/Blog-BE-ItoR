@@ -31,4 +31,10 @@ public class TokenPersistenceAdapter implements TokenPort {
         return repository.findUserIdByRefreshToken(refreshToken);
     }
 
+
+    @Override
+    public void deleteByToken(String refreshToken) {
+        repository.deleteByRefreshToken(refreshToken);
+    }
+
 }
