@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### env ###
+/docker/.env
+
+### external-credentials ###
+/src/main/resources/external-credentials/
