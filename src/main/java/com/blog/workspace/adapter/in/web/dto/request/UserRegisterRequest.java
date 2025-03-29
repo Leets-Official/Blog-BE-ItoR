@@ -25,9 +25,11 @@ public class UserRegisterRequest {
     private String imageUrl;
 
     @NotNull(message = "description는 반드시 입력해야하는 필수 사항입니다!")
+    @Size(max = 30, message = "한 줄 소개는 최대 30글자 입니다.")
     private String description;
 
     @NotNull(message = "birthday는 반드시 입력해야하는 필수 사항입니다!")
+    // 3월 16일 이전의 경우는 입력이 안되도록 추가 설정
     private String birthday;
 
 
