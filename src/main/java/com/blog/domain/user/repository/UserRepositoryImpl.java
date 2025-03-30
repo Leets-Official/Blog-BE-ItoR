@@ -35,7 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public void save(User user) {
-		String sql = "INSERT INTO users (name, nickName, email, password, userType, birthDate, introduce, profileImageUrl, createAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO users (name, nickName, email, password, userType, birthDate, introduce, profileImageUrl, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		jdbc.update(sql,
 			user.getName(),
 			user.getNickName(),
@@ -62,7 +62,7 @@ public class UserRepositoryImpl implements UserRepository {
 			user.setBirthDate(rs.getDate("birthDate").toLocalDate());
 			user.setIntroduce(rs.getString("introduce"));
 			user.setProfileImageUrl(rs.getString("profileImageUrl"));
-			user.setCreatedAt(rs.getTimestamp("createAt").toLocalDateTime());
+			user.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
 			return user;
 		};
 	}
