@@ -2,19 +2,13 @@ package com.blog.global.auth.dto;
 
 public class LoginResponseDto {
 
-	private final String email;
-	private String password;
+	private final String accessToken;
 
-	public String getEmail() {
-		return email;
+	public LoginResponseDto(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public LoginResponseDto(String email, String password) {
-		this.email = email;
-		this.password = password;
+	public String getAccessToken() {
+		return accessToken;
 	}
 }
