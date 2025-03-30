@@ -26,8 +26,19 @@ public class UserService {
     }
 
     public Optional<User> findByKakaoInfo(Map<String, Object> userInfo) {
-        Optional<User> existUser=userRepository.findByEmail((String) userInfo.get("email"));
-        return existUser;
+        // "kakao_account" 내에서 "email" 가져오기
+        Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
+
+        if (kakaoAccount == null || !kakaoAccount.containsKey("email")) {
+            System.out.println("이메일 정보가 없습니다.");
+            return Optional.empty(); // 이메일이 없으면 회원 조회 불가능
+        }
+
+        String email = (String) kakaoAccount.get("email");
+        System.out.println("카카오에서 가져온 이메일: " + email);
+
+        return userRepository.findByEmail(email);
     }
+
 
 }
