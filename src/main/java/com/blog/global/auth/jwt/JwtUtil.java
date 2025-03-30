@@ -52,4 +52,50 @@ public class JwtUtil {
 		return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
 	}
 
+
+	public boolean validateToken(String token) {
+		try {
+			// 만료 시간 직접 비교 (payload에서 exp 추출)
+			String[] parts = token.split("\\.");
+			if (parts.length != 3) return false;
+
+			String payloadJson = new String(Base64.getDecoder().decode(parts[1]));
+			String expStr = extractValueFromJson(payloadJson, "exp");
+
+			if (expStr == null) return false;
+
+			long exp = Long.parseLong(expStr);
+			long now = System.currentTimeMillis() / 1000;
+
+			return now < exp;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public String extractUserId(String token) {
+		try {
+			String[] parts = token.split("\\.");
+			if (parts.length != 3) return null;
+
+			String payloadJson = new String(Base64.getDecoder().decode(parts[1]));
+			return extractValueFromJson(payloadJson, "sub");
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private String extractValueFromJson(String json, String key) {
+		String search = "\"" + key + "\":";
+		int start = json.indexOf(search);
+		if (start == -1) return null;
+
+		start += search.length();
+		int end = json.indexOf(",", start);
+		if (end == -1) end = json.indexOf("}", start);
+		if (end == -1) return null;
+
+		String value = json.substring(start, end).replaceAll("[\"}]", "").trim();
+		return value;
+	}
 }
