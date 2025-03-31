@@ -46,13 +46,15 @@ public class UsersService {
 
 
     // 비밀번호, 닉네임, 프로필 이미지 수정
-    public ApiResponse<UsersResultResponse> userUpdateInfo(UsersUpdateRequest request){
+    public ApiResponse<UsersResultResponse> userUpdateInfo(UsersUpdateRequest request) throws NoSuchAlgorithmException {
 
         if (usersRepository.isNickNameDuplicated(request.nickname())) {
             return ApiResponse.error("업데이트 실패:  닉네임 중복");
         }
 
-        int result = usersRepository.usersUpdateInfo(request);
+        String hashedPassword = EncryptUtils.sha256(request.password());
+
+        int result = usersRepository.usersUpdateInfo(request, hashedPassword);
 
         if (result == 0) {
             return ApiResponse.error("업데이트 실패: 사용자 정보 없음");

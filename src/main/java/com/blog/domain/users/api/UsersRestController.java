@@ -8,6 +8,8 @@ import com.blog.domain.users.api.dto.response.UsersResultResponse;
 import com.blog.domain.users.service.UsersService;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/users")
 public class UsersRestController {
@@ -21,7 +23,7 @@ public class UsersRestController {
     // 닉네임, 비밀번호, 프로필 사진을 변경
     @PatchMapping("/update")
     public ApiResponse<UsersResultResponse> usersUpdateInfo(
-            @RequestBody UsersUpdateRequest request){
+            @RequestBody UsersUpdateRequest request) throws NoSuchAlgorithmException {
 
         return usersService.userUpdateInfo(request);
     }

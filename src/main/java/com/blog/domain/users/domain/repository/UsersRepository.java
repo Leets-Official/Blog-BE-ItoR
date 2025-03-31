@@ -68,11 +68,11 @@ public class UsersRepository {
     }
 
     // 사용자 정보 수정
-    public int usersUpdateInfo(UsersUpdateRequest request){
+    public int usersUpdateInfo(UsersUpdateRequest request, String hashedPassword){
         String sql = "UPDATE users SET password = ?, nickname = ?, profile_image = ? WHERE id = ?";
 
         return jdbcTemplate.update(sql,
-                request.password(),
+                hashedPassword,
                 request.nickname(),
                 request.profile_image(),
                 request.user_id()
