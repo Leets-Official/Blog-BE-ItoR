@@ -18,7 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new PermissionInterceptor(jwtUtil))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/auth/**", "/login/**", "/admin/**"); // 회원가입, 로그인, 관리자페이지 제외
+                .excludePathPatterns("/auth/**", "/login/**", "/admin/**", "/users/**");
     }
 
 }

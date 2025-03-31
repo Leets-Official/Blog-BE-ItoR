@@ -31,7 +31,7 @@ public class UsersRestController {
     public ApiResponse<UsersInfoResponse> usersInfo(
             @RequestBody UsersIdRequest request){
 
-        return usersService.usersInfo(request);
+        return usersService.getUsersByUserId(request);
     }
 
     // 사용자 정보 삭제

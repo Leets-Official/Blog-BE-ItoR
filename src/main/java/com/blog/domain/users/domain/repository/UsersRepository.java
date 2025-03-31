@@ -2,7 +2,7 @@ package com.blog.domain.users.domain.repository;
 
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
-import com.blog.domain.login.api.dto.request.LoginRequest;
+import com.blog.domain.login.api.dto.request.LoginEmailRequest;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
@@ -25,7 +25,7 @@ public class UsersRepository {
     }
 
     // 사용자 등록
-    public int emailRegister(AuthEmailRequest request, String hashedPassword) {
+    public int addUsersByEmail(AuthEmailRequest request, String hashedPassword) {
 
         String sql = "INSERT INTO users (email, password, name, nickname, birth, profile_image, social, introduce) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -80,7 +80,7 @@ public class UsersRepository {
     }
 
     // 사용자 정보 조회
-    public UsersInfoResponse usersInfo(UsersIdRequest request){
+    public UsersInfoResponse getUsersByUserId(UsersIdRequest request){
         String sql = "SELECT * FROM users WHERE id = ?";
 
         try {
@@ -116,7 +116,7 @@ public class UsersRepository {
 
 
     // 로그인
-    public Users emailLogin(LoginRequest request, String hashedPassword){
+    public Users getUsersByEmailAndPassword(LoginEmailRequest request, String hashedPassword){
         String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
 
         try {
@@ -141,7 +141,7 @@ public class UsersRepository {
     }
 
     // 카카오 회원가입
-    public int kakaoReigster(AuthKaKaoRequest request, String name) {
+    public int addUserByKaKao(AuthKaKaoRequest request, String name) {
 
         String sql = "INSERT INTO users (email, password, name, nickname, birth, social, introduce) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -160,5 +160,30 @@ public class UsersRepository {
         String selectSql = "SELECT LAST_INSERT_ID()";
 
         return jdbcTemplate.queryForObject(selectSql, Integer.class);
+    }
+
+    // 이메일, 이름으로 사용자 조회
+    public Users getUsersByName (String name){
+        String sql = "SELECT * FROM users WHERE name = ?";
+
+        try {
+
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Users(
+                    rs.getInt("id"),
+                    rs.getString("email"),
+                    rs.getString("name"),
+                    rs.getString("nickname"),
+                    rs.getString("password"),
+                    rs.getString("profile_image"),
+                    rs.getBoolean("social"),
+                    rs.getString("introduce"),
+                    rs.getObject("birth", LocalDate.class),
+                    rs.getObject("created_at", LocalDateTime.class),
+                    rs.getObject("updated_at", LocalDateTime.class)
+            ), name);
+        } catch (EmptyResultDataAccessException e) {
+
+            return null;
+        }
     }
 }

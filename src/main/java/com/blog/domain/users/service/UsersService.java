@@ -5,7 +5,7 @@ import com.blog.common.response.ApiResponse;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
 import com.blog.domain.auth.api.dto.response.AuthResponse;
-import com.blog.domain.login.api.dto.request.LoginRequest;
+import com.blog.domain.login.api.dto.request.LoginEmailRequest;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
@@ -26,7 +26,7 @@ public class UsersService {
     }
 
     // 회원가입 Service
-    public AuthResponse emailRegister(AuthEmailRequest request) throws NoSuchAlgorithmException {
+    public AuthResponse addUserByEmail(AuthEmailRequest request) throws NoSuchAlgorithmException {
 
         // 비밀번호 암호화
         String hashedPassword = EncryptUtils.sha256(request.password());
@@ -41,7 +41,7 @@ public class UsersService {
             return new AuthResponse(false, "이미 사용 중인 닉네임입니다.", null);
         }
         // 중복이 없으면 회원가입 진행
-        return new AuthResponse(true, "회원가입 성공", usersRepository.emailRegister(request, hashedPassword));
+        return new AuthResponse(true, "회원가입 성공", usersRepository.addUsersByEmail(request, hashedPassword));
     }
 
 
@@ -62,9 +62,9 @@ public class UsersService {
     }
 
     // 사용자 정보 조회
-    public ApiResponse<UsersInfoResponse> usersInfo(UsersIdRequest request){
+    public ApiResponse<UsersInfoResponse> getUsersByUserId(UsersIdRequest request){
 
-        UsersInfoResponse response = usersRepository.usersInfo(request);
+        UsersInfoResponse response = usersRepository.getUsersByUserId(request);
         // 조회 실패: 사용자 정보 없을 때
         if(response == null){
             return ApiResponse.error("조회 실패: 사용자 정보 없음");
@@ -86,12 +86,12 @@ public class UsersService {
     }
 
     // 이메일 로그인
-    public Users emailLogin(LoginRequest request, String hashedPassword){
-        return usersRepository.emailLogin(request, hashedPassword);
+    public Users getUsersByEmailAndPassword(LoginEmailRequest request, String hashedPassword){
+        return usersRepository.getUsersByEmailAndPassword(request, hashedPassword);
     }
 
-    // 카카오 로그인
-    public AuthResponse kakaoRegister(AuthKaKaoRequest request, String name){
+    // 카카오 회원가입
+    public AuthResponse addUserByKakao(AuthKaKaoRequest request, String name){
 
         // 닉네임 중복 확인
         if (usersRepository.isNickNameDuplicated(request.nickname())) {
@@ -99,7 +99,13 @@ public class UsersService {
         }
 
         // 중복이 없으면 회원가입 진행
-        return new AuthResponse(true, "회원가입 성공", usersRepository.kakaoReigster(request, name));
+        return new AuthResponse(true, "회원가입 성공", usersRepository.addUserByKaKao(request, name));
+    }
+
+    // 이메일, 이름 조회 - 이메일은 권한이 없어서 임시로 이름만 받아오기
+    public Users getUsersByName(String name){
+
+        return usersRepository.getUsersByName(name);
     }
 }
 

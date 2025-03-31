@@ -2,14 +2,11 @@ package com.blog.domain.login.service;
 
 import com.blog.common.EncryptUtils;
 import com.blog.common.response.ApiResponse;
-import com.blog.domain.login.api.dto.request.LoginRequest;
+import com.blog.domain.login.api.dto.request.LoginEmailRequest;
 import com.blog.domain.login.api.dto.response.LoginResponse;
 import com.blog.domain.users.domain.Users;
 import com.blog.domain.users.service.UsersService;
 import com.blog.global.security.jwt.JwtUtil;
-import io.jsonwebtoken.Jwt;
-import org.apache.catalina.User;
-import org.apache.juli.logging.Log;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -25,27 +22,41 @@ public class LoginService {
         this.usersService = usersService;
     }
 
-    public ApiResponse<LoginResponse> emailLogin(LoginRequest request) throws NoSuchAlgorithmException {
+    // 이메일 로그인
+    public ApiResponse<LoginResponse> emailLogin(LoginEmailRequest request) throws NoSuchAlgorithmException {
 
         String hashedPassword = EncryptUtils.sha256(request.password());
-        Users user = usersService.emailLogin(request, hashedPassword);
+        Users user = usersService.getUsersByEmailAndPassword(request, hashedPassword);
 
         if (user == null){
 
             return ApiResponse.error("로그인 실패");
         }
 
-        String accessToken;
-        String refreshToken;
+        LoginResponse response = createTokens(user, request.refreshToken());
 
-        if (jwtUtil.isValidRefreshToken(request.refreshToken())){
+        return ApiResponse.success(response);
+    }
+
+    // 카카오 로그인
+    public Users getUsersByName(String name)  {
+
+        return usersService.getUsersByName(name);
+    }
+
+
+    public LoginResponse createTokens(Users user, String refreshToken) {
+        String accessToken;
+        String newRefreshToken;
+
+        if (refreshToken != null && jwtUtil.isValidRefreshToken(refreshToken)) {
             accessToken = jwtUtil.createAccessToken(user);
-            refreshToken = request.refreshToken();
+            newRefreshToken = refreshToken;
         } else {
             accessToken = jwtUtil.createAccessToken(user);
-            refreshToken = jwtUtil.createRefreshToken(user);
+            newRefreshToken = jwtUtil.createRefreshToken(user);
         }
 
-        return ApiResponse.success(new LoginResponse(accessToken, refreshToken, user));
+        return new LoginResponse(accessToken, newRefreshToken, user);
     }
 }
