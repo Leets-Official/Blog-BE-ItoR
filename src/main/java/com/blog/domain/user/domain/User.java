@@ -76,6 +76,22 @@ public class User {
 		);
 	}
 
+	public static User createKakaoUser(String nickname, String email) {
+		return new User(
+			0,
+			nickname,
+			nickname,
+			email,
+			null,
+			UserType.KAKAO,
+			null,
+			null,
+			null,
+			LocalDateTime.now()
+		);
+	}
+
+
 	public int getUserId() {
 		return userId;
 	}
