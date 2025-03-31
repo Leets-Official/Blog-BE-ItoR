@@ -22,6 +22,7 @@ public class UsersRestController {
     @PatchMapping("/update")
     public ApiResponse<UsersResultResponse> usersUpdateInfo(
             @RequestBody UsersUpdateRequest request){
+
         return usersService.userUpdateInfo(request);
     }
 
@@ -29,6 +30,7 @@ public class UsersRestController {
     @GetMapping("/info")
     public ApiResponse<UsersInfoResponse> usersInfo(
             @RequestBody UsersIdRequest request){
+
         return usersService.usersInfo(request);
     }
 
@@ -36,6 +38,7 @@ public class UsersRestController {
     @DeleteMapping("/delete")
     public ApiResponse<UsersResultResponse> usersDeleteInfo(
             @RequestBody UsersIdRequest request){
+
         return usersService.usersDeleteInfo(request);
     }
 }

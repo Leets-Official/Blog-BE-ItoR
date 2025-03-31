@@ -25,8 +25,15 @@ public class LoginRestController {
     @PostMapping("/email")
     public ApiResponse<LoginResponse> emailLogin(
             @RequestBody LoginRequest request) throws NoSuchAlgorithmException {
+
         return loginService.emailLogin(request);
     }
 
     // 카카오 로그인
+//    @PostMapping("/kakao")
+//    public ApiResponse<> callback(
+//            @RequestParam("code") String code) {
+//
+//        return ApiResponse.success();
+//    }
 }

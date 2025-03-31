@@ -15,3 +15,10 @@ jwt:
   access-token-expiration: 3600000  # 1시간
   refresh-token-expiration: 604800000  # 7일
 
+
+kakao:
+  client_id: afc82ea0ab60ad88b0a5e8bd4469adff
+  redirect_uri: http://localhost:8080/auth/kakao/register
+  token_url: https://kauth.kakao.com
+  user_url: https://kapi.kakao.com
+

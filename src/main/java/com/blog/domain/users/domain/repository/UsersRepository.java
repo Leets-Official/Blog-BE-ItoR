@@ -1,6 +1,7 @@
 package com.blog.domain.users.domain.repository;
 
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
+import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
 import com.blog.domain.login.api.dto.request.LoginRequest;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
@@ -42,15 +43,16 @@ public class UsersRepository {
 
         // 삽입된 레코드의 마지막 ID를 가져오는 쿼리
         String selectSql = "SELECT LAST_INSERT_ID()";
+
         return jdbcTemplate.queryForObject(selectSql, Integer.class);
     }
 
     // 이메일 중복확인
-    public boolean isEmailDuplicated(AuthEmailRequest request) {
+    public boolean isEmailDuplicated(String email) {
 
         String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
 
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, request.email());
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
 
         return count != null && count > 0;
     }
@@ -136,5 +138,27 @@ public class UsersRepository {
 
             return null;
         }
+    }
+
+    // 카카오 회원가입
+    public int kakaoReigster(AuthKaKaoRequest request, String name) {
+
+        String sql = "INSERT INTO users (email, password, name, nickname, birth, social, introduce) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+                "kakao",
+                "password",
+                name,
+                request.nickname(),
+                request.birth(),
+                true,  // social: 기본값은 false
+                request.introduce()
+        );
+
+        // 삽입된 레코드의 마지막 ID를 가져오는 쿼리
+        String selectSql = "SELECT LAST_INSERT_ID()";
+
+        return jdbcTemplate.queryForObject(selectSql, Integer.class);
     }
 }

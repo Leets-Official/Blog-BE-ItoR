@@ -3,7 +3,8 @@ package com.blog.domain.users.service;
 import com.blog.common.EncryptUtils;
 import com.blog.common.response.ApiResponse;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
-import com.blog.domain.auth.api.dto.response.AuthEmailResponse;
+import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
+import com.blog.domain.auth.api.dto.response.AuthResponse;
 import com.blog.domain.login.api.dto.request.LoginRequest;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
@@ -25,22 +26,22 @@ public class UsersService {
     }
 
     // 회원가입 Service
-    public AuthEmailResponse emailRegister(AuthEmailRequest request) throws NoSuchAlgorithmException {
+    public AuthResponse emailRegister(AuthEmailRequest request) throws NoSuchAlgorithmException {
 
         // 비밀번호 암호화
         String hashedPassword = EncryptUtils.sha256(request.password());
 
         // 이메일 중복 확인
-        if (usersRepository.isEmailDuplicated(request)) {
-            return new AuthEmailResponse(false, "이미 사용 중인 이메일입니다.", null);
+        if (usersRepository.isEmailDuplicated(request.email())) {
+            return new AuthResponse(false, "이미 사용 중인 이메일입니다.", null);
         }
 
         // 닉네임 중복 확인
         if (usersRepository.isNickNameDuplicated(request.nickname())) {
-            return new AuthEmailResponse(false, "이미 사용 중인 닉네임입니다.", null);
+            return new AuthResponse(false, "이미 사용 중인 닉네임입니다.", null);
         }
         // 중복이 없으면 회원가입 진행
-        return new AuthEmailResponse(true, "회원가입 성공", usersRepository.emailRegister(request, hashedPassword));
+        return new AuthResponse(true, "회원가입 성공", usersRepository.emailRegister(request, hashedPassword));
     }
 
 
@@ -89,5 +90,16 @@ public class UsersService {
         return usersRepository.emailLogin(request, hashedPassword);
     }
 
+    // 카카오 로그인
+    public AuthResponse kakaoRegister(AuthKaKaoRequest request, String name){
+
+        // 닉네임 중복 확인
+        if (usersRepository.isNickNameDuplicated(request.nickname())) {
+            return new AuthResponse(false, "이미 사용 중인 닉네임입니다.", null);
+        }
+
+        // 중복이 없으면 회원가입 진행
+        return new AuthResponse(true, "회원가입 성공", usersRepository.kakaoReigster(request, name));
+    }
 }
 

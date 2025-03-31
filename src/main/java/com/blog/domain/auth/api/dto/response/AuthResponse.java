@@ -1,6 +1,6 @@
 package com.blog.domain.auth.api.dto.response;
 
-public record AuthEmailResponse(
+public record AuthResponse(
         boolean success,
         String message,
         Integer id

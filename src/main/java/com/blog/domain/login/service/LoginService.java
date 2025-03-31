@@ -31,6 +31,7 @@ public class LoginService {
         Users user = usersService.emailLogin(request, hashedPassword);
 
         if (user == null){
+
             return ApiResponse.error("로그인 실패");
         }
 
