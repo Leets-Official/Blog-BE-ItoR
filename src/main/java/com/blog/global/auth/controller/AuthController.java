@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.domain.token.dto.TokenReissueRequestDto;
 import com.blog.global.auth.dto.LoginRequestDto;
 import com.blog.global.auth.dto.LoginResponseDto;
 import com.blog.global.auth.dto.SignUpRequestDto;
@@ -48,5 +49,11 @@ public class AuthController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PostMapping("/reissue")
+	public ResponseEntity<LoginResponseDto> reissue(@RequestBody TokenReissueRequestDto request) throws Exception {
+		String accessToken = authService.reissueAccessToken(request.getRefreshToken());
+		String refreshToken = request.getRefreshToken(); // 필요 시 재발급도 가능
+		return ResponseEntity.ok(new LoginResponseDto(accessToken, refreshToken));
+	}
 
 }
