@@ -5,9 +5,8 @@ import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.response.AuthEmailResponse;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
-import com.blog.domain.users.api.dto.response.UsersDeleteResponse;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
-import com.blog.domain.users.api.dto.response.UsersUpdateResponse;
+import com.blog.domain.users.api.dto.response.UsersResultResponse;
 import com.blog.domain.users.domain.repository.UsersRepository;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +37,7 @@ public class UsersService {
 
 
     // 비밀번호, 닉네임, 프로필 이미지 수정
-    public ApiResponse<UsersUpdateResponse> userUpdateInfo(UsersUpdateRequest request){
+    public ApiResponse<UsersResultResponse> userUpdateInfo(UsersUpdateRequest request){
 
         if (usersRepository.isNickNameDuplicated(request.nickname())) {
             return ApiResponse.error("업데이트 실패:  닉네임 중복");
@@ -50,7 +49,7 @@ public class UsersService {
             return ApiResponse.error("업데이트 실패: 사용자 정보 없음");
         }
 
-        return ApiResponse.success(new UsersUpdateResponse(result));
+        return ApiResponse.success(new UsersResultResponse(result));
     }
 
     // 사용자 정보 조회
@@ -66,12 +65,12 @@ public class UsersService {
     }
 
     // 사용자 삭제
-    public ApiResponse<UsersDeleteResponse> usersDeleteInfo(UsersIdRequest request){
-        UsersDeleteResponse response = usersRepository.usersDeleteInfo(request);
+    public ApiResponse<UsersResultResponse> usersDeleteInfo(UsersIdRequest request){
+        UsersResultResponse response = usersRepository.usersDeleteInfo(request);
 
         // 삭제 실패
-        if(response.result() == 0){
-            return ApiResponse.error("삭제 실패: 사용자 정보 없음");
+        if(response == null){
+            return ApiResponse.error("조회 실패: 사용자 정보 없음");
         }
         // 삭제 성공
         return ApiResponse.success(response);

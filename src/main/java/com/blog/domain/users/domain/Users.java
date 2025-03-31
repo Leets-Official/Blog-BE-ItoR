@@ -74,6 +74,10 @@ public class Users {
         this.introduce = introduce;
     }
 
+    public int getUserId() {
+        return id;
+    }
+
     public String getEmail() {
         return email;
     }

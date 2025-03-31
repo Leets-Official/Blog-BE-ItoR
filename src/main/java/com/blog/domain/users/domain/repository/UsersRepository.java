@@ -3,8 +3,8 @@ package com.blog.domain.users.domain.repository;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
-import com.blog.domain.users.api.dto.response.UsersDeleteResponse;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
+import com.blog.domain.users.api.dto.response.UsersResultResponse;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -97,15 +97,15 @@ public class UsersRepository {
     }
 
     // 사용자 삭제
-    public UsersDeleteResponse usersDeleteInfo(UsersIdRequest request){
+    public UsersResultResponse usersDeleteInfo(UsersIdRequest request){
         String sql = "DELETE FROM users WHERE id = ?";
 
         int result = jdbcTemplate.update(sql, request.user_id());
         // 삭제 X
         if (result == 0) {
-            return new UsersDeleteResponse(0);
+            return new UsersResultResponse(0);
         }
 
-        return new UsersDeleteResponse(result);
+        return new UsersResultResponse(result);
     }
 }

@@ -3,9 +3,8 @@ package com.blog.domain.users.api;
 import com.blog.common.response.ApiResponse;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
-import com.blog.domain.users.api.dto.response.UsersDeleteResponse;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
-import com.blog.domain.users.api.dto.response.UsersUpdateResponse;
+import com.blog.domain.users.api.dto.response.UsersResultResponse;
 import com.blog.domain.users.service.UsersService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +20,7 @@ public class UsersRestController {
 
     // 닉네임, 비밀번호, 프로필 사진을 변경
     @PatchMapping("/update")
-    public ApiResponse<UsersUpdateResponse> usersUpdateInfo(
+    public ApiResponse<UsersResultResponse> usersUpdateInfo(
             @RequestBody UsersUpdateRequest request){
         return usersService.userUpdateInfo(request);
     }
@@ -35,7 +34,7 @@ public class UsersRestController {
 
     // 사용자 정보 삭제
     @DeleteMapping("/delete")
-    public ApiResponse<UsersDeleteResponse> usersDeleteInfo(
+    public ApiResponse<UsersResultResponse> usersDeleteInfo(
             @RequestBody UsersIdRequest request){
         return usersService.usersDeleteInfo(request);
     }

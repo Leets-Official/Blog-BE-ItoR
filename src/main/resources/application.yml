@@ -10,5 +10,8 @@ spring:
     init:
       mode: never
       schema-locations: classpath:/schema.sql # schema.sql 위치 설정
-
+jwt:
+  secret: YW2ebv1Fs81fvyne4opWbUEIbsbNAjER # 시크릿 키
+  access-token-expiration: 3600000  # 1시간
+  refresh-token-expiration: 604800000  # 7일
 
