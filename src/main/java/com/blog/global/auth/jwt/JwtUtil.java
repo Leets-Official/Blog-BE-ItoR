@@ -20,23 +20,23 @@ public class JwtUtil {
 	private long expiration;
 
 	public String createToken(String userId) throws Exception {
+		return generateToken(userId, expiration);
+	}
+
+	public String createRefreshToken(String userId) throws Exception {
+		long refreshExp = 1000L * 60 * 60 * 24 * 7; // 7일
+		return generateToken(userId, refreshExp);
+	}
+
+	private String generateToken(String userId, long expireMillis) throws Exception {
 		long now = System.currentTimeMillis();
-		long exp = now + expiration;
+		long exp = now + expireMillis;
 
-		// 1. Header
-		String headerJson = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
-		String encodedHeader = base64UrlEncode(headerJson);
+		String header = base64UrlEncode("{\"alg\":\"HS256\",\"typ\":\"JWT\"}");
+		String payload = base64UrlEncode(String.format("{\"sub\":\"%s\",\"exp\":%d}", userId, exp));
+		String signature = hmacSha256(header + "." + payload, secretKey);
 
-		// 2. Payload
-		String payloadJson = String.format("{\"sub\":\"%s\",\"exp\":%d}", userId, exp);
-		String encodedPayload = base64UrlEncode(payloadJson);
-
-		// 3. Signature
-		String message = encodedHeader + "." + encodedPayload;
-		String signature = hmacSha256(message, secretKey);
-
-		// 4. Token 조립
-		return message + "." + signature;
+		return header + "." + payload + "." + signature;
 	}
 
 	private String base64UrlEncode(String data) {
@@ -52,10 +52,8 @@ public class JwtUtil {
 		return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
 	}
 
-
 	public boolean validateToken(String token) {
 		try {
-			// 만료 시간 직접 비교 (payload에서 exp 추출)
 			String[] parts = token.split("\\.");
 			if (parts.length != 3) return false;
 
@@ -95,7 +93,6 @@ public class JwtUtil {
 		if (end == -1) end = json.indexOf("}", start);
 		if (end == -1) return null;
 
-		String value = json.substring(start, end).replaceAll("[\"}]", "").trim();
-		return value;
+		return json.substring(start, end).replaceAll("[\"}]", "").trim();
 	}
 }
