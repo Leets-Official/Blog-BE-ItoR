@@ -24,14 +24,14 @@ public class UsersRepository {
     }
 
     // 사용자 등록
-    public int emailRegister(AuthEmailRequest request) {
+    public int emailRegister(AuthEmailRequest request, String hashedPassword) {
 
         String sql = "INSERT INTO users (email, password, name, nickname, birth, profile_image, social, introduce) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
                 request.email(),
-                request.password(),
+                hashedPassword,
                 request.name(),
                 request.nickname(),
                 request.birth(),
@@ -114,7 +114,7 @@ public class UsersRepository {
 
 
     // 로그인
-    public Users emailLogin(LoginRequest request){
+    public Users emailLogin(LoginRequest request, String hashedPassword){
         String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
 
         try {
@@ -131,7 +131,7 @@ public class UsersRepository {
                     rs.getObject("birth", LocalDate.class),
                     rs.getObject("created_at", LocalDateTime.class),
                     rs.getObject("updated_at", LocalDateTime.class)
-            ), request.email(), request.password());
+            ), request.email(), hashedPassword);
         } catch (EmptyResultDataAccessException e) {
 
             return null;

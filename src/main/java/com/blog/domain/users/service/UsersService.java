@@ -1,5 +1,6 @@
 package com.blog.domain.users.service;
 
+import com.blog.common.EncryptUtils;
 import com.blog.common.response.ApiResponse;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.response.AuthEmailResponse;
@@ -12,6 +13,8 @@ import com.blog.domain.users.domain.Users;
 import com.blog.domain.users.domain.repository.UsersRepository;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+
 @Service
 public class UsersService {
 
@@ -22,7 +25,10 @@ public class UsersService {
     }
 
     // 회원가입 Service
-    public AuthEmailResponse emailRegister(AuthEmailRequest request) {
+    public AuthEmailResponse emailRegister(AuthEmailRequest request) throws NoSuchAlgorithmException {
+
+        // 비밀번호 암호화
+        String hashedPassword = EncryptUtils.sha256(request.password());
 
         // 이메일 중복 확인
         if (usersRepository.isEmailDuplicated(request)) {
@@ -34,7 +40,7 @@ public class UsersService {
             return new AuthEmailResponse(false, "이미 사용 중인 닉네임입니다.", null);
         }
         // 중복이 없으면 회원가입 진행
-        return new AuthEmailResponse(true, "회원가입 성공", usersRepository.emailRegister(request));
+        return new AuthEmailResponse(true, "회원가입 성공", usersRepository.emailRegister(request, hashedPassword));
     }
 
 
@@ -79,8 +85,8 @@ public class UsersService {
     }
 
     // 이메일 로그인
-    public Users emailLogin(LoginRequest request){
-        return usersRepository.emailLogin(request);
+    public Users emailLogin(LoginRequest request, String hashedPassword){
+        return usersRepository.emailLogin(request, hashedPassword);
     }
 
 }

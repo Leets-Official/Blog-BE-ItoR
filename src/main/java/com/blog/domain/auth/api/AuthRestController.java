@@ -6,6 +6,8 @@ import com.blog.domain.auth.service.AuthService;
 import com.blog.common.response.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthRestController {
@@ -20,7 +22,7 @@ public class AuthRestController {
     // 이메일 회원가입 (이메일, 닉네임 중복확인)
     @PostMapping("/signup/email")
     public ApiResponse<AuthEmailResponse> EmailAuth(
-            @RequestBody AuthEmailRequest request){
+            @RequestBody AuthEmailRequest request) throws NoSuchAlgorithmException {
 
         AuthEmailResponse response = authService.emailRegister(request);
         return ApiResponse.success(response);

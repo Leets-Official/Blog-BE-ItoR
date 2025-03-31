@@ -6,6 +6,8 @@ import com.blog.domain.users.service.UsersService;
 import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+
 @Service
 public class AuthService {
 
@@ -15,7 +17,7 @@ public class AuthService {
         this.usersService = usersService;
     }
 
-    public AuthEmailResponse emailRegister(AuthEmailRequest request){
+    public AuthEmailResponse emailRegister(AuthEmailRequest request) throws NoSuchAlgorithmException {
         return usersService.emailRegister(request);
     }
 }

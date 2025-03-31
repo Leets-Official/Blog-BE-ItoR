@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/login")
 public class LoginRestController {
@@ -22,7 +24,7 @@ public class LoginRestController {
     // 이메일 로그인
     @PostMapping("/email")
     public ApiResponse<LoginResponse> emailLogin(
-            @RequestBody LoginRequest request){
+            @RequestBody LoginRequest request) throws NoSuchAlgorithmException {
         return loginService.emailLogin(request);
     }
 

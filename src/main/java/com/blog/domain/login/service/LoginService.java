@@ -1,5 +1,6 @@
 package com.blog.domain.login.service;
 
+import com.blog.common.EncryptUtils;
 import com.blog.common.response.ApiResponse;
 import com.blog.domain.login.api.dto.request.LoginRequest;
 import com.blog.domain.login.api.dto.response.LoginResponse;
@@ -10,6 +11,8 @@ import io.jsonwebtoken.Jwt;
 import org.apache.catalina.User;
 import org.apache.juli.logging.Log;
 import org.springframework.stereotype.Service;
+
+import java.security.NoSuchAlgorithmException;
 
 @Service
 public class LoginService {
@@ -22,8 +25,10 @@ public class LoginService {
         this.usersService = usersService;
     }
 
-    public ApiResponse<LoginResponse> emailLogin(LoginRequest request){
-        Users user = usersService.emailLogin(request);
+    public ApiResponse<LoginResponse> emailLogin(LoginRequest request) throws NoSuchAlgorithmException {
+
+        String hashedPassword = EncryptUtils.sha256(request.password());
+        Users user = usersService.emailLogin(request, hashedPassword);
 
         if (user == null){
             return ApiResponse.error("로그인 실패");
