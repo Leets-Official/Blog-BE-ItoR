@@ -3,10 +3,12 @@ package com.blog.domain.users.service;
 import com.blog.common.response.ApiResponse;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.response.AuthEmailResponse;
+import com.blog.domain.login.api.dto.request.LoginRequest;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
 import com.blog.domain.users.api.dto.response.UsersResultResponse;
+import com.blog.domain.users.domain.Users;
 import com.blog.domain.users.domain.repository.UsersRepository;
 import org.springframework.stereotype.Service;
 
@@ -75,5 +77,11 @@ public class UsersService {
         // 삭제 성공
         return ApiResponse.success(response);
     }
+
+    // 이메일 로그인
+    public Users emailLogin(LoginRequest request){
+        return usersRepository.emailLogin(request);
+    }
+
 }
 

@@ -1,15 +1,18 @@
 package com.blog.domain.users.domain.repository;
 
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
+import com.blog.domain.login.api.dto.request.LoginRequest;
 import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
 import com.blog.domain.users.api.dto.response.UsersResultResponse;
+import com.blog.domain.users.domain.Users;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Repository
 public class UsersRepository {
@@ -107,5 +110,31 @@ public class UsersRepository {
         }
 
         return new UsersResultResponse(result);
+    }
+
+
+    // 로그인
+    public Users emailLogin(LoginRequest request){
+        String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+
+        try {
+
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Users(
+                    rs.getInt("id"),
+                    rs.getString("email"),
+                    rs.getString("name"),
+                    rs.getString("nickname"),
+                    rs.getString("password"),
+                    rs.getString("profile_image"),
+                    rs.getBoolean("social"),
+                    rs.getString("introduce"),
+                    rs.getObject("birth", LocalDate.class),
+                    rs.getObject("created_at", LocalDateTime.class),
+                    rs.getObject("updated_at", LocalDateTime.class)
+            ), request.email(), request.password());
+        } catch (EmptyResultDataAccessException e) {
+
+            return null;
+        }
     }
 }
