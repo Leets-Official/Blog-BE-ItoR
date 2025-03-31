@@ -3,9 +3,9 @@ package com.blog.global.auth.dto;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 
 public class SignUpRequestDto {
 
@@ -23,13 +23,13 @@ public class SignUpRequestDto {
 	private String name;
 
 	@NotBlank(message = "닉네임 입력은 필수입니다.")
-	@Max(value = 20 , message = "닉네임은 최대 20자까지 입력 가능합니다.")
+	@Size(max = 20 , message = "닉네임은 최대 20자까지 입력 가능합니다.")
 	private String nickName;
 
 	@Past
 	private LocalDate birthDate;
 
-	@Max(value = 30 , message = "한 줄 소개는 최대 30자까지 입력 가능합니다.")
+	@Size(max = 30 , message = "한 줄 소개는 최대 30자까지 입력 가능합니다.")
 	private String introduce;
 
 	private String profileImageUrl;
