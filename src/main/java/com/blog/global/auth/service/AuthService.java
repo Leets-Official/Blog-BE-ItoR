@@ -1,7 +1,5 @@
 package com.blog.global.auth.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 
 import com.blog.domain.user.domain.User;
@@ -62,5 +60,5 @@ public class AuthService {
 		return new SignUpResponseDto("회원가입 성공!");
 	}
 
-	}
 }
+
