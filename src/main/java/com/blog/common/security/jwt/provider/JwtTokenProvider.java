@@ -80,6 +80,12 @@ public class JwtTokenProvider {
 
     // JWT 유효성 검사 (서명을 체크)
     public boolean validateJwt(String token) {
+
+        // 없는 경우 예외처리
+        if (token == null || token.isEmpty()) {
+            throw new IllegalStateException("RefreshToken이 없습니다.");
+        }
+
         String[] parts = token.split("\\.");
         if (parts.length != 3) {
             return false;  // 토큰 형식이 잘못된 경우

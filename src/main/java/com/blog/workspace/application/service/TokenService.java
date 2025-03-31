@@ -44,11 +44,7 @@ public class TokenService implements TokenUseCase {
         // 쿠키에서 refreshToken 가져오기
         String refreshToken = getRefreshTokenFromCookie(httpServletRequest);
 
-        // refreshToken이 없으면 예외 처리
-        if (refreshToken == null || refreshToken.isEmpty()) {
-            throw new IllegalStateException("RefreshToken이 없습니다.");
-        }
-        // Refresh 토큰 검증 체크
+        // Refresh 토큰 검증 체크, 예외처리는 내부에서 진행
         boolean validated = jwtTokenProvider.validateJwt(refreshToken);
 
         if (!validated) {
@@ -75,13 +71,17 @@ public class TokenService implements TokenUseCase {
     // 쿠키에서 refreshToken 추출하는 메서드
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    return cookie.getValue(); // refreshToken 값을 반환
-                }
+
+        if (cookies ==null){
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if ("refreshToken".equals(cookie.getName())) {
+                return cookie.getValue(); // refreshToken 값을 반환
             }
         }
+
         return null; // 쿠키에 refreshToken이 없으면 null 반환
     }
 

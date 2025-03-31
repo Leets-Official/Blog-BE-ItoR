@@ -95,13 +95,17 @@ public class LoginService implements LoginUseCase {
     // 쿠키에서 refreshToken 추출하는 메서드
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    return cookie.getValue(); // refreshToken 값을 반환
-                }
+
+        if(cookies == null){
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if ("refreshToken".equals(cookie.getName())) {
+                return cookie.getValue(); // refreshToken 값을 반환
             }
         }
-        return null; // 쿠키에 refreshToken이 없으면 null 반환
+
+        return null;
     }
 }

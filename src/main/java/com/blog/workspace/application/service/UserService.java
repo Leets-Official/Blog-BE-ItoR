@@ -68,33 +68,15 @@ public class UserService implements GetUserUseCase, RegisterUserUseCase, UpdateU
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저는 수정할 수 없습니다."));
 
         ///  카카오 및 자체 유저의 수정하기
-        // 닉네임이 요청에 있으면 수정
-        if (request.getNickname() != null && !request.getNickname().isEmpty()) {
-            user.changeNickname(request.getNickname());
-        }
-
-        // 생일이 요청에 있으면 수정
-        if (request.getBirthday() != null && !request.getBirthday().isEmpty()) {
-            user.changeBirthday(request.getBirthday());
-        }
-
-        // 설명이 요청에 있으면 수정
-        if (request.getDescription() != null && !request.getDescription().isEmpty()) {
-            user.changeDescription(request.getDescription());
-        }
-
-        // 이미지 URL이 요청에 있으면 수정
-        if (request.getImageUrl() != null && !request.getImageUrl().isEmpty()) {
-            user.changeImageUrl(request.getImageUrl());
-        }
-
+        changeUserInfo(request, user);
 
         /// 자체 유저 비밀번호 변경 처리, 카카오는 불가능하다.
         if (!user.isSocial()) {
 
-            // 비밀번호와 비밀번호 확인의 동일여부 체크
             if (request.getPassword() != null && request.getPasswordCheck() != null) {
+                // 비밀번호와 비밀번호 확인의 동일여부 체크
                 validationPassWord(request.getPassword(), request.getPasswordCheck());
+
                 user.changePassword(request.getPassword());
             }
 
@@ -126,6 +108,29 @@ public class UserService implements GetUserUseCase, RegisterUserUseCase, UpdateU
     private void validationPassWord(String passWord, String passwordCheck) {
         if (!passWord.equals(passwordCheck)) {
             throw new NotSamePasswordException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    ///  유저 정보 수정
+    private void changeUserInfo(UserUpdateRequest request, User user) {
+        // 닉네임이 요청에 있으면 수정
+        if (request.getNickname() != null && !request.getNickname().isEmpty()) {
+            user.changeNickname(request.getNickname());
+        }
+
+        // 생일이 요청에 있으면 수정
+        if (request.getBirthday() != null && !request.getBirthday().isEmpty()) {
+            user.changeBirthday(request.getBirthday());
+        }
+
+        // 설명이 요청에 있으면 수정
+        if (request.getDescription() != null && !request.getDescription().isEmpty()) {
+            user.changeDescription(request.getDescription());
+        }
+
+        // 이미지 URL이 요청에 있으면 수정
+        if (request.getImageUrl() != null && !request.getImageUrl().isEmpty()) {
+            user.changeImageUrl(request.getImageUrl());
         }
     }
 
