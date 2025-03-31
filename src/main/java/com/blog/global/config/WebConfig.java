@@ -22,7 +22,7 @@ public class WebConfig  implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new JwtInterceptor(jwtUtil))
 			.addPathPatterns("/api/**") // 인증이 필요한 경로들은 /api로 시작
-			.excludePathPatterns("/auth/login"); //로그인은 Jwt 검사 제외
+			.excludePathPatterns("/auth/**"); //로그인,회원가입은 Jwt 검사 제외
 
 	}
 }
