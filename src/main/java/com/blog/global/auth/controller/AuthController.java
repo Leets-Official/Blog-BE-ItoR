@@ -51,9 +51,8 @@ public class AuthController {
 
 	@PostMapping("/reissue")
 	public ResponseEntity<LoginResponseDto> reissue(@RequestBody TokenReissueRequestDto request) throws Exception {
-		String accessToken = authService.reissueAccessToken(request.getRefreshToken());
-		String refreshToken = request.getRefreshToken(); // 필요 시 재발급도 가능
-		return ResponseEntity.ok(new LoginResponseDto(accessToken, refreshToken));
+		LoginResponseDto response = authService.reissueAccessToken(request.getRefreshToken());
+		return ResponseEntity.ok(response);
 	}
 
 }

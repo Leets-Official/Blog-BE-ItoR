@@ -44,4 +44,21 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 	public void deleteByUserId(int userId) {
 		jdbc.update("DELETE FROM refresh_tokens WHERE userId = ?", userId);
 	}
+
+	@Override
+	public void update(RefreshToken refreshToken) {
+		String sql = "UPDATE refresh_tokens SET refreshToken = ?, expiredAt = ? WHERE userId = ?";
+		jdbc.update(sql,
+			refreshToken.getRefreshToken(),
+			refreshToken.getExpiredAt(),
+			refreshToken.getUserId()
+		);
+	}
+
+	@Override
+	public boolean existsByUserId(int userId) {
+		String sql = "SELECT COUNT(*) FROM refresh_tokens WHERE userId = ?";
+		Integer count = jdbc.queryForObject(sql, Integer.class, userId);
+		return count != null && count > 0;
+	}
 }

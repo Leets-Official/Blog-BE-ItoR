@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.blog.domain.token.domain.RefreshToken;
 import com.blog.domain.token.repository.RefreshTokenRepository;
+import com.blog.domain.token.service.TokenService;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.auth.dto.LoginResponseDto;
@@ -21,11 +22,13 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final TokenService tokenService;
 
-	public AuthService(UserRepository userRepository, JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
+	public AuthService(UserRepository userRepository, JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository, TokenService tokenService) {
 		this.userRepository = userRepository;
 		this.jwtUtil = jwtUtil;
 		this.refreshTokenRepository = refreshTokenRepository;
+		this.tokenService = tokenService;
 	}
 
 	public LoginResponseDto login(String email, String password) throws Exception {
@@ -39,10 +42,9 @@ public class AuthService {
 		}
 
 		String accessToken = jwtUtil.createToken(String.valueOf(user.getUserId()));
-		String refreshToken = jwtUtil.createRefreshToken(String.valueOf(user.getUserId()));
+		tokenService.issueOrUpdateRefreshToken(user.getUserId());
+		String refreshToken = tokenService.getRefreshTokenForUser(user.getUserId());
 
-		RefreshToken token = RefreshToken.create(user.getUserId(), refreshToken, LocalDateTime.now().plusDays(7));
-		refreshTokenRepository.save(token);
 
 		return new LoginResponseDto(accessToken, refreshToken);
 	}
@@ -73,20 +75,29 @@ public class AuthService {
 	}
 
 	// 어세스 토큰 재발급 로직
-	public String reissueAccessToken(String refreshToken) throws Exception {
+	public LoginResponseDto reissueAccessToken(String refreshToken) throws Exception {
 		if (!jwtUtil.validateToken(refreshToken)) {
 			throw new CommonException(ErrorCode.INVALID_TOKEN);
 		}
 
-		String userId = jwtUtil.extractUserId(refreshToken);
-		RefreshToken storedToken = refreshTokenRepository.findByUserId(Integer.parseInt(userId))
+		String userIdStr = jwtUtil.extractUserId(refreshToken);
+		int userId = Integer.parseInt(userIdStr);
+
+		RefreshToken storedToken = refreshTokenRepository.findByUserId(userId)
 			.orElseThrow(() -> new CommonException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
 		if (!storedToken.getRefreshToken().equals(refreshToken)) {
 			throw new CommonException(ErrorCode.INVALID_TOKEN);
 		}
 
-		return jwtUtil.createToken(userId);
+		String newAccessToken = jwtUtil.createToken(String.valueOf(userId));
+		String newRefreshToken = jwtUtil.createRefreshToken(String.valueOf(userId));
+		LocalDateTime newExp = LocalDateTime.now().plusDays(7);
+
+		storedToken.update(newRefreshToken, newExp);
+		refreshTokenRepository.update(storedToken);
+
+		return new LoginResponseDto(newAccessToken, newRefreshToken);
 	}
 
 }
