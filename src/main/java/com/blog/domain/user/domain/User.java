@@ -16,7 +16,8 @@ public class User {
 	private String profileImageUrl;
 	private LocalDateTime createdAt;
 
-	private User ( String name,
+	//Row Mapper 전용 생성자
+	public User ( int userId,String name,
 		String nickName,
 		String email,
 		String password,
@@ -25,7 +26,7 @@ public class User {
 		String introduce,
 		String profileImageUrl,
 		LocalDateTime createdAt) {
-		this.userId = 0;
+		this.userId = userId;
 		this.name = name;
 		this.nickName = nickName;
 		this.email = email;
@@ -36,6 +37,22 @@ public class User {
 		this.profileImageUrl = profileImageUrl;
 		this.createdAt = createdAt;
 	}
+
+	//생성자 오버로딩
+	public User(String name, String nickName, String email, String password,
+		UserType userType, LocalDate birthDate, String introduce,
+		String profileImageUrl, LocalDateTime createdAt) {
+		this.name = name;
+		this.nickName = nickName;
+		this.email = email;
+		this.password = password;
+		this.userType = userType;
+		this.birthDate = birthDate;
+		this.introduce = introduce;
+		this.profileImageUrl = profileImageUrl;
+		this.createdAt = createdAt;
+	}
+
 
 	public static User createEmailUser(
 		String name,

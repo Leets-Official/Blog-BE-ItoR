@@ -51,20 +51,18 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	private RowMapper<User> userRowMapper() {
-		return (rs, rowNum) -> {
-			User user = new User();
-			user.setUserId(rs.getInt("userId"));
-			user.setName(rs.getString("name"));
-			user.setNickName(rs.getString("nickName"));
-			user.setEmail(rs.getString("email"));
-			user.setPassword(rs.getString("password"));
-			user.setUserType(UserType.valueOf(rs.getString("userType")));
-			user.setBirthDate(rs.getDate("birthDate").toLocalDate());
-			user.setIntroduce(rs.getString("introduce"));
-			user.setProfileImageUrl(rs.getString("profileImageUrl"));
-			user.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
-			return user;
-		};
+		return (rs, rowNum) -> new User(
+			rs.getInt("userId"),
+			rs.getString("name"),
+			rs.getString("nickName"),
+			rs.getString("email"),
+			rs.getString("password"),
+			UserType.valueOf(rs.getString("userType")),
+			rs.getDate("birthDate").toLocalDate(),
+			rs.getString("introduce"),
+			rs.getString("profileImageUrl"),
+			rs.getTimestamp("createdAt").toLocalDateTime()
+		);
+		}
 	}
 
-}
