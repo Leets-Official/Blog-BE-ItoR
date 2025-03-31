@@ -1,1 +1,14 @@
-spring.application.name=blog
+spring:
+  application:
+    name: blog
+  datasource:
+    url: jdbc:mysql://localhost:3306/blog # DB 주소
+    username: root # MySQL 사용자명
+    password: root # MySQL 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver # MySQL 드라이버
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath:/schema.sql # schema.sql 위치 설정
+
+
