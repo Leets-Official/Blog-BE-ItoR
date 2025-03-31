@@ -1,4 +1,4 @@
-package com.blog.domain.user.controller.dto;
+package com.blog.global.security;
 
 public class OAuthToken {
 

@@ -2,7 +2,7 @@ CREATE TABLE `user` (
                         id BIGINT PRIMARY KEY AUTO_INCREMENT,
                         email VARCHAR(255) NOT NULL UNIQUE,
                         password VARCHAR(255) NOT NULL,
-                        name VARCHAR(50) NOT NULL,
+                        name VARCHAR(50) NOT NULL UNIQUE,
                         nickname VARCHAR(50) NOT NULL,
                         introduction VARCHAR(255) NOT NULL,
                         birth DATE NOT NULL,

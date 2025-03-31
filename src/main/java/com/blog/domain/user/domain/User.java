@@ -34,6 +34,14 @@ public class User extends BaseDomain {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public User(Long id, String email, String name) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+    }
+
+
+
     public Long getId() {
         return id;
     }
