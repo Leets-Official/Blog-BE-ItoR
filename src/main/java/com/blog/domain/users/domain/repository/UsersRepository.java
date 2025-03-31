@@ -1,8 +1,9 @@
 package com.blog.domain.users.domain.repository;
 
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
-import com.blog.domain.users.api.dto.request.UsersInfoRequest;
+import com.blog.domain.users.api.dto.request.UsersIdRequest;
 import com.blog.domain.users.api.dto.request.UsersUpdateRequest;
+import com.blog.domain.users.api.dto.response.UsersDeleteResponse;
 import com.blog.domain.users.api.dto.response.UsersInfoResponse;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,7 +20,7 @@ public class UsersRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // 사용자 등록 (INSERT)
+    // 사용자 등록
     public int emailRegister(AuthEmailRequest request) {
 
         String sql = "INSERT INTO users (email, password, name, nickname, birth, profile_image, social, introduce) " +
@@ -63,25 +64,25 @@ public class UsersRepository {
 
     // 사용자 정보 수정
     public int usersUpdateInfo(UsersUpdateRequest request){
-        String sql = "UPDATE FROM users SET password = ?, nickname = ?, profile_image = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET password = ?, nickname = ?, profile_image = ? WHERE id = ?";
 
         return jdbcTemplate.update(sql,
                 request.password(),
                 request.nickname(),
                 request.profile_image(),
-                request.user_id()  // user_id로 WHERE 절을 통해 특정 사용자 업데이트
+                request.user_id()
         );
     }
 
     // 사용자 정보 조회
-    public UsersInfoResponse usersInfo(UsersInfoRequest request){
+    public UsersInfoResponse usersInfo(UsersIdRequest request){
         String sql = "SELECT * FROM users WHERE id = ?";
 
         try {
+
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new UsersInfoResponse(
-                    rs.getInt("user_id"),
+                    rs.getInt("id"),
                     rs.getString("email"),
-                    rs.getString("password"),
                     rs.getString("name"),
                     rs.getString("nickname"),
                     rs.getObject("birth", LocalDate.class),
@@ -90,7 +91,21 @@ public class UsersRepository {
                     rs.getString("introduce")
             ), request.user_id());
         } catch (EmptyResultDataAccessException e) {
+
             return null;
         }
+    }
+
+    // 사용자 삭제
+    public UsersDeleteResponse usersDeleteInfo(UsersIdRequest request){
+        String sql = "DELETE FROM users WHERE id = ?";
+
+        int result = jdbcTemplate.update(sql, request.user_id());
+        // 삭제 X
+        if (result == 0) {
+            return new UsersDeleteResponse(0);
+        }
+
+        return new UsersDeleteResponse(result);
     }
 }

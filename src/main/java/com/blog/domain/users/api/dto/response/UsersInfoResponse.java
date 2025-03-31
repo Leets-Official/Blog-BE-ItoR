@@ -4,9 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record UsersInfoResponse(
-        int user_id,
+        int id,
         String email,
-        String password,
         String name,
         String nickname,
         LocalDate birth,

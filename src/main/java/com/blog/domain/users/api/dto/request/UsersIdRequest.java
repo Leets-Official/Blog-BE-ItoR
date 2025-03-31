@@ -1,8 +1,6 @@
 package com.blog.domain.users.api.dto.request;
 
-import java.time.LocalDate;
-
-public record UsersInfoRequest(
+public record UsersIdRequest(
         int user_id
 ) {
 }
