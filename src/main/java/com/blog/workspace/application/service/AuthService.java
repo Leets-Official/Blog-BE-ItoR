@@ -1,6 +1,6 @@
 package com.blog.workspace.application.service;
 
-import com.blog.common.security.jwt.provider.JwtTokenProvider;
+import com.blog.security.jwt.provider.JwtTokenProvider;
 import com.blog.workspace.adapter.in.web.dto.request.AuthFirstTimeRequest;
 import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 import com.blog.workspace.adapter.out.oauth.OAuthUserInfo;
@@ -11,7 +11,6 @@ import com.blog.workspace.application.out.token.TokenPort;
 import com.blog.workspace.application.out.user.UserPort;
 import com.blog.workspace.domain.token.JwtToken;
 import com.blog.workspace.domain.user.User;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.blog.common.security.jwt.provider.JwtTokenProvider.REFRESH_TOKEN_EXPIRATION_TIME;
+import static com.blog.security.jwt.provider.JwtTokenProvider.REFRESH_TOKEN_EXPIRATION_TIME;
 
 
 @Service

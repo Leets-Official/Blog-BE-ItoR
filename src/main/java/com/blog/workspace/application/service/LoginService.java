@@ -1,6 +1,6 @@
 package com.blog.workspace.application.service;
 
-import com.blog.common.security.jwt.provider.JwtTokenProvider;
+import com.blog.security.jwt.provider.JwtTokenProvider;
 import com.blog.workspace.adapter.in.web.dto.request.UserLoginRequest;
 import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 import com.blog.workspace.application.in.user.LoginUseCase;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static com.blog.common.security.jwt.provider.JwtTokenProvider.REFRESH_TOKEN_EXPIRATION_TIME;
+import static com.blog.security.jwt.provider.JwtTokenProvider.REFRESH_TOKEN_EXPIRATION_TIME;
 
 @Service
 @Transactional

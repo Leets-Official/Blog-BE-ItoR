@@ -1,6 +1,6 @@
-package com.blog.common.security.jwt.handler;
+package com.blog.security.jwt.handler;
 
-import com.blog.common.security.jwt.provider.JwtTokenProvider;
+import com.blog.security.jwt.provider.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;

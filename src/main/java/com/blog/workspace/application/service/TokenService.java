@@ -1,6 +1,6 @@
 package com.blog.workspace.application.service;
 
-import com.blog.common.security.jwt.provider.JwtTokenProvider;
+import com.blog.security.jwt.provider.JwtTokenProvider;
 import com.blog.workspace.adapter.in.web.dto.response.UserLoginResponse;
 import com.blog.workspace.application.in.token.TokenUseCase;
 import com.blog.workspace.application.out.token.TokenPort;

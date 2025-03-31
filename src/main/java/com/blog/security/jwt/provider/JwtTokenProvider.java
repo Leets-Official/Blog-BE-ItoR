@@ -1,4 +1,4 @@
-package com.blog.common.security.jwt.provider;
+package com.blog.security.jwt.provider;
 
 import com.blog.workspace.domain.user.User;
 import jakarta.servlet.http.Cookie;

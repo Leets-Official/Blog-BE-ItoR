@@ -1,4 +1,4 @@
-package com.blog.common.security.jwt.handler;
+package com.blog.security.jwt.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
