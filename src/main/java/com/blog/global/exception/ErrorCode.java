@@ -22,7 +22,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(1004, HttpStatus.UNAUTHORIZED, "재발급 토큰이 올바르지 않습니다."),
     INVALID_ACCESS_TOKEN(1005, HttpStatus.UNAUTHORIZED, "접근 토큰이 올바르지 않습니다."),
     INVALID_TOKEN(1006, HttpStatus.UNAUTHORIZED, "토큰이 생성되지 않았습니다"),
-
+    USER_NOT_FOUND_IN_COOKIE(1007, HttpStatus.NOT_FOUND,"쿠키에서 사용자정보를 찾을 수 없습니다."),
     POST_NOT_FOUND(2001, HttpStatus.NOT_FOUND, "요청한 게시글을 찾을 수 없습니다."),
     UNAUTHORIZED_POST_ACCESS(2002, HttpStatus.FORBIDDEN, "해당 게시글에 접근할 권한이 없습니다."),
     COMMENT_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "요청한 댓글을 찾을 수 없습니다."),

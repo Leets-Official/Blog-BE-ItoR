@@ -14,14 +14,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
 
 @WebFilter(urlPatterns = "/*")
 public class TokenFilter implements Filter {
 
-    TokenStore tokenStore = new TokenStore();
+    private CustomTokenUtil customTokenUtil = new CustomTokenUtil();
+
+    public TokenFilter() {
+        this.customTokenUtil = customTokenUtil;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -41,8 +42,8 @@ public class TokenFilter implements Filter {
 
         String path = request.getRequestURI();
 
-        // 검증하지 않아도 되는 것만 적기
-        if (path.startsWith("/auth") || path.startsWith("/login") || path.startsWith("/public")) {
+        // 검증하지 않아도 되는 것만 적기|| path.startsWith("/refresh")
+        if (path.startsWith("/auth") || path.startsWith("/login") || path.startsWith("/join")  || path.startsWith("/public")) {
             chain.doFilter(request, response);
             return;
         }
@@ -54,50 +55,17 @@ public class TokenFilter implements Filter {
 
         if (accessToken != null && CustomTokenUtil.validateToken(accessToken)) {
             // 토큰 유효성 검증 후, 사용자 정보 추출
-            String userId = CustomTokenUtil.getUserFromToken(accessToken).toString();
+            String userId = customTokenUtil.getUserFromToken(accessToken).toString();
             request.setAttribute("userId", userId);
-
-            //??????
-            addCookie(userId, response);
 
             chain.doFilter(request, response);
             return;
         }
-// ✅ 2. Access Token이 만료된 경우 -> Refresh Token 확인
-        String refreshToken = getRefreshTokenFromCookies(request);
-
-        if (refreshToken != null) {
-            // Refresh Token에서 사용자 정보 추출
-            Map<String, Object> userInfo = CustomTokenUtil.getUserFromToken(refreshToken);
-
-            // Refresh Token이 서버에 저장되어 있고 유효한 경우
-            if (userInfo != null && tokenStore.isRefreshTokenStoredInServer((Long) userInfo.get("userId"), refreshToken)) {
-                // 🔥 Refresh Token이 유효하면 새로운 Access Token 발급
-                String newAccessToken = CustomTokenUtil.generateAccessToken((Long) userInfo.get("userId"), (String) userInfo.get("email"));
-
-                // ✅ 새로운 Access Token을 헤더에 추가
-                response.setHeader("Authorization", "Bearer " + newAccessToken);
-
-                // ✅ 요청 속성에 사용자 정보 추가
-                request.setAttribute("userId", userInfo.get("userId").toString());
-
-                // 필터 체인 계속 진행
-                chain.doFilter(request, response);
-                return;
-            }
-        }
-
-// Refresh Token이 없거나 유효하지 않으면 에러 처리
+        // Refresh Token이 없거나 유효하지 않으면 에러 처리
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or missing refresh token");
 
-
     }
 
-    private static void addCookie(String userId, HttpServletResponse response) {
-        Cookie userIdCookie = new Cookie("userId", userId);
-        userIdCookie.setMaxAge(60 * 60);
-        response.addCookie(userIdCookie);
-    }
 
     // 🔹 헤더에서 Access Token 가져오기
     private String getTokenFromRequest(HttpServletRequest request) {
@@ -108,14 +76,5 @@ public class TokenFilter implements Filter {
         return null;
     }
 
-    // 🔹 쿠키에서 Refresh Token 가져오기
-    private String getRefreshTokenFromCookies(HttpServletRequest request) {
-        if (request.getCookies() == null) return null;
 
-        Optional<Cookie> refreshTokenCookie = Arrays.stream(request.getCookies())
-                .filter(cookie -> "refresh_token".equals(cookie.getName()))
-                .findFirst();
-
-        return refreshTokenCookie.map(Cookie::getValue).orElse(null);
-    }
 }

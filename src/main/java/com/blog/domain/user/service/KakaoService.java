@@ -1,9 +1,12 @@
 package com.blog.domain.user.service;
 
 
+import com.blog.domain.user.repository.TokenStore;
 import com.blog.global.exception.ErrorCode;
 import com.blog.global.security.OAuthToken;
 import com.blog.global.exception.CustomException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -20,10 +23,18 @@ import static com.blog.global.exception.ErrorCode.USER_NOT_FOUND;
 public class KakaoService {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final TokenStore tokenStore;
+    private final TokenService tokenService;
 
     @Value("${kakao.client-id}")
     private String clientId;
 
+    public KakaoService(TokenStore tokenStore, TokenService tokenService) {
+        this.tokenStore = tokenStore;
+        this.tokenService = tokenService;
+    }
+
+    //카카오 인가 코드는 10분 후 만료
     public String getAccessToken(String authorizationCode, String clientId, String redirectUri) {
 
         // ️ access token 요청
@@ -54,22 +65,28 @@ public class KakaoService {
     }
 
     //  카카오 유저 정보 가져오기
-    public Map<String, Object> getKakaoUserInfo(String accessToken) {
+    public Map<String, Object> getKakaoUserInfo(String accessToken, HttpServletResponse response) {
+        System.out.println(accessToken);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
-        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setBearerAuth(accessToken); // 토큰을 Bearer 형태로 전달
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         HttpEntity<String> kakaoProfileRequest = new HttpEntity<>(headers);
+
         // 카카오 사용자 정보 요청
-        ResponseEntity<Map> response = restTemplate.exchange(
+        ResponseEntity<Map> responseEntity  = restTemplate.exchange(
                 "https://kapi.kakao.com/v2/user/me",
                 HttpMethod.GET,
                 kakaoProfileRequest,
                 Map.class
         );
-        Map<String, Object> userInfo = response.getBody();
+        Map<String, Object> userInfo = responseEntity.getBody();
+        System.out.println(userInfo);
+
+        tokenService.addCookie((String) userInfo.get("userId"), response);
+
         if (userInfo == null) {
             throw new CustomException(USER_NOT_FOUND);
         }
