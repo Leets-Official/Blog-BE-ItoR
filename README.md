@@ -2,55 +2,58 @@
 
 # Blog 만들기
 
+## 미션 요구사항
+
+1. 미션 진행 방법을 꼭 읽고 진행해주세요
+   [미션 진행 방법](https://www.notion.so/46dbd9440a4f4d5e97228011dff70f5a?pvs=21)
+2. 해당 ReadMe 를 지우고 erd 및 디렉토리 구조를 작성해주세요
+    1. erd를 그리는 방법은 자유입니다
+    2. 디렉토리 구조도 자유롭게 설정하셔도 좋습니다
+3. 아래 API 요구사항은 API URI를 포함하고 있습니다. 반드시 URI를 지켜서 구현해주세요
+
 `ex) GET posts/all`
 
-## ERD
 
-![블로그 1주차 erd](https://github.com/user-attachments/assets/db86eb59-bba7-45f0-a559-a92fd5cfc210)
+## API 요구사항
 
-## 요구사항 정의서
+### 회원가입(/auth)
 
-![image](https://github.com/user-attachments/assets/834a9589-d526-47f4-aeab-f27f82226723)
+- 사용자는 이메일 주소 또는 카카오 OAuth를 통해 회원가입을 진행할 수 있어야 합니다.
+- 사용자는 비밀번호를 생성하여 회원가입을 진행할 수 있어야 합니다.
+- 사용자는 프로필사진을 등록하며 회원가입을 진행할 수 있어야합니다(이메일 로그인에 한함)
+- 사용자가 입력한 이메일 주소와 닉네임은 시스템에 이미 등록되어 있지 않아야 합니다.
 
-## 디렉토리
-```
-/blog-backend
- ├── src
- │   ├── main
- │   │   ├── java/com/blog/app
- │   │   │   ├── config/             # 설정 파일 (보안, CORS 등)
- │   │   │   ├── auth/               # 인증 관련 (로그인, 회원가입)
- │   │   │   │   ├── controller/     # Auth 컨트롤러
- │   │   │   │   ├── dao/            # Auth DAO
- │   │   │   │   ├── mapper/         # Auth Mapper
- │   │   │   │   ├── service/        # Auth 서비스
- │   │   │   │   ├── vo/             # Auth VO (Value Object)
- │   │   │   ├── member/             # 회원 관련
- │   │   │   │   ├── controller/     # Member 컨트롤러
- │   │   │   │   ├── dao/            # Member DAO
- │   │   │   │   ├── mapper/         # Member Mapper
- │   │   │   │   ├── service/        # Member 서비스
- │   │   │   │   ├── vo/             # Member VO
- │   │   │   ├── post/               # 게시물 관련
- │   │   │   │   ├── controller/     # Post 컨트롤러
- │   │   │   │   ├── dao/            # Post DAO
- │   │   │   │   ├── mapper/         # Post Mapper
- │   │   │   │   ├── service/        # Post 서비스
- │   │   │   │   ├── vo/             # Post VO
- │   │   │   ├── comment/            # 댓글 관련
- │   │   │   │   ├── controller/     # Comment 컨트롤러
- │   │   │   │   ├── dao/            # Comment DAO
- │   │   │   │   ├── mapper/         # Comment Mapper
- │   │   │   │   ├── service/        # Comment 서비스
- │   │   │   │   ├── vo/             # Comment VO
- │   │   │   ├── image/              # 이미지 업로드 관련
- │   │   │   │   ├── controller/     # Image 컨트롤러
- │   │   │   │   ├── service/        # Image 서비스
- │   │   │   ├── BlogApplication.java # 메인 애플리케이션
- │   │   ├── resources
- │   │   │   ├── application.yml     # 환경설정 파일
- │   ├── test                        # 테스트 코드
- ├── pom.xml                         # Maven 설정 파일
- └── README.md                        # 프로젝트 설명
-```
+### 로그인(/login)
+
+- 사용자는 등록한 이메일 주소 또는 카카오 로그인을 이용하여 로그인할 수 있어야 합니다.
+- (토큰 방식으로 구현시) refresh token을 통해 새로운 access token을 발급받을 수 있어야 합니다.
+
+### 게시물 (/posts)
+
+- 사용자는 로그인을 하지 않고도 게시물을 조회할 수 있어야 합니다.
+- 사용자는 로그인을 진행해야 게시물을 작성할 수 있어야 합니다.
+- 사용자는 자신의 게시물만 수정, 삭제할 수 있어야 합니다.
+- 게시물은 페이지네이션이 가능해야 합니다.
+  - 페이지네이션은 클라이언트에서 입력 받을 수 있게 구현해야 합니다.
+- 게시물의 목록 조회와 게시물 내용을 보는 API는 별도로 구현되어야 합니다.
+- 게시물 조회시 댓글도 모두 조회할 수 있어야 합니다.
+
+### 댓글(/comments)
+
+- 사용자는 로그인을 하지 않고도 댓글을 확인할 수 있어야 합니다.
+- 사용자는 자신의 댓글만 수정, 삭제할 수 있어야 합니다.
+- 댓글에는 댓글을 달수 없습니다(단 원하는 경우 구현해도 괜찮습니다)
+
+### 유저(/users)
+
+- 사용자는 닉네임, 비밀번호, 프로필 사진을 변경할 수 있어야 합니다.
+- 사용자는 자신의 정보를 조회할 수 있어야 합니다.
+
+### 이미지
+- 이미지는 Pre-Signed Url 방식으로 업로드 할 수 있어야 합니다.
+
+### 참고
+
+- 모든 댓글, 게시물은 조회시 자신의 소유 여부를 응답으로 반환해야 합니다.
+- 카카오 로그인과 이메일 로그인은 별도의 API로 구현되어야 합니다.
 
