@@ -1,15 +1,12 @@
 package com.blog.domain.user.repository;
 
-import com.blog.domain.user.controller.dto.request.JoinRequest;
 import com.blog.domain.user.domain.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.util.Optional;
 
 @Repository
@@ -46,7 +43,7 @@ public class UserRepository {
                 joinUser.getIntroduction(),
                 sqlBirth,
                 joinUser.getProfileImage(),
-                String.valueOf(joinUser.getProvider()) // provider가 객체일 경우 대비하여 문자열 변환
+                String.valueOf(joinUser.getProvider())
         );
     }
 
@@ -55,30 +52,16 @@ public class UserRepository {
     public Optional<User> findByEmail(String email) {
         String sql = "SELECT * FROM `user` WHERE email = ?";
 
-        System.out.println("이메일 조회 요청: " + email); // 로그 추가
-
         try {
-            RowMapper<User> rowMapper = (rs, rowNum) -> {
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
-                return user;
-            };
+            RowMapper<User> rowMapper = (rs, rowNum) -> new User(rs.getLong("id"), rs.getString("email"), rs.getString("password"));
 
             User user = jdbcTemplate.queryForObject(sql, new Object[]{email}, rowMapper);
-            System.out.println("조회된 사용자: " + user);
             return Optional.ofNullable(user);
 
-        } catch (EmptyResultDataAccessException e) {
-            System.out.println("사용자를 찾을 수 없음: " + email);
-            return Optional.empty();
         } catch (DataAccessException e) {
-            e.printStackTrace();
             throw new RuntimeException("데이터베이스 조회 중 오류 발생", e);
         }
     }
-
 
 
 }

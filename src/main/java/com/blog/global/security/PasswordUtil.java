@@ -10,7 +10,7 @@ public class PasswordUtil {
     public static String encryptPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         byte[] hashedBytes = messageDigest.digest(password.getBytes());
-        return Base64.getEncoder().encodeToString(hashedBytes); // 암호화된 비밀번호 반환
+        return Base64.getEncoder().encodeToString(hashedBytes);
     }
 
     // 비밀번호 검증 (입력된 비밀번호가 저장된 비밀번호와 일치하는지 확인)

@@ -23,16 +23,14 @@ public class JoinController {
         this.userService = userService;
     }
 
-    // 회원가입 - 프론트에서 email, name , provider를 넣어서 보내준 상태
     @PostMapping
     public ApiResponse<String> join(@Valid @RequestBody JoinRequest joinRequest) throws NoSuchAlgorithmException {
 
-        // email+nickname도 중복 안됨
+        // email 중복 검사
         boolean isEmailUsed = userService.isEmailUsed(joinRequest.getEmail());
         if (isEmailUsed) {
             return ApiResponse.fail(new CustomException(ErrorCode.DUPLICATE_EMAIL));
         }
-
         userService.join(joinRequest);
         return ApiResponse.ok("회원가입이 완료되었습니다.");
     }
