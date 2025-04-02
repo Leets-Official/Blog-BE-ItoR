@@ -4,13 +4,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.blog.global.common.dto.GlobalResponseDto;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(CommonException.class)
-	public ResponseEntity<String> handleCommonException(CommonException e) {
+	public ResponseEntity<GlobalResponseDto<?>> handleCommonException(CommonException e) {
 		return ResponseEntity
-			.status(400)
-			.body(e.getErrorCode().getMessage());
+			.status(e.getErrorCode().getStatus())
+			.body(GlobalResponseDto.fail(e.getErrorCode()));
 	}
+
 }
