@@ -22,34 +22,17 @@ public class KakaoClient {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public KakaoTokenResponseDto getToken(String code, String clientId, String redirectUri, String tokenUri) throws Exception {
-		URL url = new URL(tokenUri);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("POST");
-		conn.setDoOutput(true);
-		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-		conn.setRequestProperty("Accept", "application/json");
+		//단계 별로 추상화 함
+		//서버와 연결준비
+		HttpURLConnection conn = createPostConnection(tokenUri);
+		// 카카오 서버에 보낼 데이터 양식만들기
+		String params = buildParams(code, clientId, redirectUri);
+		// 데이터를 보내기
+		writeRequest(conn, params);
+		// 받은 응답을 읽기
+		String response = readResponse(conn);
 
-		String encodedRedirectUri = URLEncoder.encode(redirectUri, "UTF-8");
-		String encodedCode = URLEncoder.encode(code, "UTF-8");
-
-		String params = "grant_type=authorization_code"
-			+ "&client_id=" + clientId
-			+ "&redirect_uri=" + encodedRedirectUri
-			+ "&code=" + encodedCode;
-
-		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()))) {
-			writer.write(params);
-			writer.flush();
-		}
-
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-			}
-			return objectMapper.readValue(sb.toString(), KakaoTokenResponseDto.class);
-		}
+		return objectMapper.readValue(response, KakaoTokenResponseDto.class);
 	}
 
 	// 카카오로부터 사용자 정보를 받아오는 메서드
@@ -81,4 +64,43 @@ public class KakaoClient {
 		}
 
 	}
+
+	private HttpURLConnection createPostConnection(String tokenUri) throws Exception {
+		URL url = new URL(tokenUri);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setDoOutput(true);
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("Accept", "application/json");
+		return conn;
+	}
+
+	private String buildParams(String code, String clientId, String redirectUri) throws Exception {
+		String encodedRedirectUri = URLEncoder.encode(redirectUri, "UTF-8");
+		String encodedCode = URLEncoder.encode(code, "UTF-8");
+
+		return "grant_type=authorization_code"
+			+ "&client_id=" + clientId
+			+ "&redirect_uri=" + encodedRedirectUri
+			+ "&code=" + encodedCode;
+	}
+
+	private void writeRequest(HttpURLConnection conn, String params) throws Exception {
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()))) {
+			writer.write(params);
+			writer.flush();
+		}
+	}
+
+	private String readResponse(HttpURLConnection conn) throws Exception {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+			return sb.toString();
+		}
+	}
+
 }
