@@ -15,6 +15,7 @@ import com.blog.global.auth.dto.SignUpRequestDto;
 import com.blog.global.auth.dto.SignUpResponseDto;
 import com.blog.global.auth.service.AuthService;
 import com.blog.global.auth.service.KakaoAuthService;
+import com.blog.global.common.dto.GlobalResponseDto;
 
 import jakarta.validation.Valid;
 
@@ -31,28 +32,28 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) throws Exception {
+	public ResponseEntity<GlobalResponseDto<LoginResponseDto>> login(@RequestBody LoginRequestDto request) throws Exception {
 		LoginResponseDto response = authService.login(request.getEmail(), request.getPassword());
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(GlobalResponseDto.success(response));
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<SignUpResponseDto> signup(@RequestBody @Valid SignUpRequestDto request) {
+	public ResponseEntity<GlobalResponseDto<SignUpResponseDto>> signup(@RequestBody @Valid SignUpRequestDto request) {
 		SignUpResponseDto response = authService.signUp(request);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(GlobalResponseDto.success(response));
 	}
 
 	// 카카오에서 발급한 인가 코드를 파라미터로 받아서 JWT를 발급함
 	@GetMapping("/kakao/callback")
-	public ResponseEntity<LoginResponseDto> kakaoLogin(@RequestParam String code) throws Exception {
+	public ResponseEntity<GlobalResponseDto<LoginResponseDto>> kakaoLogin(@RequestParam String code) throws Exception {
 		LoginResponseDto response = kakaoAuthService.kakaoLogin(code);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(GlobalResponseDto.success(response));
 	}
 
 	@PostMapping("/reissue")
-	public ResponseEntity<LoginResponseDto> reissue(@RequestBody TokenReissueRequestDto request) throws Exception {
+	public ResponseEntity<GlobalResponseDto<LoginResponseDto>> reissue(@RequestBody TokenReissueRequestDto request) throws Exception {
 		LoginResponseDto response = authService.reissueAccessToken(request.getRefreshToken());
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(GlobalResponseDto.success(response));
 	}
 
 }
