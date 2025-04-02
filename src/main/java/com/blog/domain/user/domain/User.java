@@ -36,10 +36,10 @@ public class User extends BaseDomain {
         this.profileImage = profileImage;
     }
 
-    public User(Long id, String email, String name) {
+    public User(Long id, String email, String password) {
         this.id = id;
         this.email = email;
-        this.name = name;
+        this.password = password;
     }
 
 
