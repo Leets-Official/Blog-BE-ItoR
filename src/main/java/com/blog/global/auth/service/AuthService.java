@@ -33,7 +33,7 @@ public class AuthService {
     String password = request.get("password");
 
     if (userRepository.findByEmail(email).isPresent()) {
-      return ResponseEntity.badRequest().body("❌ [회원가입 실패] 이미 존재하는 이메일입니다.");
+      return ResponseEntity.badRequest().body("[회원가입 실패] 이미 존재하는 이메일입니다.");
     }
 
     String hashedPassword = hashPassword(password);

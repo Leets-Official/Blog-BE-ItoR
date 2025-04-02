@@ -7,6 +7,7 @@ import com.blog.global.auth.jwtUtil.JwtUtil;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,9 +19,10 @@ public class UserController {
     this.userRepository = userRepository;
   }
 
+
+
   @GetMapping("/protected-resource")
   public User getUserInfo(@RequestHeader("Authorization") String token) {
-    // "Bearer " 제거
     token = token.replace("Bearer ", "");
 
     // 토큰 검증 및 파싱
