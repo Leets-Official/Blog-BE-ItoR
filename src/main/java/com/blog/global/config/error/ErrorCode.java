@@ -2,12 +2,21 @@ package com.blog.global.config.error;
 
 public enum ErrorCode {
 
+	//유저 관련
 	USER_NOT_FOUND(400, "USER_NOT_FOUND", "사용자를 찾을 수 없습니다."),
 	INVALID_PASSWORD(401, "INVALID_PASSWORD", "비밀번호가 일치하지 않습니다."),
 	PASSWORD_MISMATCH(400, "PASSWORD_MISMATCH", "비밀번호가 일치하지 않습니다."),
 	EMAIL_ALREADY_EXISTS(400, "EMAIL_ALREADY_EXISTS", "이미 사용 중인 이메일입니다."),
+
+	//Access & Refresh Token 관련
 	INVALID_TOKEN(401, "INVALID_TOKEN", "토큰이 유효하지 않습니다."),
-	REFRESH_TOKEN_NOT_FOUND(404, "REFRESH_TOKEN_NOT_FOUND", "리프레쉬 토큰을 찾을 수 없습니다.");
+	REFRESH_TOKEN_NOT_FOUND(404, "REFRESH_TOKEN_NOT_FOUND", "리프레쉬 토큰을 찾을 수 없습니다."),
+
+	//카카오 관련
+	KAKAO_TOKEN_REQUEST_FAILED(500, "TOKEN_REQUEST_FAILED", "카카오 토큰 요청에 실패했습니다."),
+	KAKAO_TOKEN_PARSE_FAILED(500, "TOKEN_PARSE_FAILED", "카카오 토큰 응답 파싱에 실패했습니다."),
+	KAKAO_USERINFO_REQUEST_FAILED(500, "USERINFO_REQUEST_FAILED", "카카오 사용자 정보 요청에 실패했습니다."),
+	KAKAO_USERINFO_PARSE_FAILED(500, "USERINFO_PARSE_FAILED", "카카오 사용자 정보 파싱에 실패했습니다.");
 
 	private final int status;
 	private final String code;
