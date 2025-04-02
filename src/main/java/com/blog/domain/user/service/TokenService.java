@@ -1,19 +1,19 @@
 package com.blog.domain.user.service;
 
 import com.blog.domain.user.repository.TokenStore;
+import com.blog.global.exception.CustomException;
 import com.blog.global.security.CustomTokenUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
+
+import static com.blog.global.exception.ErrorCode.USER_NOT_FOUND_IN_COOKIE;
 
 @Service
 public class TokenService {
-    
+
     private final CustomTokenUtil customTokenUtil;
     private final TokenStore tokenStore;
 
@@ -28,10 +28,13 @@ public class TokenService {
     }
 
     // refresh 토큰 생성
-    public String generateRefreshToken(Long userId, String email) {
+    public String generateRefreshToken(Long userId, String email, HttpServletResponse response) {
         String refreshToken=customTokenUtil.generateRefreshToken(userId, email);
         tokenStore.storeToken(userId,refreshToken);
-        return String.valueOf(tokenStore.getToken(userId));
+
+        // 쿠키 넣기
+        addCookie(String.valueOf(userId), response);
+        return refreshToken;
     }
 
     // 토큰을 요청에서 추출하는 방법
@@ -43,27 +46,61 @@ public class TokenService {
         return null;
     }
 
+    // 재발급 하는 로직
+    public String getAccessTokenFromRequest(HttpServletRequest request) {
+
+        // 쿠키에서 사용자 ID 가져오기
+        Long userId = getUserIdFromCookie(request);
+
+        String refreshToken = String.valueOf(tokenStore.getToken(userId));
+        Map<String, Object> user = decodeUserFromToken(refreshToken);
+
+        Long userIdfromAccessToken = Long.parseLong((String) user.get("userId"));
+        String userEmailfromAccessToken = (String) user.get("email");
+
+        return generateAccessToken(userIdfromAccessToken, userEmailfromAccessToken);
+
+    }
+
+    // 로그아웃할때, 토큰을 삭제
+    public void deleteRefreshTokenByLogout(HttpServletRequest request) {
+
+        String token = getTokenFromRequest(request);
+
+        // 토큰에서 사용자 정보 추출 (디코딩)
+        Map<String, Object> user = decodeUserFromToken(token);
+
+        // userId가 Long 형식이라면
+        Long userId = Long.valueOf(user.get("userId").toString());
+
+        tokenStore.removeToken(userId);
+    }
+
+    //  쿠키에 UserId 추가하기
+    private void addCookie(String userId, HttpServletResponse response) {
+        Cookie userIdCookie = new Cookie("userId", userId);
+        userIdCookie.setMaxAge(60 * 60);
+        userIdCookie.setHttpOnly(true);
+        userIdCookie.setPath("/");
+        response.addCookie(userIdCookie);
+    }
+
 
     // 쿠키에서 userId 가져오기
-    public Long getUserIdFromCookie(HttpServletRequest request) {
+    private Long getUserIdFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("userId".equals(cookie.getName())) {
-                    return Long.valueOf(cookie.getValue());
-                }
+        if (cookies == null){
+            throw new CustomException(USER_NOT_FOUND_IN_COOKIE);
+        }
+
+        for (Cookie cookie : cookies) {
+            if ("userId".equals(cookie.getName())) {
+                return Long.valueOf(cookie.getValue());
             }
         }
 
         return null;
-    }
-
-    //  쿠키에 UserId 추가하기
-    public void addCookie(String userId, HttpServletResponse response) {
-        Cookie userIdCookie = new Cookie("userId", userId);
-        userIdCookie.setMaxAge(60 * 60);
-        response.addCookie(userIdCookie);
     }
 
 

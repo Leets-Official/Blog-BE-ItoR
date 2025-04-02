@@ -1,6 +1,5 @@
 package com.blog.global.security;
 
-// 카톡 access token 재발급을 위해 필요
 public class OAuthToken {
 
     private String access_token;

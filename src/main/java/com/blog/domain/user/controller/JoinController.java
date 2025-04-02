@@ -26,12 +26,9 @@ public class JoinController {
     @PostMapping
     public ApiResponse<String> join(@Valid @RequestBody JoinRequest joinRequest) throws NoSuchAlgorithmException {
 
-        // email 중복 검사
-        boolean isEmailUsed = userService.isEmailUsed(joinRequest.getEmail());
-        if (isEmailUsed) {
-            return ApiResponse.fail(new CustomException(ErrorCode.DUPLICATE_EMAIL));
-        }
         userService.join(joinRequest);
         return ApiResponse.ok("회원가입이 완료되었습니다.");
     }
+
+
 }

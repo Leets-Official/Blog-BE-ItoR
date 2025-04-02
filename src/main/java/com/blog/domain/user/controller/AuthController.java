@@ -52,7 +52,7 @@ public class AuthController {
             throw new CustomException(INVALID_ACCESS_TOKEN);
         }
 
-        Map<String, Object> userInfo = kakaoService.getKakaoUserInfo(accessToken,response);
+        Map<String, Object> userInfo = kakaoService.getKakaoUserInfo(accessToken);
         Optional<User> existingUser = userService.findByKakaoInfo(userInfo);
 
         if (existingUser.isPresent()) {
@@ -68,11 +68,11 @@ public class AuthController {
 
     // 프론트에서 accessToken으로 회원가입 요청하면 유저 정보를 줌
     @GetMapping("kakao/signupRequest")
-    public ApiResponse<Map<String, Object>> signupRequest(@RequestParam(value = "access_token") String accessToken,HttpServletResponse response) {
+    public ApiResponse<Map<String, Object>> signupRequest(@RequestParam(value = "access_token") String accessToken) {
         if (accessToken == null || accessToken.isEmpty()) {
             throw new CustomException(INVALID_ACCESS_TOKEN);
         }
-        Map<String, Object> userInfo = kakaoService.getKakaoUserInfo(accessToken,response);
+        Map<String, Object> userInfo = kakaoService.getKakaoUserInfo(accessToken);
         return ApiResponse.ok(userInfo);
     }
 

@@ -1,12 +1,7 @@
 package com.blog.domain.user.service;
 
-
-import com.blog.domain.user.repository.TokenStore;
-import com.blog.global.exception.ErrorCode;
 import com.blog.global.security.OAuthToken;
 import com.blog.global.exception.CustomException;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,20 +11,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 import static com.blog.global.exception.ErrorCode.INVALID_ACCESS_TOKEN;
-import static com.blog.global.exception.ErrorCode.USER_NOT_FOUND;
 
 @Service
 public class KakaoService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final TokenService tokenService;
-
-    @Value("${kakao.client-id}")
-    private String clientId;
-
-    public KakaoService(TokenService tokenService) {
-        this.tokenService = tokenService;
-    }
 
     //카카오 인가 코드는 10분 후 만료
     public String getAccessToken(String authorizationCode, String clientId, String redirectUri) {
@@ -62,7 +48,7 @@ public class KakaoService {
     }
 
     //  카카오 유저 정보 가져오기
-    public Map<String, Object> getKakaoUserInfo(String accessToken, HttpServletResponse response) {
+    public Map<String, Object> getKakaoUserInfo(String accessToken) {
         System.out.println(accessToken);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -79,12 +65,9 @@ public class KakaoService {
                 kakaoProfileRequest,
                 Map.class
         );
-        Map<String, Object> userInfo = responseEntity.getBody();
-        System.out.println(userInfo);
 
-        tokenService.addCookie((String) userInfo.get("userId"), response);
+        return responseEntity.getBody();
 
-        return userInfo;
     }
 
 }
