@@ -2,7 +2,7 @@ package com.blog.global.auth.dto;
 
 public class LoginRequestDto {
 
-	private final String email;
+	private String email;
 	private String password;
 
 	public String getEmail() {
