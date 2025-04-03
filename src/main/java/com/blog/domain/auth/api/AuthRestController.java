@@ -8,7 +8,6 @@ import com.blog.domain.auth.service.AuthService;
 import com.blog.common.response.ApiResponse;
 import com.blog.domain.login.api.dto.request.LoginKakaoRequest;
 import com.blog.domain.login.api.dto.response.LoginResponse;
-import com.blog.domain.users.domain.Users;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
@@ -28,7 +27,7 @@ public class AuthRestController {
 
     // 이메일 회원가입 (이메일, 닉네임 중복확인)
     @PostMapping("/email/register")
-    public ApiResponse<AuthResponse> EmailAuth(
+    public ApiResponse<AuthResponse> emailAuth(
             @RequestBody AuthEmailRequest request) throws NoSuchAlgorithmException {
 
         AuthResponse response = authService.addUserByEmail(request);
@@ -38,7 +37,7 @@ public class AuthRestController {
 
     // 카카오 회원가입 토큰 받기
     @GetMapping("/kakao/register")
-    public ApiResponse<AuthKakaoResponse> KakaoAuth(
+    public ApiResponse<AuthKakaoResponse> kakaoAuth(
             @RequestParam("code") String code) {
 
         return authService.getAccessTokenKakao(code);
@@ -54,7 +53,7 @@ public class AuthRestController {
 
     // 카카오 추가 회원가입
     @PostMapping("/kakao/register/info")
-    public ApiResponse<AuthResponse> KakaoAuthInfo(
+    public ApiResponse<AuthResponse> kakaoAuthInfo(
             @RequestBody AuthKaKaoRequest request) {
 
         AuthResponse response = authService.addUserByKakao(request);
