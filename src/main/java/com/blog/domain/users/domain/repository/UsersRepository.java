@@ -36,7 +36,7 @@ public class UsersRepository {
                 request.name(),
                 request.nickname(),
                 request.birth(),
-                request.profile_image(),
+                request.profileImage(),
                 false,  // social: 기본값은 false
                 request.introduce()
         );
@@ -74,8 +74,8 @@ public class UsersRepository {
         return jdbcTemplate.update(sql,
                 hashedPassword,
                 request.nickname(),
-                request.profile_image(),
-                request.user_id()
+                request.profileImage(),
+                request.userId()
         );
     }
 
@@ -91,10 +91,10 @@ public class UsersRepository {
                     rs.getString("name"),
                     rs.getString("nickname"),
                     rs.getObject("birth", LocalDate.class),
-                    rs.getString("profile_image"),
+                    rs.getString("profileImage"),
                     rs.getBoolean("social"),
                     rs.getString("introduce")
-            ), request.user_id());
+            ), request.userId());
         } catch (EmptyResultDataAccessException e) {
 
             return null;
@@ -105,7 +105,7 @@ public class UsersRepository {
     public UsersResultResponse usersDeleteInfo(UsersIdRequest request){
         String sql = "DELETE FROM users WHERE id = ?";
 
-        int result = jdbcTemplate.update(sql, request.user_id());
+        int result = jdbcTemplate.update(sql, request.userId());
         // 삭제 X
         if (result == 0) {
             return new UsersResultResponse(0);
@@ -127,7 +127,7 @@ public class UsersRepository {
                     rs.getString("name"),
                     rs.getString("nickname"),
                     rs.getString("password"),
-                    rs.getString("profile_image"),
+                    rs.getString("profileImage"),
                     rs.getBoolean("social"),
                     rs.getString("introduce"),
                     rs.getObject("birth", LocalDate.class),
@@ -174,7 +174,7 @@ public class UsersRepository {
                     rs.getString("name"),
                     rs.getString("nickname"),
                     rs.getString("password"),
-                    rs.getString("profile_image"),
+                    rs.getString("profileImage"),
                     rs.getBoolean("social"),
                     rs.getString("introduce"),
                     rs.getObject("birth", LocalDate.class),

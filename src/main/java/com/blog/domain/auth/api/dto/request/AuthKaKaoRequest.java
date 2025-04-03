@@ -6,7 +6,7 @@ public record AuthKaKaoRequest(
         String accessToken,
         String nickname,
         LocalDate birth,
-        String profile_image,
+        String profileImage,
         String introduce
 ) {
 }

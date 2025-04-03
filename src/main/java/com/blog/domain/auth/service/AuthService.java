@@ -91,7 +91,7 @@ public class AuthService {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)  // Authorization 헤더에 Bearer 토큰 추가
                 .retrieve()
                 .bodyToMono(AuthKaKaoUserResponse.class)  // 응답을 AuthKaKaoUserResponse 객체로 매핑
-                .map(response -> response.kakao_account().profile().nickname())  // nickname 추출
+                .map(response -> response.kakaoAccount().profile().nickname())  // nickname 추출
                 .block();  // 동기 호출
     }
 }

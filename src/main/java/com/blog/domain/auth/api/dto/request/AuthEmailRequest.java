@@ -8,7 +8,7 @@ public record AuthEmailRequest(
         String name,
         String nickname,
         LocalDate birth,
-        String profile_image,
+        String profileImage,
         Boolean social,
         String introduce
 ) {

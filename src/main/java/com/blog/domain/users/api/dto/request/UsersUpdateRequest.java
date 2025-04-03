@@ -1,11 +1,9 @@
 package com.blog.domain.users.api.dto.request;
 
-import java.time.LocalDate;
-
 public record UsersUpdateRequest(
-        int user_id,
+        int userId,
         String password,
         String nickname,
-        String profile_image
+        String profileImage
 ) {
 }
