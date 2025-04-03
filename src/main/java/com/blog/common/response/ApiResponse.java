@@ -12,15 +12,20 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> success(T data) {
+
         return new ApiResponse<>(true, "요청이 성공했습니다.", data);
     }
 
     public static <T> ApiResponse<T> error(String message) {
+
         return new ApiResponse<>(false, message, null);
     }
 
     // Getter 추가
-    public boolean isSuccess() { return success; }
-    public String getMessage() { return message; }
-    public T getData() { return data; }
+    public boolean isSuccess() {
+        return success; }
+    public String getMessage() {
+        return message; }
+    public T getData() {
+        return data; }
 }

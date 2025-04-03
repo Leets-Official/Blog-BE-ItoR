@@ -118,5 +118,3 @@ public class Users {
         return updated_at;
     }
 }
-
-
