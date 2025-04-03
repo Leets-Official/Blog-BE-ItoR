@@ -76,8 +76,8 @@ public class UsersService {
     }
 
     // 사용자 삭제
-    public ApiResponse<UsersResultResponse> usersDeleteInfo(UsersIdRequest request){
-        UsersResultResponse response = usersRepository.usersDeleteInfo(request);
+    public ApiResponse<UsersResultResponse> usersDeleteInfo(int userId){
+        UsersResultResponse response = usersRepository.usersDeleteInfo(userId);
 
         // 삭제 실패
         if(response == null){

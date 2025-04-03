@@ -102,10 +102,10 @@ public class UsersRepository {
     }
 
     // 사용자 삭제
-    public UsersResultResponse usersDeleteInfo(UsersIdRequest request){
+    public UsersResultResponse usersDeleteInfo(int userId){
         String sql = "DELETE FROM users WHERE id = ?";
 
-        int result = jdbcTemplate.update(sql, request.userId());
+        int result = jdbcTemplate.update(sql, userId);
         // 삭제 X
         if (result == 0) {
             return new UsersResultResponse(0);

@@ -21,7 +21,7 @@ public class UsersRestController {
     }
 
     // 닉네임, 비밀번호, 프로필 사진을 변경
-    @PatchMapping("/update")
+    @PatchMapping("/me")
     public ApiResponse<UsersResultResponse> usersUpdateInfo(
             @RequestBody UsersUpdateRequest request) throws NoSuchAlgorithmException {
 
@@ -37,10 +37,10 @@ public class UsersRestController {
     }
 
     // 사용자 정보 삭제
-    @DeleteMapping("/delete")
+    @DeleteMapping("/{userId}")
     public ApiResponse<UsersResultResponse> usersDeleteInfo(
-            @RequestBody UsersIdRequest request){
+            @PathVariable int userId){
 
-        return usersService.usersDeleteInfo(request);
+        return usersService.usersDeleteInfo(userId);
     }
 }
