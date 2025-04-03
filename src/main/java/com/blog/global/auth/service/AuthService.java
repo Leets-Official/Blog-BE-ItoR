@@ -151,4 +151,17 @@ public class AuthService {
   private boolean verifyPassword(String rawPassword, String hashedPassword) {
     return hashPassword(rawPassword).equals(hashedPassword);
   }
+
+  public User getUserInfoFromToken(String authorizationHeader) {
+    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+      throw new RuntimeException("[토큰 오류] 유효하지 않은 Authorization 헤더입니다.");
+    }
+
+    String token = authorizationHeader.replace("Bearer ", "");
+    Map<String, Object> claims = JwtUtil.verifyToken(token);
+    String userId = (String) claims.get("id");
+    String email = (String) claims.get("email");
+
+    return new User(null, "Unknown", "jwt", email, null, null, null);
+  }
 }
