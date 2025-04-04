@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ApiResponse<ExceptionDto> handleNoSuchElementException(NoSuchElementException e) {
 
-        CustomException exception = new CustomException(ErrorCode.NOT_FOUND_END_POINT, e.getMessage());
+        CustomException exception = new CustomException(ErrorCode.NOT_FOUND_END_POINT, null);
 
         return ApiResponse.fail(exception);
     }
