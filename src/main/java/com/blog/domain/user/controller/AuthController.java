@@ -26,23 +26,15 @@ public class AuthController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
-    private final TokenService tokenService;
 
-    @Value("${kakao.client-id}")
-    private String clientId;
-
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
-
-    public AuthController(UserService userService, KakaoService kakaoService, TokenService tokenService) {
+    public AuthController(UserService userService, KakaoService kakaoService) {
         this.userService = userService;
         this.kakaoService = kakaoService;
-        this.tokenService = tokenService;
     }
 
     @GetMapping("kakao/callback")
     public ApiResponse<String> kakaoCallback(@RequestParam("code") String authorizationCode) {
-        String accessToken = kakaoService.getAccessToken(authorizationCode, clientId, redirectUri);
+        String accessToken = kakaoService.getAccessToken(authorizationCode);
         return ApiResponse.ok(accessToken);
     }
 

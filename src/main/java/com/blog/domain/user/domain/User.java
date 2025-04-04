@@ -31,15 +31,21 @@ public class User extends BaseDomain {
         this.provider = Provider.valueOf(provider);
     }
 
-    public User(String nickname, String profileImage) {
-        this.nickname = nickname;
-        this.profileImage = profileImage;
-    }
+
 
     public User(Long id, String email, String password) {
         this.id = id;
         this.email = email;
         this.password = password;
+    }
+
+    // 🔹 정적 팩토리 메서드 추가 (더 명확한 의미 전달)
+    public static User createSocialUser(String email, String password, String name, String nickname, LocalDate birth, String introduction, String profileImage, String provider) {
+        return new User(email, password, name, nickname, birth, introduction, profileImage, provider);
+    }
+
+    public static User createBasicUser(Long id, String email, String password) {
+        return new User(id, email, password);
     }
 
 
