@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
 
@@ -27,15 +27,21 @@ dependencies {
 	// swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
-	// database
+	// database (JDBC 사용)
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//env
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+tasks.named('bootRun') {
+	jvmArgs = ['-Xshare:off']
 }
