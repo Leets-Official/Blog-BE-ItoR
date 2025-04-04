@@ -1,5 +1,6 @@
 package com.blog.workspace.adapter.out;
 
+import com.blog.workspace.adapter.out.jdbc.user.UserJdbc;
 import com.blog.workspace.adapter.out.jdbc.user.UserJdbcRepository;
 import com.blog.workspace.application.out.user.UserPort;
 import com.blog.workspace.domain.user.User;
@@ -23,16 +24,36 @@ public class UserPersistenceAdapter implements UserPort {
     // 저장하기
     @Override
     public User saveUser(User user) {
-        return null;
+
+        var entity = UserJdbc.from(user);
+
+        return repository.save(entity)
+                .toDomain();
     }
 
     @Override
     public User updateUser(User user) {
-        return null;
+        var entity = UserJdbc.forUpdate(user);
+
+        return repository.updateUser(entity)
+                .toDomain();
+
+    }
+
+    @Override
+    public boolean loadExistingEmail(String email) {
+        return repository.existsByEmail(email);
     }
 
     @Override
     public Optional<User> findMe(Long userId) {
-        return Optional.empty();
+        return repository.findById(userId)
+                .map(UserJdbc::toDomain);
+    }
+
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        return repository.findByEmail(email)
+                .map(UserJdbc::toDomain);
     }
 }

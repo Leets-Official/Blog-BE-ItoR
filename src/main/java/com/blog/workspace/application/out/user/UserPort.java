@@ -14,5 +14,9 @@ public interface UserPort {
     User updateUser(User user);
 
     /// 조회하기
+    boolean loadExistingEmail(String email);
+
     Optional<User> findMe(Long userId);
+
+    Optional<User> findUserByEmail(String email);
 }

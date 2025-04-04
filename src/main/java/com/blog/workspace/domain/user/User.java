@@ -10,34 +10,78 @@ public class User extends BaseDomain {
 
     private final String email;
 
+    private final String username;
 
-    private final String nickname;
+    private String nickname;
 
-    private final String password;
+    private String password;
 
-    private final String imageUrl;
+    private String imageUrl;
 
     private final boolean social;
 
-    /// 서비스 내부 생성자
-    public User(String email, String nickname, String password, String imageUrl, boolean social, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private String description;
+
+    private String birthday;
+
+    /// 자체 회원가입 생성자
+    public User(String email, String nickname, String username, String password, String imageUrl, boolean social, String description, String birthday, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
         this.email = email;
         this.nickname = nickname;
+        this.username = username;
         this.password = password;
         this.imageUrl = imageUrl;
         this.social = social;
+        this.description = description;
+        this.birthday = birthday;
+    }
+
+    /// 소셜로그인 생성자
+    public User(String email, String username, String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(createdAt, updatedAt);
+        this.email = email;
+        this.username = username;
+        this.imageUrl = imageUrl;
+        this.password = "password";
+        this.social = true;
     }
 
     /// JDBC에서 Domain으로 변환할 때 생성자
-    public User(Long id, String email, String nickname, String password, String imageUrl, boolean social, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(Long id, String email, String username, String nickname, String password, String imageUrl, boolean social, String description, String birthday, LocalDateTime createdAt, LocalDateTime updatedAt) {
+
         super(createdAt, updatedAt);
         this.id = id;
         this.email = email;
+        this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.imageUrl = imageUrl;
         this.social = social;
+        this.description = description;
+        this.birthday = birthday;
+    }
+
+    /// 비즈니스 로직
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changeImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    public void changeBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
     /// @Getter
@@ -61,9 +105,21 @@ public class User extends BaseDomain {
         return imageUrl;
     }
 
-    public boolean getSocial() {
+    public String getUsername() {
+        return username;
+    }
+
+    public boolean isSocial() {
         return social;
     }
 
-    /// 비즈니스 로직
+    public String getDescription() {
+        return description;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+
 }
