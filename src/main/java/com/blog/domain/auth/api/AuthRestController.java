@@ -32,7 +32,7 @@ public class AuthRestController {
 
         AuthResponse response = authService.addUserByEmail(request);
 
-        return ApiResponse.success(response);
+        return ApiResponse.ok(response);
     }
 
     // 카카오 회원가입 토큰 받기
@@ -58,7 +58,7 @@ public class AuthRestController {
 
         AuthResponse response = authService.addUserByKakao(request);
 
-        return ApiResponse.success(response);
+        return ApiResponse.ok(response);
     }
 
 }

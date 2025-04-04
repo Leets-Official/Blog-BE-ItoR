@@ -1,6 +1,8 @@
 package com.blog.domain.auth.service;
 
 import com.blog.common.response.ApiResponse;
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
 import com.blog.domain.auth.api.dto.response.AuthKaKaoUserResponse;
@@ -57,7 +59,7 @@ public class AuthService {
                 .bodyToMono(AuthKakaoResponse.class)
                 .block();
 
-        return ApiResponse.success(response);
+        return ApiResponse.ok(response);
     }
 
     public AuthResponse addUserByKakao(AuthKaKaoRequest request){
@@ -74,10 +76,10 @@ public class AuthService {
         Users user = loginService.getUsersByName(name);
 
         if (user == null){
-            return ApiResponse.error("회원가입이 필요합니다.");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        return ApiResponse.success(new LoginResponse(request.refreshToken(), request.accessToken(), user));
+        return ApiResponse.ok(new LoginResponse(request.refreshToken(), request.accessToken(), user));
     }
 
     // 이름 받아오기 (이메일 받아오기)

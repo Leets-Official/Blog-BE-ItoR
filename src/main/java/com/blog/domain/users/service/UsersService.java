@@ -2,6 +2,8 @@ package com.blog.domain.users.service;
 
 import com.blog.common.EncryptUtils;
 import com.blog.common.response.ApiResponse;
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
 import com.blog.domain.auth.api.dto.response.AuthResponse;
@@ -33,12 +35,12 @@ public class UsersService {
 
         // 이메일 중복 확인
         if (usersRepository.isEmailDuplicated(request.email())) {
-            return new AuthResponse(false, "이미 사용 중인 이메일입니다.", null);
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
         // 닉네임 중복 확인
         if (usersRepository.isNickNameDuplicated(request.nickname())) {
-            return new AuthResponse(false, "이미 사용 중인 닉네임입니다.", null);
+            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
         }
         // 중복이 없으면 회원가입 진행
         return new AuthResponse(true, "회원가입 성공", usersRepository.addUsersByEmail(request, hashedPassword));
@@ -48,19 +50,20 @@ public class UsersService {
     // 비밀번호, 닉네임, 프로필 이미지 수정
     public ApiResponse<UsersResultResponse> userUpdateInfo(UsersUpdateRequest request) throws NoSuchAlgorithmException {
 
-        if (usersRepository.isNickNameDuplicated(request.nickname())) {
-            return ApiResponse.error("업데이트 실패:  닉네임 중복");
-        }
+//        if (usersRepository.isNickNameDuplicated(request.nickname())) {
+//            return ApiResponse.fail("업데이트 실패:  닉네임 중복");
+//        }
+//        error 코드 만들기
 
         String hashedPassword = EncryptUtils.sha256(request.password());
 
         int result = usersRepository.usersUpdateInfo(request, hashedPassword);
 
         if (result == 0) {
-            return ApiResponse.error("업데이트 실패: 사용자 정보 없음");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        return ApiResponse.success(new UsersResultResponse(result));
+        return ApiResponse.ok(new UsersResultResponse(result));
     }
 
     // 사용자 정보 조회
@@ -69,10 +72,10 @@ public class UsersService {
         UsersInfoResponse response = usersRepository.getUsersByUserId(request);
         // 조회 실패: 사용자 정보 없을 때
         if(response == null){
-            return ApiResponse.error("조회 실패: 사용자 정보 없음");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
         // 조회 성공
-        return ApiResponse.success(response);
+        return ApiResponse.ok(response);
     }
 
     // 사용자 삭제
@@ -81,10 +84,10 @@ public class UsersService {
 
         // 삭제 실패
         if(response == null){
-            return ApiResponse.error("조회 실패: 사용자 정보 없음");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
         // 삭제 성공
-        return ApiResponse.success(response);
+        return ApiResponse.ok(response);
     }
 
     // 이메일 로그인

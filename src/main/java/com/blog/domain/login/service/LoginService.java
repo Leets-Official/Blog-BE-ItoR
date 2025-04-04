@@ -2,6 +2,8 @@ package com.blog.domain.login.service;
 
 import com.blog.common.EncryptUtils;
 import com.blog.common.response.ApiResponse;
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.login.api.dto.request.LoginEmailRequest;
 import com.blog.domain.login.api.dto.response.LoginResponse;
 import com.blog.domain.users.domain.Users;
@@ -30,12 +32,12 @@ public class LoginService {
 
         if (user == null){
 
-            return ApiResponse.error("로그인 실패");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         LoginResponse response = createTokens(user, request.refreshToken());
 
-        return ApiResponse.success(response);
+        return ApiResponse.ok(response);
     }
 
     // 카카오 로그인
