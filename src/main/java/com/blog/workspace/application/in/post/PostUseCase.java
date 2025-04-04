@@ -1,5 +1,11 @@
 package com.blog.workspace.application.in.post;
 
+import com.blog.common.response.page.Page;
+import com.blog.common.response.page.Pageable;
+import com.blog.workspace.adapter.in.web.dto.request.PostRequest;
+import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
+import com.blog.workspace.domain.post.Post;
+
 public interface PostUseCase {
 
     /*
@@ -11,5 +17,23 @@ public interface PostUseCase {
         게시물의 목록 조회와 게시물 내용을 보는 API는 별도로 구현되어야 합니다.
         게시물 조회시 댓글도 모두 조회할 수 있어야 합니다.
      */
+
+    /// 게시글 작성
+    Post savePost(PostRequest request);
+
+    /// 게시글 조회
+    // 게시글 상세 조회
+    PostDetailResponse loadPostById(Long id);
+
+    // 나의 게시글 목록 조회(페이징 처리10개)
+    Page<Post> loadPosts(Pageable pageable, Long userId);
+
+    /// 게시글 수정
+    Post updatePost(Post updatePost, Long userId);
+
+    /// 게시글 삭제
+    void deletePost(Long id, Long userId);
+
+
 
 }
