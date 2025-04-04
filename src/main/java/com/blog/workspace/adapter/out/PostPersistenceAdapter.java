@@ -38,7 +38,10 @@ public class PostPersistenceAdapter implements SavePostPort, LoadPostPort, Delet
 
     @Override
     public Post updatePost(Post post) {
-        return null;
+        var entity = PostJdbc.forDB(post);
+
+        return repository.update(entity)
+                .toDomain();
     }
 
     @Override
@@ -55,12 +58,13 @@ public class PostPersistenceAdapter implements SavePostPort, LoadPostPort, Delet
 
     @Override
     public boolean checkPostByUserId(Long userId, Long postId) {
-        return false;
+
+        return repository.existsByUserIdAndPostId(userId, postId);
     }
 
 
     @Override
     public void deletePostById(Long id) {
-
+        repository.deleteById(id);
     }
 }

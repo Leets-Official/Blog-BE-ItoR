@@ -8,7 +8,7 @@ public class Post extends BaseDomain {
 
     private Long id;
     private final Long userId;
-    private final String title;
+    private String title;
 
 
     /// 생성자
@@ -42,6 +42,8 @@ public class Post extends BaseDomain {
     }
 
     /// 비즈니스 로직
-
+    public void changeTitle(String title) {
+        this.title = title;
+    }
 
 }

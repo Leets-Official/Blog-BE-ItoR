@@ -35,12 +35,12 @@ public class ContentBlockPersistenceAdapter implements ContentBlockPort {
 
     @Override
     public void deleteBlockById(Long id) {
-
+        repository.deleteById(id);
     }
 
     @Override
     public void deleteBlockByPost(Long postId) {
-
+        repository.deleteByPostId(postId);
     }
 
     @Override

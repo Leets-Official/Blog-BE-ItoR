@@ -12,7 +12,6 @@ CREATE TABLE user (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE token (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT,
@@ -36,17 +35,18 @@ CREATE TABLE content_block (
   type VARCHAR(20) NOT NULL,
   content TEXT NOT NULL,
   ord INT NOT NULL,
-  FOREIGN KEY (post_id) REFERENCES post (id)
+  FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE
 );
 
 CREATE TABLE comment (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  board_id BIGINT,
+  post_id BIGINT,
   user_id BIGINT,
-  parent_id BIGINT,
+  parent_id BIGINT NULL,
   content TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (board_id) REFERENCES post (id),
-  FOREIGN KEY (user_id) REFERENCES user (id)
+  FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user (id),
+  FOREIGN KEY (parent_id) REFERENCES comment (id) ON DELETE CASCADE  -- 대댓글 지원
 );

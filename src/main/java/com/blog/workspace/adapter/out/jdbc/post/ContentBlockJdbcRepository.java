@@ -35,6 +35,17 @@ public class ContentBlockJdbcRepository {
         return jdbcTemplate.query(sql, contentBlockRowMapper(), postId);
     }
 
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM content_block WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
+    public void deleteByPostId(Long postId) {
+        String sql = "DELETE FROM content_block WHERE post_id = ?";
+        jdbcTemplate.update(sql, postId);
+    }
+
+
     private RowMapper<ContentBlockJdbc> contentBlockRowMapper() {
         return (rs, rowNum) -> new ContentBlockJdbc(
                 rs.getLong("id"),

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -47,6 +48,32 @@ public class PostJdbcRepository {
         return jdbcTemplate.query(sql, postRowMapper(), id)
                 .stream()
                 .findFirst();
+    }
+
+    // 유저가 해당 게시글의 작성자인지 확인
+    public boolean existsByUserIdAndPostId(Long userId, Long id) {
+        String sql = "SELECT COUNT(*) FROM post WHERE id = ? AND user_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id, userId);
+        return count != null && count > 0;
+    }
+
+    // 수정
+    public PostJdbc update(PostJdbc postJdbc) {
+        String sql = "UPDATE post SET title = ?, updated_at = ? WHERE id = ?";
+
+        jdbcTemplate.update(sql,
+                postJdbc.getTitle(),
+                java.sql.Timestamp.valueOf(LocalDateTime.now()),
+                postJdbc.getId());
+
+        return postJdbc;
+    }
+
+
+    // 게시글 삭제
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM post WHERE id = ?";
+        jdbcTemplate.update(sql, id);
     }
 
     private RowMapper<PostJdbc> postRowMapper() {

@@ -63,4 +63,16 @@ public class PostJdbc {
     public void setId(Long id) {
         this.id = id;
     }
+
+    /// 수정을 위한 팩토리 메서드
+    /// from
+    public static PostJdbc forDB(Post post) {
+        return new PostJdbc(
+                post.getId(),
+                post.getUserId(),
+                post.getTitle(),
+                post.getCreated(),
+                post.getUpdated()
+        );
+    }
 }
