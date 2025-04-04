@@ -3,6 +3,7 @@ package com.blog.workspace.application.in.post;
 import com.blog.common.response.page.Page;
 import com.blog.common.response.page.Pageable;
 import com.blog.workspace.adapter.in.web.dto.request.PostRequest;
+import com.blog.workspace.adapter.in.web.dto.request.PostUpdateRequest;
 import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
 import com.blog.workspace.domain.post.Post;
 
@@ -19,7 +20,7 @@ public interface PostUseCase {
      */
 
     /// 게시글 작성
-    Post savePost(PostRequest request);
+    Post savePost(PostRequest request, Long userId);
 
     /// 게시글 조회
     // 게시글 상세 조회
@@ -29,10 +30,11 @@ public interface PostUseCase {
     Page<Post> loadPosts(Pageable pageable, Long userId);
 
     /// 게시글 수정
-    Post updatePost(Post updatePost, Long userId);
+    Post updatePost(Long postId, Long userId, PostUpdateRequest request);
 
     /// 게시글 삭제
-    void deletePost(Long id, Long userId);
+    void deletePost(Long userId, Long postId);
+
 
 
 

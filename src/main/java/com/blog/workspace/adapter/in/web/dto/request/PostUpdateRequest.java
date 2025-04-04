@@ -1,15 +1,15 @@
 package com.blog.workspace.adapter.in.web.dto.request;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.util.List;
 
-public class PostRequest {
+public class PostUpdateRequest {
 
-    @NotNull(message = "제목을 입력해주세요.")
+    /*
+        @Valid 대신 서비스 계층에서 예외처리 진행했습니다.
+     */
+
     private String title;
 
-    @NotNull(message = "글 작성은 필수입니다.")
     private List<ContentRequest> content;
 
     public String getTitle() {
@@ -19,4 +19,5 @@ public class PostRequest {
     public List<ContentRequest> getContent() {
         return content;
     }
+
 }

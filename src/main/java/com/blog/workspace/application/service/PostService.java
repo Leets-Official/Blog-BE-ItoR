@@ -4,6 +4,7 @@ import com.blog.common.response.page.Page;
 import com.blog.common.response.page.Pageable;
 import com.blog.workspace.adapter.in.web.dto.request.ContentRequest;
 import com.blog.workspace.adapter.in.web.dto.request.PostRequest;
+import com.blog.workspace.adapter.in.web.dto.request.PostUpdateRequest;
 import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
 import com.blog.workspace.application.in.post.PostUseCase;
 import com.blog.workspace.application.out.post.ContentBlockPort;
@@ -12,6 +13,8 @@ import com.blog.workspace.application.out.post.LoadPostPort;
 import com.blog.workspace.application.out.post.SavePostPort;
 import com.blog.workspace.application.out.user.UserPort;
 import com.blog.workspace.application.service.exception.NotEqualPostDeleteException;
+import com.blog.workspace.application.service.exception.NotEqualPostUpdateException;
+import com.blog.workspace.application.service.exception.NotRequestException;
 import com.blog.workspace.domain.post.ContentBlock;
 import com.blog.workspace.domain.post.Post;
 import com.blog.workspace.domain.user.User;
@@ -47,29 +50,23 @@ public class PostService implements PostUseCase {
     }
 
     @Override
-    public Post savePost(PostRequest request) {
+    public Post savePost(PostRequest request, Long userId) {
 
         /// 유저 검증
-        userPort.findMe(request.getUserId())
+        userPort.findMe(userId)
                 .orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
 
         List<ContentRequest> contents = request.getContent();
 
         /// 게시글 자체 저장
         LocalDateTime now = LocalDateTime.now();
-        Post post = Post.of(request.getUserId(), request.getTitle(), now, now);
+        Post post = Post.of(userId, request.getTitle(), now, now);
         Post savedPost = savePort.savePost(post);
-
-        log.info("로그{}", savedPost.getId());
 
         /// 내용 블럭 저장
         // 순서를 위한 변수 설정
         int ord = 0;
-
-        for (ContentRequest content : contents) {
-            ContentBlock contentBlock = ContentBlock.of(savedPost.getId(), content.getType(), content.getContent(), ++ord);
-            contentPort.saveBlock(contentBlock);
-        }
+        createContenetBlock(contents, savedPost, ord);
 
         return savedPost;
     }
@@ -99,29 +96,71 @@ public class PostService implements PostUseCase {
 
     // 게시글 수정
     @Override
-    public Post updatePost(Post updatePost, Long userId) {
-        return null;
+    public Post updatePost(Long postId, Long userId, PostUpdateRequest request) {
+
+        /// 제목과 내용이 모두 비어 있는 경우 예외 처리
+        if ((request.getTitle() == null || request.getTitle().trim().isEmpty()) &&
+                (request.getContent() == null || request.getContent().isEmpty())) {
+            throw new NotRequestException("제목, 내용 중 하나는 수정해야 합니다.");
+        }
+
+        /// 게시글 가져오기
+        Post post = loadPort.loadPost(postId)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
+
+        /// 유저 검증 조건 처리
+        if (!post.getUserId().equals(userId)) {
+            throw new NotEqualPostUpdateException("글 작성자가 아니기에 게시글을 수정할 수 없습니다.");
+        }
+
+        ///  글 수정하기
+        changePost(request, post);
+        return savePort.updatePost(post);
     }
+
 
     // 게시글 삭제
     @Override
-    public void deletePost(Long id, Long userId) {
+    public void deletePost(Long userId, Long postId) {
 
         /// 본인 게시글인지 예외처리
-        boolean checked = loadPort.checkPostByUserId(id, userId);
+        boolean checked = loadPort.checkPostByUserId(userId, postId);
 
         if (!checked) {
             throw new NotEqualPostDeleteException("게시글 작성자와 삭제 요청자가 서로 다릅니다.");
         }
 
         // 게시글 자체 삭제
-        deletePort.deletePostById(id);
+        deletePort.deletePostById(postId);
 
         // 관련 내용 삭제
-        contentPort.deleteBlockByPost(id);
+        contentPort.deleteBlockByPost(postId);
     }
 
+    /// 내부 함수
+    // 블록 생성
+    private void createContenetBlock(List<ContentRequest> contents, Post savedPost, int ord) {
+        for (ContentRequest content : contents) {
+            ContentBlock contentBlock = ContentBlock.of(savedPost.getId(), content.getType(), content.getContent(), ++ord);
+            contentPort.saveBlock(contentBlock);
+        }
+    }
 
+    // 글 수정하기
+    private void changePost(PostUpdateRequest request, Post post) {
+        // 제목이 요청에 있으면 수정
+        if (request.getTitle() != null && !request.getTitle().isEmpty()) {
+            post.changeTitle(request.getTitle());
+        }
+
+        // 글이 요청에 있으면 수정, 기존 블록은 삭제하고 다시 저장
+        if (request.getContent() != null && !request.getContent().isEmpty()) {
+            contentPort.deleteBlockByPost(post.getId());
+
+            // 새롭게 내용을 저장
+            createContenetBlock(request.getContent(), post, 0);
+        }
+    }
 
 
 }
