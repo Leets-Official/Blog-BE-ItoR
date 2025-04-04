@@ -1,7 +1,7 @@
 # Blog-BE-ItoR
 
 ## ERD (https://dbdiagram.io/d/Leets-Blog-67dd20bf75d75cc844f14439)
-![img_1.png](img_1.png)
+![img.png](img.png)
 
 ## 프로젝트 구조
 ```
