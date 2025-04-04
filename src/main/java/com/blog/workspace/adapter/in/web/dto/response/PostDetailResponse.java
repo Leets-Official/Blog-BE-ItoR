@@ -3,41 +3,42 @@ package com.blog.workspace.adapter.in.web.dto.response;
 import com.blog.workspace.domain.post.ContentBlock;
 import com.blog.workspace.domain.post.Post;
 import com.blog.workspace.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
+@JsonPropertyOrder({"id", "user", "title", "content", "commentCount", "createdAt"})
 public class PostDetailResponse {
 
     /*
-       [제목, 게시글 내용, 게시글 모든 이미지, 게시글 작성 일시,작성자, 작성자 프로필 이미지, 댓글 개수]가 보여야 한다.
+       [제목, 게시글 내용, 게시글 썸네일 이미지, 게시글 작성 일시,작성자, 작성자 프로필 이미지, 댓글 개수]가 보여야 한다.
+       - 게시글 작성 일시 표기, 작성 후, 24시간 이상 [ MM DD, YYYY]
+       - 게시글 작성 일시 표기, 작성 후, 23시간 이전 [ HH 이전]
      */
 
+
     private Long id;
+
+    private UserPostResponse user;
 
     private String title;
 
     private List<ContentBlockResponse> content;
 
-    private String thumbnail;
-
-    private UserPostResponse user;
+    private String createdAt;
 
     private Integer commentCount;
 
-    private LocalDateTime createdAt;
-
-
     // 생성자
-    public PostDetailResponse(Long id, String title, String thumbnail, LocalDateTime createdAt, Integer commentCount, UserPostResponse user,List<ContentBlockResponse> content) {
-
+    public PostDetailResponse(Long id, String title, String createdAt, Integer commentCount, UserPostResponse user, List<ContentBlockResponse> content) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.thumbnail = thumbnail;
-        this.createdAt = createdAt;
         this.user = user;
         this.commentCount = commentCount;
+        this.createdAt = createdAt;
     }
 
     /// 정적 팩토리 메서드
@@ -49,12 +50,21 @@ public class PostDetailResponse {
         // 블록 관련 정보
         List<ContentBlockResponse> contentResponse = ContentBlockResponse.from(content);
 
-        return new PostDetailResponse(post.getId(), post.getTitle(), "썸네일", post.getCreated(), 0, userResponse, contentResponse);
+        //  날짜 관련 정보 처리
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd.yyyy.", Locale.ENGLISH);
+        String formattedDate = post.getCreated().format(formatter);
+
+        return new PostDetailResponse(post.getId(), post.getTitle(), formattedDate, 0, userResponse, contentResponse);
     }
 
-    ///  @Getter
+    /// @Getter
+
     public Long getId() {
         return id;
+    }
+
+    public UserPostResponse getUser() {
+        return user;
     }
 
     public String getTitle() {
@@ -65,19 +75,11 @@ public class PostDetailResponse {
         return content;
     }
 
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
     public Integer getCommentCount() {
         return commentCount;
-    }
-
-    public UserPostResponse getUser() {
-        return user;
     }
 }
