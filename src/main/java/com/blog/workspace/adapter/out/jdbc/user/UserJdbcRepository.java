@@ -17,7 +17,7 @@ public class UserJdbcRepository {
 
     /// 저장
     public UserJdbc save(UserJdbc userJdbc) {
-        String sql = "INSERT INTO User (email, username, nickname, password, image_url, social, description, birthday,  created_at, updated_at) " +
+        String sql = "INSERT INTO user (email, username, nickname, password, image_url, social, description, birthday,  created_at, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
@@ -37,7 +37,7 @@ public class UserJdbcRepository {
 
     /// 조회
     public Optional<UserJdbc> findById(Long id) {
-        String sql = "SELECT * FROM User WHERE id = ?";
+        String sql = "SELECT * FROM user WHERE id = ?";
         return jdbcTemplate.query(sql, userRowMapper(), id)
                 .stream()
                 .findFirst();
@@ -45,13 +45,13 @@ public class UserJdbcRepository {
 
     /// 존재 여부 파악
     public boolean existsByEmail(String email) {
-        String sql = "SELECT COUNT(*) FROM User WHERE email = ?";
+        String sql = "SELECT COUNT(*) FROM user WHERE email = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
         return count != null && count > 0;
     }
 
     public Optional<UserJdbc> findByEmail(String email) {
-        String sql = "SELECT * FROM User WHERE email = ?";
+        String sql = "SELECT * FROM user WHERE email = ?";
         return jdbcTemplate.query(sql, userRowMapper(), email)
                 .stream()
                 .findFirst();
@@ -59,7 +59,7 @@ public class UserJdbcRepository {
 
     public UserJdbc updateUser(UserJdbc userJdbc) {
 
-        String sql = "UPDATE User SET " +
+        String sql = "UPDATE user SET " +
                 "email = ?, username = ?, nickname = ?, password = ?, image_url = ?, social = ?, description = ?, birthday = ?, updated_at = ? " +
                 "WHERE id = ?";
 

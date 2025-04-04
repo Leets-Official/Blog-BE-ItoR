@@ -99,19 +99,20 @@ public class JwtTokenProvider {
         return expectedSignature.equals(signature);  // 서명이 일치하는지 확인
     }
 
-    // JWT에서 이메일 추출 (페이로드에서)
-    public String getEmailFromToken(String token) {
+    // JWT에서 아이디 추출 (페이로드에서)
+    public Long getUserIdFromToken(String token) {
         String[] parts = token.split("\\.");
         if (parts.length != 3) {
             throw new IllegalArgumentException("Invalid token format");
         }
 
+        // 페이로드 디코딩
         String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
         String[] claims = payload.replace("{", "").replace("}", "").split(",");
 
         for (String claim : claims) {
-            if (claim.startsWith("\"sub\":\"")) {
-                return claim.split(":")[1].replace("\"", "");
+            if (claim.startsWith("\"id\":")) {
+                return Long.parseLong(claim.split(":")[1].trim());
             }
         }
 

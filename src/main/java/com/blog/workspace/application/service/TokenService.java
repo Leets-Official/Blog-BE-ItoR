@@ -72,7 +72,7 @@ public class TokenService implements TokenUseCase {
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
-        if (cookies ==null){
+        if (cookies == null) {
             return null;
         }
 
@@ -83,6 +83,20 @@ public class TokenService implements TokenUseCase {
         }
 
         return null; // 쿠키에 refreshToken이 없으면 null 반환
+    }
+
+    public Long getUserIdFromToken(HttpServletRequest httpServletRequest) {
+
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("잘못된 Authorization 헤더 형식");
+        }
+
+        // "Bearer " 부분 제거
+        String token = authorizationHeader.substring(7);
+
+        return jwtTokenProvider.getUserIdFromToken(token);
     }
 
 }
