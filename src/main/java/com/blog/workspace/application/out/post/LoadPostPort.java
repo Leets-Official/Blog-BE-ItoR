@@ -12,7 +12,7 @@ public interface LoadPostPort {
     Optional<Post> loadPost(Long postId);
 
     // 목록 조회, 페이징네이션 필요
-    Page<Post> loadPosts(Pageable pageable);
+    Page<Post> loadPosts(Pageable pageable, Long userId);
 
     // 게시글 작성자 여부 확인
     boolean checkPostByUserId(Long userId, Long postId);

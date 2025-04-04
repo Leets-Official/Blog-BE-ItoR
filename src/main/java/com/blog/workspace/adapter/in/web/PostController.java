@@ -1,9 +1,12 @@
 package com.blog.workspace.adapter.in.web;
 
 import com.blog.common.response.ApiResponse;
+import com.blog.common.response.page.Page;
+import com.blog.common.response.page.Pageable;
 import com.blog.workspace.adapter.in.web.dto.request.PostRequest;
 import com.blog.workspace.adapter.in.web.dto.request.PostUpdateRequest;
 import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
+import com.blog.workspace.adapter.in.web.dto.response.PostListResponse;
 import com.blog.workspace.application.in.post.PostUseCase;
 import com.blog.workspace.application.service.TokenService;
 import com.blog.workspace.domain.post.Post;
@@ -46,10 +49,16 @@ public class PostController {
         return ApiResponse.ok(response);
     }
 
-//    @GetMapping("/list/{userId}")
-//    ApiResponse<List<PostDetailResponse>> getPostList(@PathVariable Long userId) {
-//        postService.loadPosts(,userId);
-//    }
+    @GetMapping("/list")
+    ApiResponse<Page<PostListResponse>> getPostList(@RequestParam(required = false, defaultValue = "1") Integer page ,
+                                                    @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                    @RequestParam Long userId) {
+
+        Pageable pageable = Pageable.of(page, size);
+        Page<PostListResponse> result = postService.loadPosts(pageable, userId);
+
+        return ApiResponse.ok(result);
+    }
 
     // 게시글 수정
     @PutMapping("/{postId}")

@@ -19,7 +19,7 @@ public class PostListResponse {
 
     private String title;
 
-    private List<ContentBlockResponse> content;
+    private String content;
 
     private String thumbnail;
 
@@ -31,7 +31,7 @@ public class PostListResponse {
 
 
     // 생성자
-    public PostListResponse(Long id, String title, String thumbnail, String createdAt, Integer commentCount, UserPostResponse user, List<ContentBlockResponse> content) {
+    public PostListResponse(Long id, String title, String thumbnail, String createdAt, Integer commentCount, UserPostResponse user, String content) {
 
         this.id = id;
         this.title = title;
@@ -43,24 +43,17 @@ public class PostListResponse {
     }
 
     /// 정적 팩토리 메서드
-    public static PostListResponse from(Post post, User user, List<ContentBlock> content) {
-
-        // 유저 관련 정보
-        UserPostResponse userResponse = UserPostResponse.from(user);
-
-        // 썸네일 관련 정보
-        /*
-            블록의 type중에서 IMAGE인 것에서 ord가 제일 낮은 것
-         */
-
-        // 블록 관련 정보
-        List<ContentBlockResponse> contentResponse = ContentBlockResponse.from(content);
+    public static PostListResponse from(Post post, UserPostResponse user, String content, String thumbnail) {
 
         // 시간 관련 정보
         DateFormatUtil dataFormatUtil = new DateFormatUtil();
         String date = dataFormatUtil.formatPostDate(post.getCreated());
 
-        return new PostListResponse(post.getId(), post.getTitle(), "썸네일", date, 0, userResponse, contentResponse);
+        if (thumbnail == null) {
+            thumbnail = "default.jpeg";
+        }
+
+        return new PostListResponse(post.getId(), post.getTitle(), thumbnail, date, 0, user, content);
     }
 
     /// @Getter
@@ -72,7 +65,7 @@ public class PostListResponse {
         return title;
     }
 
-    public List<ContentBlockResponse> getContent() {
+    public String getContent() {
         return content;
     }
 

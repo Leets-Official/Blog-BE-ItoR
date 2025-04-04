@@ -6,6 +6,8 @@ import com.blog.workspace.adapter.in.web.dto.request.ContentRequest;
 import com.blog.workspace.adapter.in.web.dto.request.PostRequest;
 import com.blog.workspace.adapter.in.web.dto.request.PostUpdateRequest;
 import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
+import com.blog.workspace.adapter.in.web.dto.response.PostListResponse;
+import com.blog.workspace.adapter.in.web.dto.response.UserPostResponse;
 import com.blog.workspace.application.in.post.PostUseCase;
 import com.blog.workspace.application.out.post.ContentBlockPort;
 import com.blog.workspace.application.out.post.DeletePostPort;
@@ -16,6 +18,7 @@ import com.blog.workspace.application.service.exception.NotEqualPostDeleteExcept
 import com.blog.workspace.application.service.exception.NotEqualPostUpdateException;
 import com.blog.workspace.application.service.exception.NotRequestException;
 import com.blog.workspace.domain.post.ContentBlock;
+import com.blog.workspace.domain.post.ContentType;
 import com.blog.workspace.domain.post.Post;
 import com.blog.workspace.domain.user.User;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -90,8 +94,33 @@ public class PostService implements PostUseCase {
 
     // 게시글 목록 조회
     @Override
-    public Page<Post> loadPosts(Pageable pageable, Long userId) {
-        return null;
+    public Page<PostListResponse> loadPosts(Pageable pageable, Long userId) {
+        Page<Post> result = loadPort.loadPosts(pageable, userId);
+        List<Post> content = result.getContent();
+
+        List<PostListResponse> arrayList = new ArrayList<>();
+
+        content.forEach(post -> {
+
+            /// 유저 정보 처리
+            User user = userPort.findMe(post.getUserId()).orElseGet(null);
+            UserPostResponse userResponse = UserPostResponse.from(user);
+
+            /// 썸네일 및 내용 처리
+            List<ContentBlock> contentBlocks = contentPort.loadBlocks(post.getId());
+            String contentBlock = String.valueOf(contentBlocks.get(0).getContent());
+
+            String thumbnail = contentBlocks.stream()
+                    .filter(block -> block.getType() == ContentType.IMAGE)
+                    .findFirst()
+                    .map(ContentBlock::getContent)
+                    .orElse(null);
+
+            PostListResponse response = PostListResponse.from(post, userResponse, contentBlock, thumbnail);
+            arrayList.add(response);
+        });
+
+        return new Page<>(arrayList, pageable, arrayList.size());
     }
 
     // 게시글 수정

@@ -5,6 +5,7 @@ import com.blog.common.response.page.Pageable;
 import com.blog.workspace.adapter.in.web.dto.request.PostRequest;
 import com.blog.workspace.adapter.in.web.dto.request.PostUpdateRequest;
 import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
+import com.blog.workspace.adapter.in.web.dto.response.PostListResponse;
 import com.blog.workspace.domain.post.Post;
 
 public interface PostUseCase {
@@ -27,7 +28,7 @@ public interface PostUseCase {
     PostDetailResponse loadPostById(Long id);
 
     // 나의 게시글 목록 조회(페이징 처리10개)
-    Page<Post> loadPosts(Pageable pageable, Long userId);
+    Page<PostListResponse> loadPosts(Pageable pageable, Long userId);
 
     /// 게시글 수정
     Post updatePost(Long postId, Long userId, PostUpdateRequest request);

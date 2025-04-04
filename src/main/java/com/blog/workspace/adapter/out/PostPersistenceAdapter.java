@@ -52,8 +52,12 @@ public class PostPersistenceAdapter implements SavePostPort, LoadPostPort, Delet
     }
 
     @Override
-    public Page<Post> loadPosts(Pageable pageable) {
-        return null;
+    public Page<Post> loadPosts(Pageable pageable, Long userId) {
+        List<Post> list = repository.findAllByUserId(pageable,userId)
+                .getContent().stream().map(PostJdbc::toDomain)
+                .toList();
+
+        return new Page<>(list, pageable, list.size());
     }
 
     @Override
