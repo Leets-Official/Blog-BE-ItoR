@@ -1,0 +1,125 @@
+package com.blog.domain.post.service;
+
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.blog.domain.post.domain.ContentBlock;
+import com.blog.domain.post.domain.Post;
+import com.blog.domain.post.domain.PostImage;
+import com.blog.domain.post.dto.PostRequestDto;
+import com.blog.domain.post.dto.PostResponseDto;
+import com.blog.domain.post.repository.PostImageRepository;
+import com.blog.domain.post.repository.PostRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.blog.global.config.error.ErrorCode;
+import com.blog.global.config.error.exception.CommonException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class PostService {
+
+	private final PostRepository postRepository;
+	private final PostImageRepository postImageRepository;
+	private final ObjectMapper objectMapper;
+	//댓글 추후 추가 예정
+
+	public PostService(PostRepository postRepository, PostImageRepository postImageRepository, ObjectMapper objectMapper) {
+		this.postRepository = postRepository;
+		this.postImageRepository = postImageRepository;
+		this.objectMapper = new ObjectMapper();
+	}
+
+	@Transactional //글 생성
+	public boolean createPost(int userId, PostRequestDto postRequestDto) {
+		String contentJson = serialize(postRequestDto.getContentBlocks());
+
+		Post post = new Post(0, userId, postRequestDto.getTitle(), contentJson, now(), now(), null);
+		boolean inserted = postRepository.insert(post);
+		if (!inserted) {
+			return false;
+		}
+		for (ContentBlock block : postRequestDto.getContentBlocks()) {
+			if("image".equals(block.getType())) {
+				PostImage image = new PostImage(0, post.getPostId(), block.getValue(), now());
+				postImageRepository.insert(image);
+			}
+		}
+		return true;
+	}
+
+	// 게시물 조회
+	public PostResponseDto getPostById(int postId) {
+		Post post = postRepository.findById(postId);
+		if (post == null || post.getDeletedAt() != null) {
+			throw new CommonException(ErrorCode.POST_NOT_FOUND);
+		}
+
+		List<ContentBlock> content = deserialize(post.getContent());
+
+		return new PostResponseDto(
+			post.getPostId(),
+			post.getUserId(),
+			post.getTitle(),
+			post.getCreatedAt(),
+			content
+		);
+	}
+
+	@Transactional //게시물 수정
+	public void updatePost(int userId,int postId, PostRequestDto postRequestDto) {
+		Post post = postRepository.findById(postId);
+		if (post == null || post.getDeletedAt() != null) {
+			throw new CommonException(ErrorCode.POST_NOT_FOUND);
+		}
+		if (post.getUserId() != userId) {
+			throw new CommonException(ErrorCode.FORBIDDEN_POST_ACCESS);
+		}
+		Post updated = new Post(postId, userId, postRequestDto.getTitle(), serialize(PostRequestDto.getContentBlock()), post.getCreatedAt(), now(), null);
+
+		boolean updatedResult = postRepository.update(updated);
+		if (!updatedResult) {
+			throw new CommonException(ErrorCode.POST_NOT_FOUND);
+		}
+	}
+
+	@Transactional
+	public void deletePost(int userId, int postId) {
+		Post post = postRepository.findById(postId);
+		if (post == null || post.getDeletedAt() != null)
+			throw new CommonException(ErrorCode.POST_NOT_FOUND);
+
+		if (post.getUserId() != userId)
+			throw new CommonException(ErrorCode.FORBIDDEN_POST_ACCESS);
+
+		boolean deleted = postRepository.softDelete(postId);
+		if (!deleted)
+			throw new CommonException(ErrorCode.POST_NOT_FOUND);
+	}
+
+	//  직렬화 (ContentBlock → JSON)
+	private String serialize(List<ContentBlock> blocks) {
+		try {
+			return objectMapper.writeValueAsString(blocks);
+		} catch (Exception e) {
+			throw new CommonException(ErrorCode.SERIALIZE_FAILED);
+		}
+	}
+
+	//  역직렬화 (JSON → ContentBlock)
+	private List<ContentBlock> deserialize(String json) {
+		try {
+			return objectMapper.readValue(json, new TypeReference<>() {});
+		} catch (Exception e) {
+			return List.of(); // 실패 시 빈 목록 반환
+		}
+	}
+
+	private LocalDateTime now() {
+		return LocalDateTime.now();
+	}
+
+}
