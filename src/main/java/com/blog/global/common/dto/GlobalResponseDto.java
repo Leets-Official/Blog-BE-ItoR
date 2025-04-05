@@ -67,4 +67,9 @@ public class GlobalResponseDto<T> {
 	public T getResult() {
 		return result;
 	}
+
+	public static <T> GlobalResponseDto<T> error(String message) {
+		return new GlobalResponseDto<>(false, 400, message, null, null);
+	}
+
 }
