@@ -14,6 +14,8 @@ import com.blog.domain.post.dto.PostRequestDto;
 import com.blog.domain.post.dto.PostResponseDto;
 import com.blog.domain.post.repository.PostImageRepository;
 import com.blog.domain.post.repository.PostRepository;
+import com.blog.global.common.dto.PageRequestDto;
+import com.blog.global.common.dto.PageResponseDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.blog.global.config.error.ErrorCode;
 import com.blog.global.config.error.exception.CommonException;
@@ -120,6 +122,27 @@ public class PostService {
 
 	private LocalDateTime now() {
 		return LocalDateTime.now();
+	}
+
+	public PageResponseDto<PostResponseDto> getPostPage(PageRequestDto pageRequestDto) {
+		int page = pageRequestDto.getPage();
+		int size = pageRequestDto.getSize();
+		int offset = (page - 1) * size;
+
+		List<Post> posts = postRepository.findPage(offset, size);
+		int total = postRepository.countAll();
+
+		List<PostResponseDto> data = posts.stream()
+			.map(post -> new PostResponseDto(
+				post.getPostId(),
+				post.getUserId(),
+				post.getTitle(),
+				post.getCreatedAt(),
+				deserialize(post.getContent())
+			))
+			.toList();
+
+		return new PageResponseDto<>(page, size, total, data);
 	}
 
 }
