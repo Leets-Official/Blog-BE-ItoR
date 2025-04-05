@@ -7,11 +7,11 @@ import com.blog.domain.post.domain.Post;
 
 public interface PostRepository {
 
-	boolean insert(Connection conn, Post post);
-	Post findById(Connection conn, int postId);
-	List<Post> findPage(Connection conn, int offset, int size);
-	int countAll (Connection conn);
-	boolean update(Connection conn, Post post);
-	boolean Softdelete(Connection conn, int postId);
+	boolean insert(Post post);
+	Post findById(int postId);
+	List<Post> findPage(int offset, int size);
+	int countAll ();
+	boolean update(Post post);
+	boolean softDelete(int postId);
 
 }
