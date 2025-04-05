@@ -10,10 +10,11 @@ public class PostImage {
 
 	public PostImage() {}
 
-	public PostImage(int imageId, int postId, String imageUrl) {
+	public PostImage(int imageId, int postId, String imageUrl, LocalDateTime createdAt) {
 		this.imageId = imageId;
 		this.postId = postId;
 		this.imageUrl = imageUrl;
+		this.createdAt = createdAt;
 	}
 
 	public int getPostId() {
@@ -26,6 +27,10 @@ public class PostImage {
 
 	public int getImageId() {
 		return imageId;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
 	}
 
 }
