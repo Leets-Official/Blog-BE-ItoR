@@ -13,11 +13,12 @@ import com.blog.domain.login.api.dto.response.LoginResponse;
 import com.blog.domain.login.service.LoginService;
 import com.blog.domain.users.domain.Users;
 import com.blog.domain.users.service.UsersService;
-import io.netty.handler.codec.http.HttpHeaderValues;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 
 @Service
@@ -44,21 +45,32 @@ public class AuthService {
 
     // 카카오 토큰 얻기
     public ApiResponse<AuthKakaoResponse> getAccessTokenKakao(String code) {
+        RestTemplate restTemplate = new RestTemplate();
 
-        AuthKakaoResponse response = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
-                .uri(uriBuilder -> uriBuilder
-                        .scheme("https")
-                        .path("/oauth/token")
-                        .queryParam("grant_type", "authorization_code")
-                        .queryParam("client_id", clientId)
-                        .queryParam("code", code)
-                        .build(true))
-                .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-                .retrieve()
-                .bodyToMono(AuthKakaoResponse.class)
-                .block();
+        // 요청 URL
+        String url = KAUTH_TOKEN_URL_HOST + "/oauth/token";
 
-        return ApiResponse.ok(response);
+        // 요청 파라미터 설정
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", clientId);
+        params.add("code", code);
+
+        // 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 요청 본문 구성
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        // POST 요청 보내기
+        ResponseEntity<AuthKakaoResponse> response = restTemplate.postForEntity(
+                url,
+                request,
+                AuthKakaoResponse.class
+        );
+
+        return ApiResponse.ok(response.getBody());
     }
 
     public AuthResponse addUserByKakao(AuthKaKaoRequest request){
@@ -81,18 +93,35 @@ public class AuthService {
         return ApiResponse.ok(new LoginResponse(request.refreshToken(), request.accessToken(), user));
     }
 
-    // 이름 받아오기 (이메일 받아오기)
+    // 카카오에서 이름 받아오기
     public String getNameKakao(String accessToken) {
+        // 요청 URL
+        String url = KAUTH_USER_URL_HOST + "/v2/user/me";
 
-        return WebClient.builder()
-                .baseUrl(KAUTH_USER_URL_HOST)  // "https://kapi.kakao.com"
-                .build()
-                .get()
-                .uri("/v2/user/me")  // 사용자 정보 요청 URL
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)  // Authorization 헤더에 Bearer 토큰 추가
-                .retrieve()
-                .bodyToMono(AuthKaKaoUserResponse.class)  // 응답을 AuthKaKaoUserResponse 객체로 매핑
-                .map(response -> response.kakaoAccount().profile().nickname())  // nickname 추출
-                .block();  // 동기 호출
+        // 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);  // Authorization: Bearer {토큰}
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 요청 엔티티 (GET 이므로 바디는 없음)
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        // RestTemplate 객체 생성
+        RestTemplate restTemplate = new RestTemplate();
+
+        // 요청 전송 및 응답 수신
+        ResponseEntity<AuthKaKaoUserResponse> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                AuthKaKaoUserResponse.class
+        );
+
+        // 응답 파싱 및 nickname 리턴
+        return response.getBody()
+                .kakaoAccount()
+                .profile()
+                .nickname();
     }
+
 }
