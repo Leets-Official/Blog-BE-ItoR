@@ -10,18 +10,24 @@ public class Post {
 	private String content;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
+	private LocalDateTime deletedAt;
 
 	public Post() {
 	}
 
 	public Post(int postId, int userId, String title, String content, LocalDateTime createdAt,
-		LocalDateTime modifiedAt) {
+		LocalDateTime modifiedAt, LocalDateTime deletedAt) {
 		this.postId = postId;
 		this.userId = userId;
 		this.title = title;
 		this.content = content;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
+		this.deletedAt = deletedAt;
+	}
+
+	public LocalDateTime getDeletedAt() {
+		return deletedAt;
 	}
 
 	public int getPostId() {
