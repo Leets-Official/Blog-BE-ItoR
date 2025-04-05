@@ -32,7 +32,7 @@ public class PostService {
 	public PostService(PostRepository postRepository, PostImageRepository postImageRepository, ObjectMapper objectMapper) {
 		this.postRepository = postRepository;
 		this.postImageRepository = postImageRepository;
-		this.objectMapper = new ObjectMapper();
+		this.objectMapper = objectMapper;
 	}
 
 	@Transactional //글 생성
