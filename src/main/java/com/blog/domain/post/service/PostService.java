@@ -80,7 +80,7 @@ public class PostService {
 		if (post.getUserId() != userId) {
 			throw new CommonException(ErrorCode.FORBIDDEN_POST_ACCESS);
 		}
-		Post updated = new Post(postId, userId, postRequestDto.getTitle(), serialize(PostRequestDto.getContentBlock()), post.getCreatedAt(), now(), null);
+		Post updated = new Post(postId, userId, postRequestDto.getTitle(), serialize(postRequestDto.getContentBlocks()), post.getCreatedAt(), now(), null);
 
 		boolean updatedResult = postRepository.update(updated);
 		if (!updatedResult) {
