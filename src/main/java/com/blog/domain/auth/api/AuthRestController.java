@@ -10,7 +10,6 @@ import com.blog.domain.login.api.dto.request.LoginKakaoRequest;
 import com.blog.domain.login.api.dto.response.LoginResponse;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,7 +27,7 @@ public class AuthRestController {
     // 이메일 회원가입 (이메일, 닉네임 중복확인)
     @PostMapping("/email/register")
     public ApiResponse<AuthResponse> emailAuth(
-            @RequestBody AuthEmailRequest request) throws NoSuchAlgorithmException {
+            @RequestBody AuthEmailRequest request) {
 
         AuthResponse response = authService.addUserByEmail(request);
 

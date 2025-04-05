@@ -11,7 +11,6 @@ import com.blog.domain.users.service.UsersService;
 import com.blog.global.security.jwt.JwtUtil;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
 
 @Service
 public class LoginService {
@@ -25,7 +24,7 @@ public class LoginService {
     }
 
     // 이메일 로그인
-    public ApiResponse<LoginResponse> emailLogin(LoginEmailRequest request) throws NoSuchAlgorithmException {
+    public ApiResponse<LoginResponse> emailLogin(LoginEmailRequest request) {
 
         String hashedPassword = EncryptUtils.sha256(request.password());
         Users user = usersService.getUsersByEmailAndPassword(request, hashedPassword);

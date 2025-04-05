@@ -16,7 +16,6 @@ import com.blog.domain.users.domain.Users;
 import com.blog.domain.users.domain.repository.UsersRepository;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
 
 @Service
 public class UsersService {
@@ -28,7 +27,7 @@ public class UsersService {
     }
 
     // 회원가입 Service
-    public AuthResponse addUserByEmail(AuthEmailRequest request) throws NoSuchAlgorithmException {
+    public AuthResponse addUserByEmail(AuthEmailRequest request) {
 
         // 비밀번호 암호화
         String hashedPassword = EncryptUtils.sha256(request.password());
@@ -42,18 +41,18 @@ public class UsersService {
         if (usersRepository.isNickNameDuplicated(request.nickname())) {
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
         }
+
         // 중복이 없으면 회원가입 진행
         return new AuthResponse(true, "회원가입 성공", usersRepository.addUsersByEmail(request, hashedPassword));
     }
 
 
     // 비밀번호, 닉네임, 프로필 이미지 수정
-    public ApiResponse<UsersResultResponse> userUpdateInfo(UsersUpdateRequest request) throws NoSuchAlgorithmException {
+    public ApiResponse<UsersResultResponse> userUpdateInfo(UsersUpdateRequest request) {
 
-//        if (usersRepository.isNickNameDuplicated(request.nickname())) {
-//            return ApiResponse.fail("업데이트 실패:  닉네임 중복");
-//        }
-//        error 코드 만들기
+        if (usersRepository.isNickNameDuplicated(request.nickname())) {
+            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+        }
 
         String hashedPassword = EncryptUtils.sha256(request.password());
 

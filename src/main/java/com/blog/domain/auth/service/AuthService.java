@@ -19,7 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.security.NoSuchAlgorithmException;
 
 @Service
 public class AuthService {
@@ -39,7 +38,7 @@ public class AuthService {
         this.loginService = loginService;
     }
 
-    public AuthResponse addUserByEmail(AuthEmailRequest request) throws NoSuchAlgorithmException {
+    public AuthResponse addUserByEmail(AuthEmailRequest request) {
         return usersService.addUserByEmail(request);
     }
 

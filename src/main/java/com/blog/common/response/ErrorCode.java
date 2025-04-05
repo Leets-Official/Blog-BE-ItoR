@@ -13,9 +13,10 @@ public enum ErrorCode {
     DUPLICATE_NICKNAME(400, HttpStatus.BAD_REQUEST, "이미 사용 중인 닉네임입니다."),
     DUPLICATE_EMAIL(400, HttpStatus.BAD_REQUEST, "이미 사용 중인 이메일입니다."),
     // 500 Internal Server Error
-    INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
+    INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
+    NO_SUCH_ALGORITHM(500, HttpStatus.INTERNAL_SERVER_ERROR, "지원하지 않는 암호화 알고리즘입니다.");
 
-    // 회원 관리 에러
+
 
     private final Integer code;
     private final HttpStatus httpStatus;
