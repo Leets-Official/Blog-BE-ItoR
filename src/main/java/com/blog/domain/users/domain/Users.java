@@ -1,5 +1,12 @@
 package com.blog.domain.users.domain;
 
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
+import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
+import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -16,6 +23,9 @@ public class Users {
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
+    public Users() {
+    }
+
     // 이메일 회원가입
     public Users(String email, String password, String name, String nickname, LocalDate birth,
                  String profile_image, Boolean social, String introduce) {
@@ -30,8 +40,8 @@ public class Users {
     }
 
     // 카카오 회원가입
-    public Users(String email, String name, String nickname, LocalDate birth, String introduce) {
-        this.email = email;
+    public Users(String name, String nickname, LocalDate birth, String introduce) {
+        this.email = "kakao";
         this.password = "social";
         this.name = name;
         this.nickname = nickname;
@@ -55,6 +65,53 @@ public class Users {
         this.birth = birth;
         this.created_at = created_at;
         this.updated_at = updated_at;
+    }
+
+    // 정적 팩토리 메소드 - 이메일 User
+    public static Users createEmailUser(AuthEmailRequest request, String hashedPassword) {
+        return new Users(
+                request.email(),
+                hashedPassword,
+                request.name(),
+                request.nickname(),
+                request.birth(),
+                request.profileImage(),
+                false,
+                request.introduce()
+        );
+    }
+
+    // 정적 팩토리 메소드 - 카카오 User
+    public static Users createKaKaoUser(AuthKaKaoRequest request, String name) {
+        return new Users(
+                name,
+                request.nickname(),
+                request.birth(),
+                request.introduce()
+        );
+    }
+
+
+    // 정적 팩토리 메소드 - User 담기
+    public static Users fromResultSet(ResultSet rs) {
+        try {
+            return new Users(
+                    rs.getInt("id"),
+                    rs.getString("email"),
+                    rs.getString("name"),
+                    rs.getString("nickname"),
+                    rs.getString("password"),
+                    rs.getString("profile_image"),
+                    rs.getBoolean("social"),
+                    rs.getString("introduce"),
+                    rs.getObject("birth", LocalDate.class),
+                    rs.getObject("created_at", LocalDateTime.class),
+                    rs.getObject("updated_at", LocalDateTime.class)
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
     // Getter & Setter

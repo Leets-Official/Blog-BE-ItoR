@@ -1,5 +1,7 @@
 package com.blog.domain.users.domain.repository;
 
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.auth.api.dto.request.AuthEmailRequest;
 import com.blog.domain.auth.api.dto.request.AuthKaKaoRequest;
 import com.blog.domain.login.api.dto.request.LoginEmailRequest;
@@ -13,8 +15,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Repository
 public class UsersRepository {
 
@@ -25,26 +25,23 @@ public class UsersRepository {
     }
 
     // 사용자 등록
-    public int addUsersByEmail(AuthEmailRequest request, String hashedPassword) {
+    public int addUsersByEmail(Users user) {
 
         String sql = "INSERT INTO users (email, password, name, nickname, birth, profile_image, social, introduce) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
-                request.email(),
-                hashedPassword,
-                request.name(),
-                request.nickname(),
-                request.birth(),
-                request.profileImage(),
-                false,  // social: 기본값은 false
-                request.introduce()
+                user.getEmail(),
+                user.getPassword(),
+                user.getName(),
+                user.getNickname(),
+                user.getBirth(),
+                user.getProfileImage(),
+                user.isSocial(),
+                user.getIntroduce()
         );
 
-        // 삽입된 레코드의 마지막 ID를 가져오는 쿼리
-        String selectSql = "SELECT LAST_INSERT_ID()";
-
-        return jdbcTemplate.queryForObject(selectSql, Integer.class);
+        return jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
     }
 
     // 이메일 중복확인
@@ -97,7 +94,7 @@ public class UsersRepository {
             ), request.userId());
         } catch (EmptyResultDataAccessException e) {
 
-            return null;
+            throw new CustomException(ErrorCode.NOT_FOUND_END_POINT);
         }
     }
 
@@ -121,39 +118,28 @@ public class UsersRepository {
 
         try {
 
-            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Users(
-                    rs.getInt("id"),
-                    rs.getString("email"),
-                    rs.getString("name"),
-                    rs.getString("nickname"),
-                    rs.getString("password"),
-                    rs.getString("profileImage"),
-                    rs.getBoolean("social"),
-                    rs.getString("introduce"),
-                    rs.getObject("birth", LocalDate.class),
-                    rs.getObject("created_at", LocalDateTime.class),
-                    rs.getObject("updated_at", LocalDateTime.class)
-            ), request.email(), hashedPassword);
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Users.fromResultSet(rs),
+                    request.email(), hashedPassword);
         } catch (EmptyResultDataAccessException e) {
 
-            return null;
+            throw new CustomException(ErrorCode.NOT_FOUND_END_POINT);
         }
     }
 
     // 카카오 회원가입
-    public int addUserByKaKao(AuthKaKaoRequest request, String name) {
+    public int addUserByKaKao(Users user) {
 
         String sql = "INSERT INTO users (email, password, name, nickname, birth, social, introduce) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
-                "kakao",
-                "password",
-                name,
-                request.nickname(),
-                request.birth(),
-                true,  // social: 기본값은 false
-                request.introduce()
+                user.getEmail(),
+                user.getPassword(),
+                user.getName(),
+                user.getNickname(),
+                user.getBirth(),
+                user.isSocial(),
+                user.getIntroduce()
         );
 
         // 삽입된 레코드의 마지막 ID를 가져오는 쿼리
@@ -168,22 +154,11 @@ public class UsersRepository {
 
         try {
 
-            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Users(
-                    rs.getInt("id"),
-                    rs.getString("email"),
-                    rs.getString("name"),
-                    rs.getString("nickname"),
-                    rs.getString("password"),
-                    rs.getString("profileImage"),
-                    rs.getBoolean("social"),
-                    rs.getString("introduce"),
-                    rs.getObject("birth", LocalDate.class),
-                    rs.getObject("created_at", LocalDateTime.class),
-                    rs.getObject("updated_at", LocalDateTime.class)
-            ), name);
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Users.fromResultSet(rs), name);
         } catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
 
-            return null;
+            throw new CustomException(ErrorCode.NOT_FOUND_END_POINT);
         }
     }
 }

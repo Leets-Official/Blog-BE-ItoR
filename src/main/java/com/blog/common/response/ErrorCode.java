@@ -8,13 +8,16 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."),
     // 403 Forbidden
     Forbidden(403, HttpStatus.FORBIDDEN, "접속 권한이 없습니다."),
+
     // 400 Bad Request
     BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     DUPLICATE_NICKNAME(400, HttpStatus.BAD_REQUEST, "이미 사용 중인 닉네임입니다."),
     DUPLICATE_EMAIL(400, HttpStatus.BAD_REQUEST, "이미 사용 중인 이메일입니다."),
+
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
-    NO_SUCH_ALGORITHM(500, HttpStatus.INTERNAL_SERVER_ERROR, "지원하지 않는 암호화 알고리즘입니다.");
+    NO_SUCH_ALGORITHM(500, HttpStatus.INTERNAL_SERVER_ERROR, "지원하지 않는 암호화 알고리즘입니다."),
+    DATABASE_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 처리 중 오류가 발생했습니다.");
 
 
 

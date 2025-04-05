@@ -42,8 +42,14 @@ public class UsersService {
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
         }
 
+        // Users 객체 생성 (정적 팩토리 메소드 사용)
+        Users user = Users.createEmailUser(request, hashedPassword);
+
+        // DB에 저장하고 사용자 ID를 가져옴
+        int userId = usersRepository.addUsersByEmail(user);
+
         // 중복이 없으면 회원가입 진행
-        return new AuthResponse(true, "회원가입 성공", usersRepository.addUsersByEmail(request, hashedPassword));
+        return new AuthResponse(true, "회원가입 성공", userId);
     }
 
 
@@ -102,8 +108,13 @@ public class UsersService {
             return new AuthResponse(false, "이미 사용 중인 닉네임입니다.", null);
         }
 
-        // 중복이 없으면 회원가입 진행
-        return new AuthResponse(true, "회원가입 성공", usersRepository.addUserByKaKao(request, name));
+        // 정적 팩토리 메서드로 Users 객체 생성
+        Users user = Users.createKaKaoUser(request, name);
+
+        // 중복 없을 시 회원가입 진행
+        int userId = usersRepository.addUserByKaKao(user);
+
+        return new AuthResponse(true, "회원가입 성공", userId);
     }
 
     // 이메일, 이름 조회 - 이메일은 권한이 없어서 임시로 이름만 받아오기
