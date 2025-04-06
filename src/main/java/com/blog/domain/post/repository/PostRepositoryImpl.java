@@ -2,10 +2,13 @@ package com.blog.domain.post.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import com.blog.domain.post.domain.Post;
@@ -21,13 +24,21 @@ public class PostRepositoryImpl implements PostRepository {
 
 	@Override
 	public boolean insert(Post post) {
-		String sql = """
-			INSERT INTO posts (userId, title, content, createdAt, modifiedAt)
-			VALUES (?, ?, ?, ?, ?)
-			""";
-
-		int result = jdbcTemplate.update(sql,post.getUserId(),post.getTitle(),post.getContent(),post.getCreatedAt(),post.getModifiedAt());
-		return result == 1;
+		SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+			.withTableName("posts")
+			.usingGeneratedKeyColumns("postId");
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", post.getUserId());
+		params.put("title", post.getTitle());
+		params.put("content", post.getContent());
+		params.put("createdAt", post.getCreatedAt());
+		params.put("modifiedAt", post.getModifiedAt());
+		Number key = insert.executeAndReturnKey(params);
+		if (key != null) {
+			assignPostId(post, key);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -86,5 +97,16 @@ public class PostRepositoryImpl implements PostRepository {
 			rs.getTimestamp("deletedAt") != null ? rs.getTimestamp("deletedAt").toLocalDateTime() : null
 		);
 	}
+
+	private void assignPostId(Post post, Number key) {
+		try {
+			java.lang.reflect.Field field = Post.class.getDeclaredField("postId");
+			field.setAccessible(true);
+			field.set(post, key.intValue());
+		} catch (Exception e) {
+			throw new RuntimeException("게시글 ID 할당 실패", e);
+		}
+	}
+
 
 }
