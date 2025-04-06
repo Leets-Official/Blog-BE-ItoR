@@ -24,19 +24,18 @@ public class LoginService {
     }
 
     public String login(String email, String password) {
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            String hashedInputPassword = hashPassword(password); // 입력된 비밀번호 해싱
-            System.out.println(user.getPassword());
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (user.getPassword().contentEquals(hashedInputPassword)) {
-                return JwtUtil.generateToken(user.getId().toString(), user.getEmail());
-            }
-            throw new RuntimeException("Invalid password");
+        String hashedInputPassword = hashPassword(password);
+
+        if (user.getPassword().contentEquals(hashedInputPassword)) {
+            return JwtUtil.generateToken(user.getId().toString(), user.getEmail());
         }
-        throw new RuntimeException("User not found");
+
+        throw new RuntimeException("Invalid password");
     }
+
 
     private String hashPassword(String password) {
         try {
