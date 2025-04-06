@@ -15,7 +15,6 @@ CREATE TABLE `post` (
                         id BIGINT PRIMARY KEY AUTO_INCREMENT,
                         user_id BIGINT NOT NULL,
                         title VARCHAR(255) NOT NULL,
-                        content TEXT NOT NULL,
                         comment_count INT DEFAULT 0,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -33,10 +32,11 @@ CREATE TABLE `comment` (
                            FOREIGN KEY (post_id) REFERENCES `post`(id) ON DELETE CASCADE
 );
 
-CREATE TABLE `image` (
-                         id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                         post_id BIGINT NOT NULL ,
-                         url VARCHAR(2083) NOT NULL,
-                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                         FOREIGN KEY (post_id) REFERENCES `post`(id) ON DELETE CASCADE
+CREATE TABLE post_content (
+                              id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                              post_id BIGINT NOT NULL,
+                              type VARCHAR(20) NOT NULL, -- TEXT or IMAGE
+                              content TEXT NOT NULL,
+                              sequence INT NOT NULL,
+                              FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE
 );
