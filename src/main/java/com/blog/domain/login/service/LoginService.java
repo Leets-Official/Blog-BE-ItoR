@@ -9,6 +9,7 @@ import com.blog.domain.login.api.dto.response.LoginResponse;
 import com.blog.domain.users.domain.Users;
 import com.blog.domain.users.service.UsersService;
 import com.blog.global.security.jwt.JwtUtil;
+import com.blog.global.security.jwt.repository.TokenStore;
 import org.springframework.stereotype.Service;
 
 
@@ -17,10 +18,12 @@ public class LoginService {
 
     private final JwtUtil jwtUtil;
     private final UsersService usersService;
+    private final TokenStore tokenStore;
 
-    public LoginService(JwtUtil jwtUtil, UsersService usersService){
+    public LoginService(JwtUtil jwtUtil, UsersService usersService, TokenStore tokenStore){
         this.jwtUtil = jwtUtil;
         this.usersService = usersService;
+        this.tokenStore = tokenStore;
     }
 
     // 이메일 로그인
@@ -50,12 +53,17 @@ public class LoginService {
         String accessToken;
         String newRefreshToken;
 
-        if (refreshToken != null && jwtUtil.isValidRefreshToken(refreshToken)) {
+        if (refreshToken != null && jwtUtil.validateToken(refreshToken) &&
+                tokenStore.isValidStoredToken(user.getUserId(), refreshToken)) {
+
             accessToken = jwtUtil.createAccessToken(user);
             newRefreshToken = refreshToken;
+
         } else {
             accessToken = jwtUtil.createAccessToken(user);
             newRefreshToken = jwtUtil.createRefreshToken(user);
+
+            tokenStore.storeRefreshToken(user.getUserId(), newRefreshToken);
         }
 
         return new LoginResponse(accessToken, newRefreshToken, user);

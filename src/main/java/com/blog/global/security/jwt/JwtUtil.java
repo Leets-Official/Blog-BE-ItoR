@@ -1,84 +1,187 @@
 package com.blog.global.security.jwt;
 
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.users.domain.Users;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
+import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private final SecretKey secretKey;
 
-    @Value("${jwt.access-token-expiration}")
-    private Long accessExpiration;
+    @Value("${jwt.secret}")
+    private String secretKey;
 
-    @Value("${jwt.refresh-token-expiration}")
-    private Long refreshExpiration;
+    private final String ALGORITHM = "HmacSHA256";
+    private final long ACCESS_TOKEN_VALIDITY = 30 * 60 * 1000; // 30분
+    private final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000; // 7일
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // 시크릿 키 생성
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
-        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
-                Jwts.SIG.HS256.key().build().getAlgorithm());
+    // accessToken 생성
+    public String createAccessToken(int userId, String email) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("email", email);
+
+        return createToken(claims, now, expiration);
     }
 
-    // 액세스 토큰 생성
-    public String createAccessToken(Users user) {
-        String role = user.getUserId() == 1 ? "ADMIN" : "USER";
+    // refreshToken
+    public String createRefreshToken(int userId, String email) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + REFRESH_TOKEN_VALIDITY);
 
-        return Jwts.builder()
-                .claim("user_id", user.getUserId())
-                .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + accessExpiration))
-                .signWith(secretKey)
-                .compact();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("email", email);
+
+        return createToken(claims, now, expiration);
     }
 
-    // 리프레쉬 토큰 생성
-    public String createRefreshToken(Users user) {
-        String role = user.getUserId() == 1 ? "ADMIN" : "USER";
-
-        return Jwts.builder()
-                .claim("user_id", user.getUserId())
-                .claim("role", role)
-                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
-                .signWith(secretKey)
-                .compact();
+    // 헤더 생성
+    private String createHeader() {
+        Map<String, Object> header = new HashMap<>();
+        header.put("alg", "HS256");
+        header.put("typ", "JWT");
+        return mapToJson(header);
     }
 
-    // 토큰이 유효한지 검사
-    public boolean isValidRefreshToken(String refreshToken) {
+    // JWT 토큰 생성
+    private String createToken(Map<String, Object> claims, Date issuedAt, Date expiration) {
+        String headerJson = createHeader();
+        claims.put("iat", issuedAt.getTime() / 1000);
+        claims.put("exp", expiration.getTime() / 1000);
+        String payloadJson = mapToJson(claims);
+
+        String encodedHeader = base64UrlEncode(headerJson);
+        String encodedPayload = base64UrlEncode(payloadJson);
+        String content = encodedHeader + "." + encodedPayload;
+
+        return content + "." + generateSignature(content);
+    }
+
+    // 토큰 유효성 검증
+    public boolean validateToken(String token) {
         try {
-            getClaimsToken(refreshToken);
+            String[] parts = token.split("\\.");
+            if (parts.length != 3)
+                throw new CustomException(ErrorCode.TOKEN_PARSING_FAILED);
+
+            String content = parts[0] + "." + parts[1];
+            String signature = generateSignature(content);
+
+            if (!MessageDigest.isEqual(signature.getBytes(), parts[2].getBytes()))
+                throw new CustomException(ErrorCode.INVALID_TOKEN);
+
+            String payload = decodeBase64(parts[1]);
+            Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<>() {});
+            long exp = ((Number) claims.get("exp")).longValue();
+
+            if (exp <= (new Date().getTime() / 1000))
+                throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+
             return true;
-        } catch (NullPointerException | JwtException e) {
-            return false;
-        }
-    }
-
-    // 토큰 정보 조회
-    private Claims getClaimsToken(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    // 토큰에서 role을 추출하는 메서드 추가
-    public String getUserRole(String token) {
-        try {
-            Claims claims = getClaimsToken(token); // 토큰에서 Claims 가져오기
-            return claims.get("role", String.class); // "role" 클레임에서 역할 정보 추출
+        } catch (CustomException e) {
+            log.error("JWT 유효성 검사 실패: {}", e.getErrorCode().getMessage());
         } catch (Exception e) {
-            return null; // 만약 에러가 발생하면 null 반환
+            log.error("JWT 유효성 검사 중 예외 발생", e);
         }
+        return false;
+    }
+
+    // 토큰에서 UserId 추출
+    public Long getUserIdFromToken(String token) {
+        try {
+            Map<String, Object> claims = getClaims(token);
+            return ((Number) claims.get("userId")).longValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.TOKEN_USERID_EXTRACTION_FAILED);
+        }
+    }
+
+    // 토큰에서 email 추출
+    public String getEmailFromToken(String token) {
+        try {
+            Map<String, Object> claims = getClaims(token);
+            return (String) claims.get("email");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.TOKEN_EMAIL_EXTRACTION_FAILED);
+        }
+    }
+
+    // 토큰에서 Claims 추출
+    private Map<String, Object> getClaims(String token) {
+        try {
+            String[] parts = token.split("\\.");
+            String payload = decodeBase64(parts[1]);
+            return objectMapper.readValue(payload, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.TOKEN_PARSING_FAILED);
+        }
+    }
+
+    // Base64 디코딩
+    private String decodeBase64(String encoded) {
+        return new String(Base64.getUrlDecoder().decode(encoded), StandardCharsets.UTF_8);
+    }
+
+    // JSON 생성
+    private String mapToJson(Map<String, Object> map) {
+        try {
+            return objectMapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.JSON_CONVERT_FAILED);
+        }
+    }
+
+    // Base64Url 인코딩
+    private String base64UrlEncode(String value) {
+        return Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(value.getBytes(StandardCharsets.UTF_8));
+    }
+
+    // HMAC-SHA256 서명 생성
+    private String generateSignature(String content) {
+        try {
+            Mac mac = Mac.getInstance(ALGORITHM);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(
+                    secretKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+            mac.init(secretKeySpec);
+            byte[] hash = mac.doFinal(content.getBytes(StandardCharsets.UTF_8));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.SIGNATURE_GENERATION_FAILED);
+        }
+    }
+
+    // Users 객체로 accessToken 생성
+    public String createAccessToken(Users user) {
+        return createAccessToken(user.getUserId(), user.getEmail());
+    }
+
+    // Users 객체로 refreshToken 생성
+    public String createRefreshToken(Users user) {
+        return createRefreshToken(user.getUserId(), user.getEmail());
     }
 }

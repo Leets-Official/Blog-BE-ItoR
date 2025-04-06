@@ -6,7 +6,6 @@ import com.blog.domain.auth.api.dto.response.AuthResponse;
 import com.blog.domain.auth.api.dto.response.AuthKakaoResponse;
 import com.blog.domain.auth.service.AuthService;
 import com.blog.common.response.ApiResponse;
-import com.blog.domain.login.api.dto.request.LoginKakaoRequest;
 import com.blog.domain.login.api.dto.response.LoginResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,23 +33,17 @@ public class AuthRestController {
         return ApiResponse.ok(response);
     }
 
-    // 카카오 회원가입 토큰 받기
+    // 카카오 회원가입 토큰 받고 회원 있는지 확인
     @GetMapping("/kakao/register")
-    public ApiResponse<AuthKakaoResponse> kakaoAuth(
+    public ApiResponse<LoginResponse> kakaoAuth(
             @RequestParam("code") String code) {
 
-        return authService.getAccessTokenKakao(code);
+        AuthKakaoResponse kakaoToken = authService.getAccessTokenKakao(code);
+        return authService.getUsersByKakaoToken(kakaoToken);
     }
 
-    // 카카오 회원가입 되어있는지 확인 후 로그인 or 추가 회원가입
-    @PostMapping("/kakao/isRegister")
-    public ApiResponse<LoginResponse> kakaoIsRegister(
-            @RequestBody LoginKakaoRequest request){
 
-        return authService.getUsersByName(request);
-    }
-
-    // 카카오 추가 회원가입
+    // 회원이 아니라면 추가 정보 받아서 회원가입
     @PostMapping("/kakao/register/info")
     public ApiResponse<AuthResponse> kakaoAuthInfo(
             @RequestBody AuthKaKaoRequest request) {

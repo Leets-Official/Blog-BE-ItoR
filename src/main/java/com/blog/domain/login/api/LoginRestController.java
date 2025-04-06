@@ -25,7 +25,7 @@ public class LoginRestController {
     // 이메일 로그인
     @PostMapping("/email")
     public ApiResponse<LoginResponse> emailLogin(
-            @RequestBody LoginEmailRequest request) throws NoSuchAlgorithmException {
+            @RequestBody LoginEmailRequest request) {
 
         return loginService.emailLogin(request);
     }
