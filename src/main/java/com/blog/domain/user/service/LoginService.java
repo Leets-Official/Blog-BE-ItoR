@@ -4,6 +4,8 @@ import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.auth.jwtUtil.JwtUtil;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
@@ -26,8 +28,9 @@ public class LoginService {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             String hashedInputPassword = hashPassword(password); // 입력된 비밀번호 해싱
+            System.out.println(user.getPassword());
 
-            if (user.getPassword().equals(hashedInputPassword)) {
+            if (user.getPassword().contentEquals(hashedInputPassword)) {
                 return JwtUtil.generateToken(user.getId().toString(), user.getEmail());
             }
             throw new RuntimeException("Invalid password");
@@ -37,11 +40,18 @@ public class LoginService {
 
     private String hashPassword(String password) {
         try {
-            PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), SALT.getBytes(), 65536, 128);
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            byte[] hash = factory.generateSecret(spec).getEncoded();
-            return Base64.getEncoder().encodeToString(hash);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashedBytes) {
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+//            PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), SALT.getBytes(), 65536, 128);
+//            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+//            byte[] hash = factory.generateSecret(spec).getEncoded();
+//            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error while hashing password", e);
         }
     }

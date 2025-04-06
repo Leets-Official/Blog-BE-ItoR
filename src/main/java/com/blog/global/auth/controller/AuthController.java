@@ -20,11 +20,6 @@ public class AuthController {
     return authService.signup(request);
   }
 
-  @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody Map<String, String> request) {
-    return authService.login(request);
-  }
-
   @GetMapping("/kakao/callback")
   public ResponseEntity<String> kakaoLogin(@RequestParam("code") String code) {
     return authService.kakaoLogin(code);

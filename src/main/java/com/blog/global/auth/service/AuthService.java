@@ -37,7 +37,8 @@ public class AuthService {
     }
 
     String hashedPassword = hashPassword(password);
-    User newUser = new User(UUID.randomUUID(), "NewUser", "email", email, hashedPassword, null, null);
+    User newUser = new User(UUID.randomUUID(), "NewUser", hashedPassword, email, "", null, null);
+
     userRepository.save(newUser);
 
     return ResponseEntity.ok("[회원가입 성공] 계정이 생성되었습니다.");

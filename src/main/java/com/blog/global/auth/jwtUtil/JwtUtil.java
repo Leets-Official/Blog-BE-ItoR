@@ -8,7 +8,8 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class JwtUtil {
-    private static final String SECRET_KEY = "my-secret-key";
+    private static final String SECRET_KEY =
+        System.getenv().getOrDefault("JWT_SECRET_KEY", "default-fallback-key");
     private static final String ALGORITHM = "HmacSHA256";
     private static final long EXPIRATION_TIME = 3600000;
 
