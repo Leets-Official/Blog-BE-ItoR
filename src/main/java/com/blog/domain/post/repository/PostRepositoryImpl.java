@@ -73,7 +73,7 @@ public class PostRepositoryImpl implements PostRepository {
 			WHERE postId=? AND deletedAt IS NULL
 			""";
 
-		return jdbcTemplate.update(sql,post.getTitle(),post.getContent(),post.getModifiedAt())==1;
+		return jdbcTemplate.update(sql,post.getTitle(),post.getContent(),post.getModifiedAt(),post.getPostId())==1;
 	}
 
 	@Override
