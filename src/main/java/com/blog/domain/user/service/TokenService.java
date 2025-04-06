@@ -87,7 +87,7 @@ public class TokenService {
 
 
     // 쿠키에서 userId 가져오기
-    private Long getUserIdFromCookie(HttpServletRequest request) {
+    public Long getUserIdFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null){

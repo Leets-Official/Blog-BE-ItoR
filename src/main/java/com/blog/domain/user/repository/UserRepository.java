@@ -1,6 +1,8 @@
 package com.blog.domain.user.repository;
 
 import com.blog.domain.user.domain.User;
+import com.blog.global.exception.CustomException;
+import com.blog.global.exception.ErrorCode;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -63,5 +65,25 @@ public class UserRepository {
         }
     }
 
+    //  유저Id로 유저 가져오기
+    public Optional<User> findByUserId(Long userId) {
+        String sql = "SELECT * FROM `user` WHERE id = ?";
+        try {
+            RowMapper<User> rowMapper = (rs, rowNum) -> new User(
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getString("name"),
+                    rs.getString("nickname"),
+                    rs.getDate("birth") != null ? rs.getDate("birth").toLocalDate() : null,
+                    rs.getString("introduction"),
+                    rs.getString("profile_image"),
+                    rs.getString("provider")
+            );
 
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{userId}, rowMapper));
+
+        } catch (EmptyResultDataAccessException e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
 }
