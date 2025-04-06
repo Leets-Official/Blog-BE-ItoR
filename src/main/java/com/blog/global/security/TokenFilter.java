@@ -37,7 +37,9 @@ public class TokenFilter implements Filter {
         String path = request.getRequestURI();
 
         // 검증하지 않아도 되는 것만 적기
-        if (path.startsWith("/auth") || path.startsWith("/login") || path.startsWith("/join") || path.startsWith("/public")) {
+        if (path.startsWith("/auth") || path.startsWith("/login") || path.startsWith("/join")
+                || path.startsWith("/public")|| path.equals("/post/list")
+                || path.matches("^/post/\\d+$")) {
             chain.doFilter(request, response);
             return;
         }

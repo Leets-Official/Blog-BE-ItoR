@@ -32,7 +32,7 @@ public class LoginController {
     public ApiResponse<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
         // 사용자 정보 검증
-        String accessToken = loginService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword(), response);
+        String accessToken = loginService.authenticateUser(loginRequest.email(), loginRequest.password(), response);
 
         return ApiResponse.ok(accessToken);
     }
