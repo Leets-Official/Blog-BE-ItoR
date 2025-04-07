@@ -9,13 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
+  private final AuthService authService;
 
-  private AuthService authService = new AuthService(null);
+  public UserController(AuthService authService) {
+    this.authService = authService;
+  }
 
   @GetMapping("/protected-resource")
   public ResponseEntity<User> getProtectedResource(
-    @RequestHeader("Authorization") String token) {
+      @RequestHeader("Authorization") String token) {
     User user = authService.getUserInfoFromToken(token);
     return ResponseEntity.ok(user);
   }
 }
+

@@ -1,15 +1,22 @@
 package com.blog.global.auth.service;
 
 import com.blog.domain.user.domain.User;
+import com.blog.domain.user.dto.SignupRequest;
+import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.auth.jwtUtil.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -28,6 +35,42 @@ public class AuthService {
   private String redirectUri;
 
   private final RestTemplate restTemplate = new RestTemplate();
+  private final UserRepository userRepository;
+  private static final String SALT = "random_salt_value";
+
+  public AuthService(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
+
+  public ResponseEntity<Map<String, String>> signup(SignupRequest request) {
+    Map<String, String> response = new HashMap<>();
+
+    if (request.getEmail() == null || request.getPassword() == null) {
+      response.put("message", "[회원가입 실패] 이메일 또는 비밀번호가 누락되었습니다.");
+      return ResponseEntity.badRequest().body(response);
+    }
+
+    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+      response.put("message", "[회원가입 실패] 이미 등록된 이메일입니다.");
+      return ResponseEntity.badRequest().body(response);
+    }
+
+    String hashedPassword = hashPassword(request.getPassword());
+    User newUser = new User(
+        UUID.randomUUID(),
+        request.getNickname() != null ? request.getNickname() : "NewUser",
+        hashedPassword,
+        request.getEmail(),
+        request.getProfileImageUrl(),
+        null,
+        null
+    );
+
+    userRepository.save(newUser);
+
+    response.put("message", "[회원가입 성공] 계정이 생성되었습니다.");
+    return ResponseEntity.ok(response);
+  }
 
   public ResponseEntity<String> kakaoLogin(String code) {
     String accessToken = getKakaoAccessToken(code);
@@ -94,14 +137,11 @@ public class AuthService {
 
   private String hashPassword(String password) {
     try {
-      MessageDigest md = MessageDigest.getInstance("SHA-256");
-      byte[] hashedBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
-      StringBuilder hexString = new StringBuilder();
-      for (byte b : hashedBytes) {
-        hexString.append(String.format("%02x", b));
-      }
-      return hexString.toString();
-    } catch (Exception e) {
+      PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), SALT.getBytes(), 65536, 128);
+      SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+      byte[] hash = factory.generateSecret(spec).getEncoded();
+      return Base64.getEncoder().encodeToString(hash);
+    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
       throw new RuntimeException("[해싱 오류] 비밀번호 해싱 중 오류 발생", e);
     }
   }
@@ -117,8 +157,10 @@ public class AuthService {
 
     String token = authorizationHeader.replace("Bearer ", "");
     Map<String, Object> claims = JwtUtil.verifyToken(token);
-    String email = (String) claims.get("email");
+    String userId = (String) claims.get("id");
 
-    return new User(null, "Unknown", "jwt", email, null, null, null);
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("[사용자 조회 실패] 해당 사용자를 찾을 수 없습니다."));
   }
+
 }
