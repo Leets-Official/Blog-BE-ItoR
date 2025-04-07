@@ -8,18 +8,20 @@ import com.blog.domain.post.domain.ContentBlock;
 public class PostResponseDto {
 
 	private int postId;
-	private int userId;
-	private String title;
+	private String nickname; // User 도메인에서 조회
 	private LocalDateTime createdAt;
+	private int commentCount;
+	private String title;
 	private List<ContentBlock> contentBlocks;
 	// 댓글 리스트도 추후 추가
 
-	public PostResponseDto(int postId, int userId, String title, LocalDateTime createdAt,
+	public PostResponseDto(int postId, String nickname, LocalDateTime createdAt, int commentCount, String title,
 		List<ContentBlock> contentBlocks) {
 		this.postId = postId;
-		this.userId = userId;
-		this.title = title;
+		this.nickname = nickname;
 		this.createdAt = createdAt;
+		this.commentCount = commentCount;
+		this.title = title;
 		this.contentBlocks = contentBlocks;
 	}
 
@@ -27,8 +29,12 @@ public class PostResponseDto {
 		return postId;
 	}
 
-	public int getUserId() {
-		return userId;
+	public String getNickname() {
+		return nickname;
+	}
+
+	public int getCommentCount() {
+		return commentCount;
 	}
 
 	public String getTitle() {
