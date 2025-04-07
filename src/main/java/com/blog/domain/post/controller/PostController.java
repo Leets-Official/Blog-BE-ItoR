@@ -20,6 +20,8 @@ import com.blog.global.common.dto.GlobalResponseDto;
 import com.blog.global.common.dto.PageRequestDto;
 import com.blog.global.common.dto.PageResponseDto;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/posts")
 public class PostController {
@@ -36,7 +38,7 @@ public class PostController {
 	@PostMapping
 	public ResponseEntity<GlobalResponseDto<Void>> createPost(
 		@RequestHeader("Authorization") String bearerToken,
-		@RequestBody PostRequestDto dto
+		@RequestBody @Valid PostRequestDto dto
 	) {
 		String userIdStr = jwtUtil.parseUserIdFromBearerToken(bearerToken);
 		if (userIdStr == null) {
@@ -73,7 +75,7 @@ public class PostController {
 	public ResponseEntity<GlobalResponseDto<Void>> updatePost(
 		@RequestHeader("Authorization") String bearerToken,
 		@PathVariable int postId,
-		@RequestBody PostRequestDto dto
+		@RequestBody @Valid PostRequestDto dto
 	) {
 		String userIdStr = jwtUtil.parseUserIdFromBearerToken(bearerToken);
 		if (userIdStr == null) {
