@@ -39,11 +39,11 @@ public class PostController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Void> updatePost(@PathVariable UUID id, @RequestBody PostRequest request) {
+  public ResponseEntity<Map<String, String>> updatePost(@PathVariable UUID id, @RequestBody PostRequest request) {
     postService.updatePost(id, request);
     Map<String, String> response = new HashMap<>();
     response.put("message", "게시물 수정 성공");
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{id}")
