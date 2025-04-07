@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.blog.domain.post.domain.ContentBlock;
 import com.blog.domain.post.domain.Post;
 import com.blog.domain.post.domain.PostImage;
+import com.blog.domain.post.dto.PostDetailResponseDto;
 import com.blog.domain.post.dto.PostRequestDto;
 import com.blog.domain.post.dto.PostResponseDto;
 import com.blog.domain.post.repository.PostImageRepository;
 import com.blog.domain.post.repository.PostRepository;
+import com.blog.domain.user.service.UserService;
 import com.blog.global.common.dto.PageRequestDto;
 import com.blog.global.common.dto.PageResponseDto;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,12 +29,14 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final PostImageRepository postImageRepository;
 	private final ObjectMapper objectMapper;
+	private final UserService userService;
 	//댓글 추후 추가 예정
 
-	public PostService(PostRepository postRepository, PostImageRepository postImageRepository, ObjectMapper objectMapper) {
+	public PostService(PostRepository postRepository, PostImageRepository postImageRepository, ObjectMapper objectMapper , UserService userService) {
 		this.postRepository = postRepository;
 		this.postImageRepository = postImageRepository;
 		this.objectMapper = objectMapper;
+		this.userService = userService;
 	}
 
 	@Transactional //글 생성
@@ -54,20 +58,24 @@ public class PostService {
 	}
 
 	// 게시물 조회
-	public PostResponseDto getPostById(int postId) {
+	public PostDetailResponseDto getPostById(int postId) {
 		Post post = postRepository.findById(postId);
 		if (post == null || post.getDeletedAt() != null) {
 			throw new CommonException(ErrorCode.POST_NOT_FOUND);
 		}
 
 		List<ContentBlock> content = deserialize(post.getContent());
+		String nickname = userService.findNicknameByUserId(post.getUserId());
+		int commentCount = 0;
 
-		return new PostResponseDto(
+		return new PostDetailResponseDto(
 			post.getPostId(),
-			post.getUserId(),
-			post.getTitle(),
+			nickname,
 			post.getCreatedAt(),
-			content
+			commentCount,
+			post.getTitle(),
+			content,
+			List.of()
 		);
 	}
 
@@ -135,9 +143,10 @@ public class PostService {
 		List<PostResponseDto> data = posts.stream()
 			.map(post -> new PostResponseDto(
 				post.getPostId(),
-				post.getUserId(),
-				post.getTitle(),
+				userService.findNicknameByUserId(post.getUserId()),
 				post.getCreatedAt(),
+				0,
+				post.getTitle(),
 				deserialize(post.getContent())
 			))
 			.toList();

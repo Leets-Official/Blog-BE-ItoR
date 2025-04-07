@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.domain.post.dto.PostDetailResponseDto;
 import com.blog.domain.post.dto.PostRequestDto;
 import com.blog.domain.post.dto.PostResponseDto;
 import com.blog.domain.post.service.PostService;
@@ -56,7 +57,7 @@ public class PostController {
 
 	//게시글 조회
 	@GetMapping("/{postId}")
-	public ResponseEntity<GlobalResponseDto<PostResponseDto>> getPost(@PathVariable int postId) {
+	public ResponseEntity<GlobalResponseDto<PostDetailResponseDto>> getPost(@PathVariable int postId) {
 		return ResponseEntity.ok(GlobalResponseDto.success(postService.getPostById(postId)));
 	}
 
