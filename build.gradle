@@ -34,6 +34,19 @@ dependencies {
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+////////////////////////////////////   추가   /////////////////////////////////////////////
+	//jasper(톰캣)
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//jakarta
+	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.0'
+
+
+	//JSON
+	implementation 'org.json:json:20210307'
+
+	//내 원수 myBatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 }
 
 tasks.named('test') {

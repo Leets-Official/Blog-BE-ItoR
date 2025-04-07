@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.oauth.mapper.OauthMapper">
+
+    <select id="findByOauth" resultType="com.blog.oauth.vo.OauthVo">
+        SELECT *
+        FROM oauth_account
+        WHERE provider = #{provider}
+          AND oauth_id = #{providerUserId}
+    </select>
+
+    <insert id="insertOauth" parameterType="com.blog.oauth.vo.OauthVo">
+        INSERT INTO oauth_account (
+            oauth_id, member_id, provider, created_at
+        ) VALUES (
+                     #{providerUserId}, #{memberId}, #{provider}, now()
+                 )
+    </insert>
+
+</mapper>
