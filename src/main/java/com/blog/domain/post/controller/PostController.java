@@ -56,13 +56,13 @@ public class PostController {
 	}
 
 	//게시글 조회
-	@GetMapping("/{postId}")
+	@GetMapping("/list/{postId}")
 	public ResponseEntity<GlobalResponseDto<PostDetailResponseDto>> getPost(@PathVariable int postId) {
 		return ResponseEntity.ok(GlobalResponseDto.success(postService.getPostById(postId)));
 	}
 
 	//게시글 목록 조회 (페이지네이션)
-	@GetMapping
+	@GetMapping("/list")
 	public ResponseEntity<GlobalResponseDto<PageResponseDto<PostResponseDto>>> getPostPage(
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size
