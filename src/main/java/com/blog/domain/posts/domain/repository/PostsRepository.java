@@ -58,5 +58,15 @@ public class PostsRepository {
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Posts.fromResultSet(rs), postId);
     }
 
+    public int getPostUserId(int postId){
+        String sql = "SELECT user_id FROM posts WHERE id = ?";
 
+        return jdbcTemplate.queryForObject(sql, int.class, postId);
+    }
+
+    public void updatePost(int postId, String subject){
+        String sql = "UPDATE posts SET subject = ? WHERE id = ?";
+
+        jdbcTemplate.update(sql, subject, postId);
+    }
 }

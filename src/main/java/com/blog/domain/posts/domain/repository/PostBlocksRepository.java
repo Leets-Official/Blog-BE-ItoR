@@ -29,4 +29,25 @@ public class PostBlocksRepository {
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> PostBlocks.fromResultSet(rs), postId);
     }
+
+    public List<PostBlocks> getPostBlockListWithIdByPostId(int postId){
+        String sql = "SELECT * FROM post_blocks WHERE post_id = ? ORDER BY id ";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> PostBlocks.fromResultSetWithId(rs), postId);
+    }
+
+    public void updatePostBlock(int id, PostBlocks postBlock){
+        String sql = "UPDATE post_blocks SET content = ?, image_url = ? WHERE id = ?";
+
+        jdbcTemplate.update(sql,
+                postBlock.getContent(),
+                postBlock.getImageUrl(),
+                id);
+    }
+
+    public void deletePostBlock(int id){
+        String sql = "DELETE FROM post_blocks WHERE id = ?";
+
+        jdbcTemplate.update(sql, id);
+    }
 }

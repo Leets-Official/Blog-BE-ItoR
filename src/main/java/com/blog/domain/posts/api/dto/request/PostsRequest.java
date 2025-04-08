@@ -2,7 +2,7 @@ package com.blog.domain.posts.api.dto.request;
 
 import java.util.List;
 
-public record PostCreateRequest(
+public record PostsRequest(
         String subject,
         List<PostBlockRequest> blocks
 ) {

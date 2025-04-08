@@ -1,8 +1,8 @@
 package com.blog.domain.posts.service;
 
-import com.blog.common.response.ApiResponse;
-import com.blog.domain.posts.api.dto.request.PostBlockRequest;
-import com.blog.domain.posts.api.dto.request.PostCreateRequest;
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
+import com.blog.domain.posts.api.dto.request.PostsRequest;
 import com.blog.domain.posts.api.dto.response.PostListResponse;
 import com.blog.domain.posts.api.dto.response.PostResponse;
 import com.blog.domain.posts.domain.PostBlocks;
@@ -10,7 +10,6 @@ import com.blog.domain.posts.domain.Posts;
 import com.blog.domain.posts.domain.repository.PostsRepository;
 import com.blog.domain.users.service.TokenService;
 import com.blog.domain.users.service.UsersService;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class PostsService {
     }
 
     // 게시글 등록
-    public void createPost(int userId, PostCreateRequest request) {
+    public void createPost(int userId, PostsRequest request) {
         // 1. Posts 저장
         Posts post = Posts.createPost(userId, request.subject());
         int postId = postsRepository.addPost(post);
@@ -48,6 +47,7 @@ public class PostsService {
 
     // 게시글 목록 조회
     public PostListResponse getPostsList(){
+
         return new PostListResponse(postsRepository.getPostsList());
     }
 
@@ -68,4 +68,20 @@ public class PostsService {
         );
     }
 
+    // 게시글 수정 - 자신만 수정 가능
+    public void udpatePost(int userId, int postId, PostsRequest request){
+
+        validatePostOwnership(userId, postId);
+        postsRepository.updatePost(postId, request.subject());
+        postBlockService.updatePostBlock(postId, request.blocks());
+    }
+
+    public void validatePostOwnership(int userId, int postId) {
+        int ownerId = postsRepository.getPostUserId(postId);
+
+        if (userId != ownerId) {
+
+            throw new CustomException(ErrorCode.NO_EDIT_PERMISSION);
+        }
+    }
 }

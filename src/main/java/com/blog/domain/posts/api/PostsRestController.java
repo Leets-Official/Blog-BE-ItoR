@@ -1,11 +1,10 @@
 package com.blog.domain.posts.api;
 
 import com.blog.common.response.ApiResponse;
-import com.blog.domain.posts.api.dto.request.PostCreateRequest;
+import com.blog.domain.posts.api.dto.request.PostsRequest;
 import com.blog.domain.posts.api.dto.response.PostListResponse;
 import com.blog.domain.posts.api.dto.response.PostResponse;
 import com.blog.domain.posts.service.PostsService;
-import com.blog.global.security.jwt.repository.TokenStore;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/posts")
@@ -23,7 +22,7 @@ public class PostsRestController {
     @PostMapping()
     public ApiResponse<String> createPost(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody PostCreateRequest request){
+            @RequestBody PostsRequest request){
 
         int userId = postsService.extractUserIdFromHeader(authHeader);
 
@@ -36,6 +35,7 @@ public class PostsRestController {
     // 페이징 추가하기
     @GetMapping("/list")
     public ApiResponse<PostListResponse> postList(){
+
         return ApiResponse.ok(postsService.getPostsList());
     }
 
@@ -43,10 +43,22 @@ public class PostsRestController {
     @GetMapping("/{postId}")
     public ApiResponse<PostResponse> postBlockList(
             @PathVariable("postId") int postId){
+
         return ApiResponse.ok(postsService.getPostBlockListByPostId(postId));
     }
 
     // 수정
+    @PatchMapping("/{postId}")
+    public ApiResponse<String> updatePost(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("postId") int postId,
+            @RequestBody PostsRequest request){
+
+        int userId = postsService.extractUserIdFromHeader(authHeader);
+        postsService.udpatePost(userId, postId, request);
+
+        return ApiResponse.ok("수정 성공 했습니다.");
+    }
 
     // 삭제
 

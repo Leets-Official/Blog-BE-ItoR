@@ -20,6 +20,13 @@ public class PostBlocks {
         this.image_url = image_url;
     }
 
+    public PostBlocks(int id, int post_id, String content, String image_url){
+        this.id = id;
+        this.post_id = post_id;
+        this.content = content;
+        this.image_url = image_url;
+    }
+
 
     // 정적 메소드
     public static PostBlocks createPostBlock(int post_id, String content, String image_url){
@@ -29,6 +36,20 @@ public class PostBlocks {
     public static PostBlocks fromResultSet(ResultSet rs) {
         try {
             return new PostBlocks(
+                    rs.getInt("post_id"),
+                    rs.getString("content"),
+                    rs.getString("image_url")
+            );
+        } catch (SQLException e){
+
+            throw new CustomException(ErrorCode.DATABASE_ERROR);
+        }
+    }
+
+    public static PostBlocks fromResultSetWithId(ResultSet rs) {
+        try {
+            return new PostBlocks(
+                    rs.getInt("id"),
                     rs.getInt("post_id"),
                     rs.getString("content"),
                     rs.getString("image_url")
