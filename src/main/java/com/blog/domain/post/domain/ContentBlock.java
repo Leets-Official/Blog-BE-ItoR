@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContentBlock {
-	private String type;
+	private ContentType type;
 	private String value;
 
 	public ContentBlock() {
@@ -12,12 +12,12 @@ public class ContentBlock {
 
 	// 객체로 역직렬화 하기 위함
 	@JsonCreator
-	public ContentBlock(@JsonProperty("type") String type, @JsonProperty("value") String value) {
+	public ContentBlock(@JsonProperty("type") ContentType type, @JsonProperty("value") String value) {
 		this.type = type;
 		this.value = value;
 	}
 
-	public String getType() {
+	public ContentType getType() {
 		return type;
 	}
 
@@ -30,8 +30,10 @@ public class ContentBlock {
 		this.value = newValue;
 	}
 
-	public void updateType(String newType) {
+	public void updateType(ContentType newType) {
 		this.type = newType;
 	}
+
+
 
 }
