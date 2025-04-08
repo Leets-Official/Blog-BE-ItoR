@@ -69,4 +69,10 @@ public class PostsRepository {
 
         jdbcTemplate.update(sql, subject, postId);
     }
+
+    public void deletePost(int postId){
+        String sql = "DELETE FROM posts WHERE id = ?";
+
+        jdbcTemplate.update(sql, postId);
+    }
 }

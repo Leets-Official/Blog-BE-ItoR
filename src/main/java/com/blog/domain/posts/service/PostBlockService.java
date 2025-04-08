@@ -70,4 +70,10 @@ public class PostBlockService {
             postBlockRepository.deletePostBlock(postBlockIdList.get(i).getPostBlocksId());
         }
     }
+
+    // 단락 삭제
+    public void deletePostBlock(int postId){
+
+        postBlockRepository.deletePostBlockByPostId(postId);
+    }
 }

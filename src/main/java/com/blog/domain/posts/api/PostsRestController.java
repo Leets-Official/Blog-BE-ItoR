@@ -55,11 +55,20 @@ public class PostsRestController {
             @RequestBody PostsRequest request){
 
         int userId = postsService.extractUserIdFromHeader(authHeader);
-        postsService.udpatePost(userId, postId, request);
+        postsService.updatePost(userId, postId, request);
 
         return ApiResponse.ok("수정 성공 했습니다.");
     }
 
     // 삭제
+    @DeleteMapping("/{postId}")
+    public ApiResponse<String> updatePost(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("postId") int postId){
 
+        int userId = postsService.extractUserIdFromHeader(authHeader);
+        postsService.deletePost(userId, postId);
+
+        return ApiResponse.ok("삭제 성공 했습니다.");
+    }
 }

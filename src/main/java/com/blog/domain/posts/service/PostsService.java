@@ -11,6 +11,7 @@ import com.blog.domain.posts.domain.repository.PostsRepository;
 import com.blog.domain.users.service.TokenService;
 import com.blog.domain.users.service.UsersService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class PostsService {
 
     // userId 추출
     public int extractUserIdFromHeader(String authHeader){
+
         return tokenService.extractUserIdFromHeader(authHeader);
     }
 
@@ -69,13 +71,15 @@ public class PostsService {
     }
 
     // 게시글 수정 - 자신만 수정 가능
-    public void udpatePost(int userId, int postId, PostsRequest request){
+    @Transactional
+    public void updatePost(int userId, int postId, PostsRequest request){
 
         validatePostOwnership(userId, postId);
         postsRepository.updatePost(postId, request.subject());
         postBlockService.updatePostBlock(postId, request.blocks());
     }
 
+    // 글쓴이와 사용자 같은지
     public void validatePostOwnership(int userId, int postId) {
         int ownerId = postsRepository.getPostUserId(postId);
 
@@ -83,5 +87,14 @@ public class PostsService {
 
             throw new CustomException(ErrorCode.NO_EDIT_PERMISSION);
         }
+    }
+
+    // 게시글 삭제
+    @Transactional
+    public void deletePost(int userId, int postId){
+
+        validatePostOwnership(userId, postId);
+        postsRepository.deletePost(postId);
+        postBlockService.deletePostBlock(postId);
     }
 }

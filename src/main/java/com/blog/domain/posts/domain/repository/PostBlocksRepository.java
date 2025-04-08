@@ -50,4 +50,10 @@ public class PostBlocksRepository {
 
         jdbcTemplate.update(sql, id);
     }
+
+    public void deletePostBlockByPostId(int postId){
+        String sql = "DELETE FROM post_blocks WHERE post_id = ?";
+
+        jdbcTemplate.update(sql, postId);
+    }
 }
