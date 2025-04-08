@@ -35,9 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-# 환경 설정 및 민감 파일
-.env
-application.properties
-*.key
-*.pem
