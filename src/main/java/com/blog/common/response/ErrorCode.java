@@ -8,7 +8,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."),
     // 403 Forbidden
     Forbidden(403, HttpStatus.FORBIDDEN, "접속 권한이 없습니다."),
-    NO_EDIT_PERMISSION(403, HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
+    NO_EDIT_PERMISSION(403, HttpStatus.FORBIDDEN, "권한이 없습니다."),
 
     // 400 Bad Request
     BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
