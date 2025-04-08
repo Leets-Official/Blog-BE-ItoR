@@ -26,7 +26,7 @@ public enum ErrorCode {
     // JWT
     SIGNATURE_GENERATION_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "JWT 서명 생성 중 오류가 발생했습니다."),
     TOKEN_PARSING_FAILED(400, HttpStatus.BAD_REQUEST, "JWT 토큰 파싱 중 오류가 발생했습니다."),
-    INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
+    INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "로그인이 만료되었거나 유효하지 않은 토큰입니다. 다시 로그인해주세요."),
     EXPIRED_TOKEN(401, HttpStatus.UNAUTHORIZED, "JWT 토큰이 만료되었습니다."),
     TOKEN_USERID_EXTRACTION_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "JWT 토큰에서 사용자 ID 추출 중 오류가 발생했습니다."),
     TOKEN_EMAIL_EXTRACTION_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "JWT 토큰에서 이메일 추출 중 오류가 발생했습니다."),

@@ -107,10 +107,10 @@ public class JwtUtil {
     }
 
     // 토큰에서 UserId 추출
-    public Long getUserIdFromToken(String token) {
+    public int getUserIdFromToken(String token) {
         try {
             Map<String, Object> claims = getClaims(token);
-            return ((Number) claims.get("userId")).longValue();
+            return ((Number) claims.get("userId")).intValue();
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(ErrorCode.TOKEN_USERID_EXTRACTION_FAILED);

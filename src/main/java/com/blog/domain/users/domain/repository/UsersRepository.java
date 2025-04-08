@@ -161,4 +161,11 @@ public class UsersRepository {
             throw new CustomException(ErrorCode.NOT_FOUND_END_POINT);
         }
     }
+
+    // 닉네임 반환
+    public String getUserNicknameByUserId(int userId){
+        String sql = "SELECT nickname FROM users WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(sql,String.class, userId);
+    }
 }
