@@ -119,4 +119,10 @@ public class UsersService {
 
         return usersRepository.getUsersByName(name);
     }
+
+    // 닉네임 반환
+    public String getUserNicknameByUserId(int userId){
+
+        return usersRepository.getUserNicknameByUserId(userId);
+    }
 }
