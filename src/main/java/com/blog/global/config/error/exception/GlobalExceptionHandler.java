@@ -3,11 +3,13 @@ package com.blog.global.config.error.exception;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.blog.global.common.dto.GlobalResponseDto;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,6 +34,17 @@ public class GlobalExceptionHandler {
 		String errorMessage = ex.getBindingResult().getFieldErrors().stream()
 			.map(error -> error.getDefaultMessage())
 			.collect(Collectors.joining(", "));
+		return ResponseEntity.badRequest().body(GlobalResponseDto.error(errorMessage));
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<GlobalResponseDto<Void>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+		// ex.getCause() 로 내부에 InvalidFormatException이 있을 수 있음
+		String errorMessage = "입력 데이터 형식이 올바르지 않습니다.";
+		if (ex.getCause() instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException) {
+			errorMessage = "입력된 값 중 잘못된 형식이 있습니다: " +
+				((com.fasterxml.jackson.databind.exc.InvalidFormatException) ex.getCause()).getValue();
+		}
 		return ResponseEntity.badRequest().body(GlobalResponseDto.error(errorMessage));
 	}
 
