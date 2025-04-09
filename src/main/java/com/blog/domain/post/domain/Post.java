@@ -54,4 +54,12 @@ public class Post {
 		return modifiedAt;
 	}
 
+	public boolean isDeleted() {
+		return this.getDeletedAt() != null;
+	}
+
+	public boolean isWriter(int userId) {
+		return this.userId == userId;
+	}
+
 }
