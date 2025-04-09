@@ -32,7 +32,8 @@ public class PostService {
 	private final UserService userService;
 	//댓글 추후 추가 예정
 
-	public PostService(PostRepository postRepository, PostImageRepository postImageRepository, ObjectMapper objectMapper , UserService userService) {
+	public PostService(PostRepository postRepository, PostImageRepository postImageRepository,
+		ObjectMapper objectMapper, UserService userService) {
 		this.postRepository = postRepository;
 		this.postImageRepository = postImageRepository;
 		this.objectMapper = objectMapper;
@@ -40,21 +41,22 @@ public class PostService {
 	}
 
 	@Transactional //글 생성
-	public boolean createPost(int userId, PostRequestDto postRequestDto) {
+	public void createPost(int userId, PostRequestDto postRequestDto) {
 		String contentJson = serialize(postRequestDto.getContentBlocks());
 
 		Post post = new Post(0, userId, postRequestDto.getTitle(), contentJson, now(), now(), null);
 		boolean inserted = postRepository.insert(post);
 		if (!inserted) {
-			return false;
+			throw new CommonException(ErrorCode.POST_CREATE_FAILED);
 		}
+
 		for (ContentBlock block : postRequestDto.getContentBlocks()) {
-			if("image".equals(block.getType())) {
+			if ("image".equals(block.getType())) {
 				PostImage image = new PostImage(0, post.getPostId(), block.getValue(), now());
 				postImageRepository.insert(image);
 			}
 		}
-		return true;
+
 	}
 
 	// 게시물 조회

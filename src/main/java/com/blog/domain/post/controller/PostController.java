@@ -45,12 +45,8 @@ public class PostController {
 		if (userIdStr == null) {
 			return ResponseEntity.badRequest().body(GlobalResponseDto.error("유효하지 않은 토큰입니다."));
 		}
-
 		int userId = Integer.parseInt(userIdStr);
-		boolean success = postService.createPost(userId, dto);
-		if (!success) {
-			return ResponseEntity.internalServerError().body(GlobalResponseDto.error("게시글 생성 실패"));
-		}
+		postService.createPost(userId, dto);
 
 		return ResponseEntity.ok(GlobalResponseDto.success(null));
 	}
