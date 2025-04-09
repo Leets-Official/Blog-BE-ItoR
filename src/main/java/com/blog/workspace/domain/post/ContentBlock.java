@@ -14,7 +14,7 @@ public class ContentBlock {
     private int ord;
 
     /// 생성자
-    public ContentBlock(Long id, Long postId,ContentType type, String content, int ord) {
+    private ContentBlock(Long id, Long postId,ContentType type, String content, int ord) {
         this.id = id;
         this.postId = postId;
         this.type = type;

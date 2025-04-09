@@ -31,7 +31,7 @@ public class PostListResponse {
 
 
     // 생성자
-    public PostListResponse(Long id, String title, String thumbnail, String createdAt, Integer commentCount, UserPostResponse user, String content) {
+    private PostListResponse(Long id, String title, String thumbnail, String createdAt, Integer commentCount, UserPostResponse user, String content) {
 
         this.id = id;
         this.title = title;

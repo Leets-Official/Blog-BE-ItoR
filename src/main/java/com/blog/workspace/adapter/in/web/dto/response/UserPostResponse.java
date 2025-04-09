@@ -9,7 +9,7 @@ public class UserPostResponse {
     private String authorThumbnail;
 
     // 생성자
-    public UserPostResponse(String author, String authorThumbnail) {
+    private UserPostResponse(String author, String authorThumbnail) {
         this.author = author;
         this.authorThumbnail = authorThumbnail;
     }

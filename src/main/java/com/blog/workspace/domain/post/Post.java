@@ -12,7 +12,7 @@ public class Post extends BaseDomain {
 
 
     /// 생성자
-    public Post(Long id, Long userId, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Post(Long id, Long userId, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
         this.userId = userId;

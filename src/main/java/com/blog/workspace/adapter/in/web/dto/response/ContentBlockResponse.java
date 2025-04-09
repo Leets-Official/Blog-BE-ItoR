@@ -11,7 +11,7 @@ public class ContentBlockResponse {
     private int ord;
 
     // 생성자
-    public ContentBlockResponse(String content, int ord) {
+    private ContentBlockResponse(String content, int ord) {
         this.content = content;
         this.ord = ord;
     }

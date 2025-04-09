@@ -3,13 +3,11 @@ package com.blog.workspace.adapter.in.web.dto.response;
 import com.blog.workspace.domain.post.ContentBlock;
 import com.blog.workspace.domain.post.Post;
 import com.blog.workspace.domain.user.User;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
-@JsonPropertyOrder({"id", "user", "title", "content", "commentCount", "createdAt"})
 public class PostDetailResponse {
 
     /*
@@ -32,7 +30,7 @@ public class PostDetailResponse {
     private Integer commentCount;
 
     // 생성자
-    public PostDetailResponse(Long id, String title, String createdAt, Integer commentCount, UserPostResponse user, List<ContentBlockResponse> content) {
+    private PostDetailResponse(Long id, String title, String createdAt, Integer commentCount, UserPostResponse user, List<ContentBlockResponse> content) {
         this.id = id;
         this.title = title;
         this.content = content;
