@@ -2,6 +2,7 @@ package com.blog.domain.user.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -18,4 +19,9 @@ public class UserService {
 		this.userRepository = userRepository;
 	}
 
+	public String findNicknameByUserId(int userId) {
+		Optional<User> userOpt = userRepository.findById(userId);
+		return userOpt.map(User::getNickName)
+			.orElse(null);
+	}
 }

@@ -27,6 +27,14 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
+	public Optional<User> findById(int userId) {
+		String sql = "SELECT * FROM users WHERE userId = ?";
+		return jdbc.query(sql, userRowMapper(), userId)
+			.stream()
+			.findFirst();
+	}
+
+	@Override
 	public boolean existsByEmail(String email) {
 		String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
 		Integer count = jdbc.queryForObject(sql, Integer.class, email);

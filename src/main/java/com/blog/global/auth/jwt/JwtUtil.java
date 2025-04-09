@@ -83,6 +83,13 @@ public class JwtUtil {
 		}
 	}
 
+	public String parseUserIdFromBearerToken(String bearerToken) {
+		if (bearerToken == null || !bearerToken.startsWith("Bearer ")) return null;
+		String rawToken = bearerToken.substring(7);
+		return extractUserId(rawToken);
+	}
+
+
 	private String extractValueFromJson(String json, String key) {
 		String search = "\"" + key + "\":";
 		int start = json.indexOf(search);
