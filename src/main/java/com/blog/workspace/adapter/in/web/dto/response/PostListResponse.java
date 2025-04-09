@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"id","user","title","thumbnail","content","commentCount","createdAt"})
 public class PostListResponse {
 
     /*
@@ -46,8 +45,7 @@ public class PostListResponse {
     public static PostListResponse from(Post post, UserPostResponse user, String content, String thumbnail) {
 
         // 시간 관련 정보
-        DateFormatUtil dataFormatUtil = new DateFormatUtil();
-        String date = dataFormatUtil.formatPostDate(post.getCreated());
+        String date = DateFormatUtil.formatPostDate(post.getCreated());
 
         if (thumbnail == null) {
             thumbnail = "default.jpeg";

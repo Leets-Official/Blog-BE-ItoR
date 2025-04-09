@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class DateFormatUtil {
 
-    public String formatPostDate(LocalDateTime created) {
+    public static String formatPostDate(LocalDateTime created) {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(created, now);
 
