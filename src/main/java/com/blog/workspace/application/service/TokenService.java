@@ -94,7 +94,7 @@ public class TokenService implements TokenUseCase {
         }
 
         // "Bearer " 부분 제거
-        String token = authorizationHeader.substring(7);
+        String token = authorizationHeader.substring("Bearer ".length());
 
         return jwtTokenProvider.getUserIdFromToken(token);
     }
