@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -42,9 +44,15 @@ public class PostRepositoryImpl implements PostRepository {
 	}
 
 	@Override
-	public Post findById(int postId) {
+	public Optional<Post> findById(int postId) {
 		String sql = "SELECT * FROM posts WHERE postId = ? AND deletedAt IS NULL";
-		return jdbcTemplate.queryForObject(sql, postRowMapper(), postId);
+		try {
+			Post post = jdbcTemplate.queryForObject(sql, postRowMapper(), postId);
+			return Optional.of(post);
+		} catch (EmptyResultDataAccessException e) {
+			return Optional.empty();
+		}
+
 	}
 
 	@Override

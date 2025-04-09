@@ -61,10 +61,11 @@ public class PostService {
 
 	// 게시물 조회
 	public PostDetailResponseDto getPostById(int postId) {
-		Post post = postRepository.findById(postId);
-		if (post == null || post.getDeletedAt() != null) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
+
+		if (post.isDeleted())
 			throw new CommonException(ErrorCode.POST_NOT_FOUND);
-		}
 
 		List<ContentBlock> content = deserialize(post.getContent());
 		String nickname = userService.findNicknameByUserId(post.getUserId());
@@ -83,11 +84,13 @@ public class PostService {
 
 	@Transactional //게시물 수정
 	public void updatePost(int userId,int postId, PostRequestDto postRequestDto) {
-		Post post = postRepository.findById(postId);
-		if (post == null || post.getDeletedAt() != null) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
+
+		if (post.isDeleted())
 			throw new CommonException(ErrorCode.POST_NOT_FOUND);
-		}
-		if (post.getUserId() != userId) {
+
+		if (!post.isWriter(userId)) {
 			throw new CommonException(ErrorCode.FORBIDDEN_POST_ACCESS);
 		}
 		Post updated = new Post(postId, userId, postRequestDto.getTitle(), serialize(postRequestDto.getContentBlocks()), post.getCreatedAt(), now(), null);
@@ -100,13 +103,15 @@ public class PostService {
 
 	@Transactional
 	public void deletePost(int userId, int postId) {
-		Post post = postRepository.findById(postId);
-		if (post == null || post.getDeletedAt() != null)
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new CommonException(ErrorCode.POST_NOT_FOUND));
+
+		if (post.isDeleted())
 			throw new CommonException(ErrorCode.POST_NOT_FOUND);
 
-		if (post.getUserId() != userId)
+		if (!post.isWriter(userId)) {
 			throw new CommonException(ErrorCode.FORBIDDEN_POST_ACCESS);
-
+		}
 		boolean deleted = postRepository.softDelete(postId);
 		if (!deleted)
 			throw new CommonException(ErrorCode.POST_NOT_FOUND);
