@@ -20,6 +20,7 @@ public enum ErrorCode {
 
 	//post관련
 	POST_NOT_FOUND(404, "POST_NOT_FOUND", "게시글을 찾을 수 없습니다"),
+	POST_CREATE_FAILED(500,"POST_CREATE_FAILED", "게시글 생성에 실패했습니다."),
 	POST_UPDATE_FAILED(500,"POST_UPDATE_FAILED","게시글 수정에 실패했습니다"),
 	POST_DELETE_FAILED(500,"POST_DELETED_FAILED", "게시글 삭제에 실패했습니다"),
 	POST_ALREADY_DELETED(400, "POST_ALREADY_DELETED", "이미 삭제된 게시글입니다."),
