@@ -16,25 +16,19 @@ public class Comment extends BaseDomain {
 
     private final String content;
 
-    /// 서비스 내부 생성자
-    public Comment(Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated) {
+    /// 생성자
+    private Comment(Long id, Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated) {
 
-        super(created, updated);
+        super(created, updated);this.id = id;
         this.boardId = boardId;
         this.userId = userId;
         this.parentId = parentId;
         this.content = content;
     }
 
-    /// JDBC에서 Domain으로 변환할 때 생성자
-    public Comment(Long id, Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated) {
-
-        super(created, updated);
-        this.id = id;
-        this.boardId = boardId;
-        this.userId = userId;
-        this.parentId = parentId;
-        this.content = content;
+    /// 정적 팩토리 메서드
+    public static Comment of(Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated){
+        return new Comment(null, boardId, userId, parentId, content, created, updated);
     }
 
     /// @Getter
