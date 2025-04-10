@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.post.mapper.PostMapper">
+
+    <resultMap id="PostDetailMap" type="com.blog.post.vo.PostDetailVo">
+        <id property="id" column="post_num"/>
+        <result property="title" column="title"/>
+        <result property="writerName" column="nick"/>
+        <result property="writerProfileImg" column="profile_img_url"/>
+        <result property="createdAt" column="created_at"/>
+
+        <collection property="blocks" ofType="com.blog.post.vo.ContentBlockVo">
+            <result property="type" column="block_type"/>
+            <result property="content" column="content"/>
+            <result property="postImgUrl" column="post_img_url"/>
+            <result property="blockOrder" column="block_order"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectPostDetail" resultMap="PostDetailMap">
+        SELECT
+            p.post_num,
+            p.title,
+            p.created_at,
+            m.nick,
+            pi.profile_img_url,
+            cb.block_type,
+            cb.content,
+            cb.post_img_url,
+            cb.block_order
+        FROM POST p
+                 JOIN MEMBER m ON p.author_id = m.id
+                 LEFT JOIN PROFILE_IMG pi ON pi.member_id = m.id
+                 LEFT JOIN CONTENT_BLOCK cb ON cb.post_id = p.post_num
+        WHERE p.post_num = #{postNum}
+          AND p.is_deleted = false
+        ORDER BY cb.block_order ASC
+    </select>
+
+
+    <select id="selectPostList" resultType="com.blog.post.record.PostRecord">
+        SELECT
+            p.post_num AS id,
+            p.title,
+            SUBSTRING(p.title, 1, 100) AS previewContent,
+            NULL AS thumbnailUrl, -- 실제 콘텐츠 블록에서 가져올 수 있음 (추후 개선)
+            m.nick AS writerName,
+            pi.profile_img_url AS writerProfileImg,
+            p.created_at AS createdAt,
+            (
+                SELECT COUNT(*)
+                FROM COMMENT c
+                WHERE c.post_id = p.post_num AND c.is_deleted = false
+            ) AS commentCount
+        FROM POST p
+                 JOIN MEMBER m ON p.author_id = m.id
+                 LEFT JOIN PROFILE_IMG pi ON pi.member_id = m.id
+        WHERE p.is_deleted = false
+        ORDER BY p.created_at DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+
+
+
+
+
+    <insert id="insertPost" parameterType="com.blog.post.vo.PostWriteVo" useGeneratedKeys="true" keyProperty="postNum">
+        INSERT INTO POST (author_id, title, created_at, updated_at, is_deleted)
+        VALUES (#{authorId}, #{title}, NOW(), NOW(), false)
+    </insert>
+
+    <insert id="insertContentBlock">
+        INSERT INTO CONTENT_BLOCK (post_id, block_type, content, post_img_url, block_order)
+        VALUES
+        <foreach collection="blocks" item="block" separator=",">
+            (#{postId}, #{block.type}, #{block.content}, #{block.postImgUrl}, #{block.blockOrder})
+        </foreach>
+    </insert>
+
+
+
+
+    <update id="updatePostTitle">
+        UPDATE POST
+        SET title = #{title},
+            updated_at = NOW()
+        WHERE post_num = #{postId}
+    </update>
+
+    <delete id="deleteBlocks">
+        DELETE FROM CONTENT_BLOCK
+        WHERE post_id = #{postId}
+    </delete>
+
+    <select id="selectAuthorId" resultType="String">
+        SELECT author_id
+        FROM POST
+        WHERE post_num = #{postId}
+    </select>
+
+
+
+
+    <update id="deletePost">
+        UPDATE POST
+        SET is_deleted = true,
+            updated_at = NOW()
+        WHERE post_num = #{postId}
+    </update>
+
+
+
+</mapper>
