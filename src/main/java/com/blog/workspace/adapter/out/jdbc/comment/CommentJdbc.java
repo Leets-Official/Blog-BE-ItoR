@@ -13,7 +13,7 @@ public class CommentJdbc {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private CommentJdbc(Long postId, Long userId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private CommentJdbc(Long id, Long postId, Long userId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.postId = postId;
         this.userId = userId;
         this.content = content;
@@ -24,6 +24,7 @@ public class CommentJdbc {
     /// from
     public static CommentJdbc from(Comment comment) {
         return new CommentJdbc(
+                null,
                 comment.getPostId(),
                 comment.getUserId(),
                 comment.getContent(),
@@ -37,4 +38,32 @@ public class CommentJdbc {
         return Comment.fromDB(id, postId, userId, content, createdAt, updatedAt);
     }
 
+    /// DB용 및 수정용
+    public static CommentJdbc fromDB(Long id, Long postId, Long userId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return new CommentJdbc(id, postId, userId, content, createdAt, updatedAt);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }

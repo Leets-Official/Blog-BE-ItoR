@@ -12,7 +12,4 @@ public interface LoadCommentPort {
 
     // 게시글에 맞는 댓글 가져오기
     List<Comment> loadCommentsByPostId(Long postId);
-
-    // 댓글 작성자 여부 확인
-    boolean checkCommentByUserId(Long userId, Long commentId);
 }
