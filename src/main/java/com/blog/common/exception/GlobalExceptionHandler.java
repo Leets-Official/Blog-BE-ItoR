@@ -4,10 +4,7 @@ import com.blog.common.response.ApiResponse;
 import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
 import com.blog.common.response.ExceptionDto;
-import com.blog.workspace.application.service.exception.DuplicationUserException;
-import com.blog.workspace.application.service.exception.NotEmailException;
-import com.blog.workspace.application.service.exception.NotEqualLoginPassword;
-import com.blog.workspace.application.service.exception.NotSamePasswordException;
+import com.blog.workspace.application.service.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,7 +44,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ApiResponse<ExceptionDto> handleNoSuchElementException(NoSuchElementException e) {
 
-        CustomException exception = new CustomException(ErrorCode.NOT_FOUND_END_POINT, e.getMessage());
+        log.error(" 에러 로그 :{}", e.getMessage());
+
+        CustomException exception = new CustomException(ErrorCode.NOT_FOUND_END_POINT, null);
 
         return ApiResponse.fail(exception);
     }
@@ -57,12 +56,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicationUserException.class)
     public ApiResponse<ExceptionDto> handleException(DuplicationUserException e) {
 
+        log.error(" 에러 로그 :{}", e.getMessage());
+
         return ApiResponse.fail(new CustomException(ErrorCode.USER_BAD_REQUEST, e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NotSamePasswordException.class)
     public ApiResponse<ExceptionDto> handlePasswordException(NotSamePasswordException e) {
+
+        log.error(" 에러 로그 :{}", e.getMessage());
 
         return ApiResponse.fail(new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, e.getMessage()));
     }
@@ -72,6 +75,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotEqualLoginPassword.class)
     public ApiResponse<ExceptionDto> handlePasswordException(NotEqualLoginPassword e) {
 
+        log.error(" 에러 로그 :{}", e.getMessage());
+
         return ApiResponse.fail(new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, null));
     }
 
@@ -79,7 +84,34 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotEmailException.class)
     public ApiResponse<ExceptionDto> handlePasswordException(NotEmailException e) {
 
+        log.error(" 에러 로그 :{}", e.getMessage());
+
         return ApiResponse.fail(new CustomException(ErrorCode.NO_EMAIL, null));
+    }
+
+    /// 게시글 관련 에러처리
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotEqualPostUpdateException.class)
+    public ApiResponse<ExceptionDto> handlePostUpdateException(NotEqualPostUpdateException e) {
+        return ApiResponse.fail(new CustomException(ErrorCode.NO_UPDATE, null));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotEqualPostDeleteException.class)
+    public ApiResponse<ExceptionDto> handlePostDeleteException(NotEqualPostDeleteException e) {
+
+        log.error(" 에러 로그 :{}", e.getMessage());
+
+        return ApiResponse.fail(new CustomException(ErrorCode.NO_DELETE, null));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotRequestException.class)
+    public ApiResponse<ExceptionDto> handleNotRequestException(NotRequestException e) {
+
+        log.error(" 에러 로그 :{}", e.getMessage());
+
+        return ApiResponse.fail(new CustomException(ErrorCode.NO_UPDATE_PARAM, null));
     }
 
 }

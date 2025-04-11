@@ -8,24 +8,24 @@ public class Post extends BaseDomain {
 
     private Long id;
     private final Long userId;
-    private final String title;
-    private final String content;
+    private String title;
 
-    /// 서비스 내부 생성자
-    public Post(Long userId, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        super(createdAt, updatedAt);
-        this.userId = userId;
-        this.title = title;
-        this.content = content;
-    }
 
-    /// JDBC에서 Domain으로 변환할 때 생성자
-    public Post(Long id, Long userId, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    /// 생성자
+    private Post(Long id, Long userId, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
         this.userId = userId;
         this.title = title;
-        this.content = content;
+    }
+
+    /// 정적 팩토리 메서드 -> 서비스 계층 생성
+    public static Post of(Long userId, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return new Post(null, userId, title, createdAt, updatedAt);
+    }
+
+    public static Post fromDB(Long id, Long userId, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return new Post(id, userId, title, createdAt, updatedAt);
     }
 
     /// @Getter
@@ -41,11 +41,9 @@ public class Post extends BaseDomain {
         return title;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     /// 비즈니스 로직
-
+    public void changeTitle(String title) {
+        this.title = title;
+    }
 
 }

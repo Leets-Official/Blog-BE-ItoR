@@ -6,18 +6,12 @@
 - 도메인 관련 내용은 workspace로 정했습니다.
 
 ## ERD
-![Leets](https://github.com/user-attachments/assets/f8443409-4a54-4bfd-8c44-20b0457c43d2)
-
+![Leets](https://github.com/user-attachments/assets/95c1da3c-3fe7-4516-8687-3b5dbb0185dd)
 
 
 ## 프로젝트 구조
 ```
-├── README.md
-├── build.gradle
-├── docker
-│   └── docker-compose.yml
-├── settings.gradle
-└── src
+src
     ├── main
     │   ├── java
     │   │   └── com
@@ -25,93 +19,32 @@
     │   │           ├── BlogApplication.java
     │   │           ├── common
     │   │           │   ├── config
-    │   │           │   │   └── JdbcConfig.java
-    │   │           │   └── security
-    │   │           │       ├── jwt
-    │   │           │       │   ├── domain
-    │   │           │       │   │   └── JwtToken.java
-    │   │           │       │   ├── filter
-    │   │           │       │   │   └── JwtAuthenticationFilter.java
-    │   │           │       │   ├── handler
-    │   │           │       │   │   └── JwtAccessDeniedHandler.java
-    │   │           │       │   └── provider
-    │   │           │       │       └── JwtTokenProvider.java
-    │   │           │       └── oauth
-    │   │           │           ├── controller
-    │   │           │           │   └── OAuthController.java
-    │   │           │           ├── domain
-    │   │           │           │   └── OAuthUserInfo.java
-    │   │           │           ├── handler
-    │   │           │           │   ├── OAuth2AuthenticationFailureHandler.java
-    │   │           │           │   └── OAuth2AuthenticationSuccessHandler.java
-    │   │           │           └── service
-    │   │           │               └── CustomOAuth2UserService.java
+    │   │           │   ├── exception
+    │   │           │   ├── response
+    │   │           │   │   └── page
+    │   │           │   └── util
+    │   │           ├── security
+    │   │           │   └── jwt
     │   │           └── workspace
     │   │               ├── adapter
     │   │               │   ├── in
     │   │               │   │   └── web
-    │   │               │   │       ├── AuthController.java
-    │   │               │   │       ├── CommentController.java
-    │   │               │   │       ├── LoginController.java
-    │   │               │   │       ├── PostController.java
-    │   │               │   │       ├── UserController.java
     │   │               │   │       └── dto
+    │   │               │   │           ├── request
+    │   │               │   │           └── response
     │   │               │   └── out
-    │   │               │       ├── CommentPersistenceAdapter.java
-    │   │               │       ├── PostPersistenceAdapter.java
-    │   │               │       ├── UserPersistenceAdapter.java
-    │   │               │       └── jdbc
-    │   │               │           ├── BaseJdbc.java
-    │   │               │           ├── comment
-    │   │               │           │   ├── CommentJdbc.java
-    │   │               │           │   └── CommentJdbcRepository.java
-    │   │               │           ├── post
-    │   │               │           │   ├── PostJdbc.java
-    │   │               │           │   └── PostJdbcRepository.java
-    │   │               │           └── user
-    │   │               │               ├── UserJdbc.java
-    │   │               │               └── UserJdbcRepository.java
+    │   │               │       ├── jdbc
+    │   │               │       └── oauth
     │   │               ├── application
     │   │               │   ├── in
-    │   │               │   │   ├── AuthUseCase.java
-    │   │               │   │   ├── CommentUseCase.java
-    │   │               │   │   ├── LoginUseCase.java
-    │   │               │   │   ├── PostUseCase.java
-    │   │               │   │   └── UserUseCase.java
     │   │               │   ├── out
-    │   │               │   │   ├── comment
-    │   │               │   │   │   ├── DeleteCommentPort.java
-    │   │               │   │   │   ├── LoadCommentPort.java
-    │   │               │   │   │   └── SaveCommentPort.java
-    │   │               │   │   ├── post
-    │   │               │   │   │   ├── DeletePostPort.java
-    │   │               │   │   │   ├── LoadPostPort.java
-    │   │               │   │   │   └── SavePostPort.java
-    │   │               │   │   └── user
-    │   │               │   │       └── UserPort.java
     │   │               │   └── service
-    │   │               │       ├── CommentService.java
-    │   │               │       ├── LoginService.java
-    │   │               │       ├── PostService.java
-    │   │               │       └── UserService.java
+    │   │               │       └── exception
     │   │               └── domain
-    │   │                   ├── BaseDomain.java
-    │   │                   ├── comment
-    │   │                   │   └── Comment.java
-    │   │                   ├── post
-    │   │                   │   └── Post.java
-    │   │                   └── user
-    │   │                       ├── Social.java
-    │   │                       └── User.java
     │   └── resources
     │       ├── application.yml
     │       └── sql
     │           └── schema.sql
-    └── test
-        └── java
-            └── com
-                └── blog
-                    └── BlogApplicationTests.java
 ```
 
 ## 헥사곤 아키텍쳐

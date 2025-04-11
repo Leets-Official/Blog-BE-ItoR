@@ -1,5 +1,8 @@
 package com.blog.workspace.adapter.out;
 
+import com.blog.common.response.page.Page;
+import com.blog.common.response.page.Pageable;
+import com.blog.workspace.adapter.out.jdbc.post.PostJdbc;
 import com.blog.workspace.adapter.out.jdbc.post.PostJdbcRepository;
 import com.blog.workspace.application.out.post.DeletePostPort;
 import com.blog.workspace.application.out.post.LoadPostPort;
@@ -27,28 +30,45 @@ public class PostPersistenceAdapter implements SavePostPort, LoadPostPort, Delet
 
     @Override
     public Post savePost(Post post) {
-        return null;
+        var entity = PostJdbc.from(post);
+
+        return repository.save(entity)
+                .toDomain();
     }
 
     @Override
     public Post updatePost(Post post) {
-        return null;
+        var entity = PostJdbc.forDB(post);
+
+        return repository.update(entity)
+                .toDomain();
     }
 
     @Override
     public Optional<Post> loadPost(Long postId) {
-        return Optional.empty();
+
+        return repository.findById(postId)
+                .map(PostJdbc::toDomain);
     }
 
     @Override
-    public List<Post> loadPosts() {
-        return List.of();
+    public Page<Post> loadPosts(Pageable pageable, Long userId) {
+        List<Post> list = repository.findAllByUserId(pageable,userId)
+                .getContent().stream().map(PostJdbc::toDomain)
+                .toList();
+
+        return new Page<>(list, pageable, list.size());
     }
 
     @Override
     public boolean checkPostByUserId(Long userId, Long postId) {
-        return false;
+
+        return repository.existsByUserIdAndPostId(userId, postId);
     }
 
 
+    @Override
+    public void deletePostById(Long id) {
+        repository.deleteById(id);
+    }
 }
