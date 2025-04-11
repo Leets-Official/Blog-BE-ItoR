@@ -12,23 +12,25 @@ public class Comment extends BaseDomain {
 
     private final Long userId;
 
-    private final Long parentId;
-
-    private final String content;
+    private String content;
 
     /// 생성자
-    private Comment(Long id, Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated) {
+    private Comment(Long id, Long boardId, Long userId, String content, LocalDateTime created, LocalDateTime updated) {
 
         super(created, updated);this.id = id;
         this.boardId = boardId;
         this.userId = userId;
-        this.parentId = parentId;
         this.content = content;
     }
 
     /// 정적 팩토리 메서드
-    public static Comment of(Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated){
-        return new Comment(null, boardId, userId, parentId, content, created, updated);
+    public static Comment of(Long boardId, Long userId,String content, LocalDateTime created, LocalDateTime updated){
+        return new Comment(null, boardId, userId, content, created, updated);
+    }
+
+    /// 정적 팩토리 메서드
+    public static Comment fromDB(Long id,Long boardId, Long userId, String content, LocalDateTime created, LocalDateTime updated){
+        return new Comment(id, boardId, userId, content, created, updated);
     }
 
     /// @Getter
@@ -44,13 +46,12 @@ public class Comment extends BaseDomain {
         return userId;
     }
 
-    public Long getParentId() {
-        return parentId;
-    }
-
     public String getContent() {
         return content;
     }
 
     /// 비즈니스 로직
+    public void changeContent(String content) {
+        this.content = content;
+    }
 }

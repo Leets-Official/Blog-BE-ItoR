@@ -1,10 +1,9 @@
 package com.blog.workspace.application.in.comment;
 
-import com.blog.common.response.page.Page;
-import com.blog.common.response.page.Pageable;
 import com.blog.workspace.adapter.in.web.dto.request.CommentRequest;
-import com.blog.workspace.adapter.in.web.dto.request.CommentUpdateRequest;
 import com.blog.workspace.domain.comment.Comment;
+
+import java.util.List;
 
 public interface CommentUseCase {
 
@@ -18,13 +17,13 @@ public interface CommentUseCase {
     Comment saveComment(CommentRequest request, Long userId);
 
     /// 댓글 조회
-    // 게시판에 따른 댓글 목록 조회 (페이징 처리10개)
-    Page<Comment> loadCommentsByPost(Pageable pageable, Long postId);
+    // 게시판에 따른 댓글 목록 조회
+    List<Comment> loadCommentsByPost( Long postId);
 
     /// 댓글 수정
-    Comment updateComment(Long commentId, Long userId, CommentUpdateRequest request);
+    Comment updateComment(Long commentId, Long userId, String content);
 
-    /// 댓글 삭제
+    /// 댓글 삭제 ?
     void deleteComment(Long userId, Long commentId);
 
 }
