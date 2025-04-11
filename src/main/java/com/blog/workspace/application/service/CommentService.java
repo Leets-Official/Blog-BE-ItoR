@@ -24,21 +24,24 @@ public class CommentService implements CommentUseCase {
     private final LoadCommentPort loadPort;
     private final DeleteCommentPort deletePort;
 
-    private final LoadPostPort loadPostPort;
+    private final LoadPostPort postPort;
 
-    public CommentService(SaveCommentPort savePort, LoadCommentPort loadPort, DeleteCommentPort deletePort, LoadPostPort loadPostPort) {
+    public CommentService(SaveCommentPort savePort, LoadCommentPort loadPort, DeleteCommentPort deletePort, LoadPostPort postPort) {
         this.savePort = savePort;
         this.loadPort = loadPort;
         this.deletePort = deletePort;
-        this.loadPostPort = loadPostPort;
+        this.postPort = postPort;
     }
 
     @Override
     public Comment saveComment(CommentRequest request, Long userId) {
 
+        /// 게시글 예외처리
+        validatePostExists(request.postId());
+
+        /// 댓글 객체 생성
         LocalDateTime now = LocalDateTime.now();
 
-        // 댓글 객체 생성
         Comment comment = Comment.of
                 (request.postId(), userId, request.content(), now, now);
 
@@ -90,7 +93,7 @@ public class CommentService implements CommentUseCase {
 
     // 내부 함수
     private void validatePostExists(Long postId) {
-        loadPostPort.loadPost(postId)
+        postPort.loadPost(postId)
                 .orElseThrow(() -> new NoSuchElementException("해당하는 게시판이 존재하지 않습니다."));
     }
 
