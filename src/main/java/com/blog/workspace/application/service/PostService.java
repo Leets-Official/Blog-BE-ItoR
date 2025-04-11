@@ -14,8 +14,8 @@ import com.blog.workspace.application.out.post.DeletePostPort;
 import com.blog.workspace.application.out.post.LoadPostPort;
 import com.blog.workspace.application.out.post.SavePostPort;
 import com.blog.workspace.application.out.user.UserPort;
-import com.blog.workspace.application.service.exception.NotEqualPostDeleteException;
-import com.blog.workspace.application.service.exception.NotEqualPostUpdateException;
+import com.blog.workspace.application.service.exception.NotEqualDeleteException;
+import com.blog.workspace.application.service.exception.NotEqualUpdateException;
 import com.blog.workspace.application.service.exception.NotRequestException;
 import com.blog.workspace.domain.post.ContentBlock;
 import com.blog.workspace.domain.post.ContentType;
@@ -139,7 +139,7 @@ public class PostService implements PostUseCase {
 
         /// 유저 검증 조건 처리
         if (!post.getUserId().equals(userId)) {
-            throw new NotEqualPostUpdateException("글 작성자가 아니기에 게시글을 수정할 수 없습니다.");
+            throw new NotEqualUpdateException("글 작성자가 아니기에 게시글을 수정할 수 없습니다.");
         }
 
         ///  글 수정하기
@@ -156,7 +156,7 @@ public class PostService implements PostUseCase {
         boolean checked = loadPort.checkPostByUserId(userId, postId);
 
         if (!checked) {
-            throw new NotEqualPostDeleteException("게시글 작성자와 삭제 요청자가 서로 다릅니다.");
+            throw new NotEqualDeleteException("게시글 작성자와 삭제 요청자가 서로 다릅니다.");
         }
 
         // 게시글 자체 삭제
