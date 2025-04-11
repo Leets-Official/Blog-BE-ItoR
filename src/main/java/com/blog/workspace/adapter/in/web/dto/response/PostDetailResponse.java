@@ -5,6 +5,7 @@ import com.blog.workspace.domain.post.Post;
 import com.blog.workspace.domain.user.User;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,6 +29,8 @@ public class PostDetailResponse {
     private String createdAt;
 
     private Integer commentCount;
+
+    private List<CommentResponse> comments;
 
     // 생성자
     private PostDetailResponse(Long id, String title, String createdAt, Integer commentCount, UserPostResponse user, List<ContentBlockResponse> content) {
@@ -55,6 +58,19 @@ public class PostDetailResponse {
         return new PostDetailResponse(post.getId(), post.getTitle(), formattedDate, 0, userResponse, contentResponse);
     }
 
+    /// 로직
+    /*
+        댓글은 생성자가 아닌 기존 객체에 추가하는 형태로 구성한다.
+     */
+
+    public void changeComments(List<CommentResponse> comments){
+        this.comments = comments;
+    }
+
+    public void changeCommentCount(Integer commentCount){
+        this.commentCount = commentCount;
+    }
+
     /// @Getter
 
     public Long getId() {
@@ -73,11 +89,16 @@ public class PostDetailResponse {
         return content;
     }
 
+
     public String getCreatedAt() {
         return createdAt;
     }
 
     public Integer getCommentCount() {
         return commentCount;
+    }
+
+    public List<CommentResponse> getComments() {
+        return comments;
     }
 }

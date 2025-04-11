@@ -8,33 +8,29 @@ public class Comment extends BaseDomain {
 
     private Long id;
 
-    private final Long boardId;
+    private final Long postId;
 
     private final Long userId;
 
-    private final Long parentId;
+    private String content;
 
-    private final String content;
+    /// 생성자
+    private Comment(Long id, Long postId, Long userId, String content, LocalDateTime created, LocalDateTime updated) {
 
-    /// 서비스 내부 생성자
-    public Comment(Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated) {
-
-        super(created, updated);
-        this.boardId = boardId;
+        super(created, updated);this.id = id;
+        this.postId = postId;
         this.userId = userId;
-        this.parentId = parentId;
         this.content = content;
     }
 
-    /// JDBC에서 Domain으로 변환할 때 생성자
-    public Comment(Long id, Long boardId, Long userId, Long parentId, String content, LocalDateTime created, LocalDateTime updated) {
+    /// 정적 팩토리 메서드
+    public static Comment of(Long postId, Long userId,String content, LocalDateTime created, LocalDateTime updated){
+        return new Comment(null, postId, userId, content, created, updated);
+    }
 
-        super(created, updated);
-        this.id = id;
-        this.boardId = boardId;
-        this.userId = userId;
-        this.parentId = parentId;
-        this.content = content;
+    /// 정적 팩토리 메서드
+    public static Comment fromDB(Long id, Long postId, Long userId, String content, LocalDateTime created, LocalDateTime updated) {
+        return new Comment(id, postId, userId, content, created, updated);
     }
 
     /// @Getter
@@ -42,16 +38,12 @@ public class Comment extends BaseDomain {
         return id;
     }
 
-    public Long getBoardId() {
-        return boardId;
+    public Long getPostId() {
+        return postId;
     }
 
     public Long getUserId() {
         return userId;
-    }
-
-    public Long getParentId() {
-        return parentId;
     }
 
     public String getContent() {
@@ -59,4 +51,7 @@ public class Comment extends BaseDomain {
     }
 
     /// 비즈니스 로직
+    public void changeContent(String content) {
+        this.content = content;
+    }
 }

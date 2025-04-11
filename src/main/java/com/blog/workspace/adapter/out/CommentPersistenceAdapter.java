@@ -1,5 +1,6 @@
 package com.blog.workspace.adapter.out;
 
+import com.blog.workspace.adapter.out.jdbc.comment.CommentJdbc;
 import com.blog.workspace.adapter.out.jdbc.comment.CommentJdbcRepository;
 import com.blog.workspace.application.out.comment.DeleteCommentPort;
 import com.blog.workspace.application.out.comment.LoadCommentPort;
@@ -8,6 +9,7 @@ import com.blog.workspace.domain.comment.Comment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class CommentPersistenceAdapter implements SaveCommentPort, LoadCommentPort, DeleteCommentPort {
@@ -22,35 +24,40 @@ public class CommentPersistenceAdapter implements SaveCommentPort, LoadCommentPo
         this.repository = repository;
     }
 
-    /// 로직
     @Override
     public Comment saveComment(Comment comment) {
-        return null;
+        var entity = CommentJdbc.from(comment);
+
+        return repository.save(entity)
+                .toDomain();
     }
 
     @Override
     public Comment updateComment(Comment comment) {
-        return null;
+        var entity = CommentJdbc.fromDB(comment.getId(), comment.getPostId(), comment.getUserId(), comment.getContent(), comment.getCreated(), comment.getUpdated());
+
+        return repository.update(entity)
+                .toDomain();
     }
 
     @Override
     public void deleteById(Long commentId) {
-
+        repository.deleteById(commentId);
     }
 
     @Override
-    public List<Comment> loadCommentsByBoardId(Long boardId) {
-        return List.of();
+    public Optional<Comment> loadComment(Long commentId) {
+        return repository.findById(commentId)
+                .map(CommentJdbc::toDomain);
     }
 
     @Override
-    public List<Comment> loadCommentsByCommentId(String parentId) {
-        return List.of();
-    }
+    public List<Comment> loadCommentsByPostId(Long postId) {
 
-    @Override
-    public boolean checkCommentByUserId(Long userId, Long commentId) {
-        return false;
+        // 불변을 위해 .toList로
+        return repository.findByPostId(postId)
+                .stream().map(CommentJdbc::toDomain)
+                .toList();
     }
 
 }

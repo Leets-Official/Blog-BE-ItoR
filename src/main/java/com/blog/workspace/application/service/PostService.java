@@ -5,18 +5,22 @@ import com.blog.common.response.page.Pageable;
 import com.blog.workspace.adapter.in.web.dto.request.ContentRequest;
 import com.blog.workspace.adapter.in.web.dto.request.PostRequest;
 import com.blog.workspace.adapter.in.web.dto.request.PostUpdateRequest;
+import com.blog.workspace.adapter.in.web.dto.response.CommentResponse;
 import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
 import com.blog.workspace.adapter.in.web.dto.response.PostListResponse;
 import com.blog.workspace.adapter.in.web.dto.response.UserPostResponse;
+import com.blog.workspace.application.in.comment.CommentUseCase;
 import com.blog.workspace.application.in.post.PostUseCase;
+import com.blog.workspace.application.out.comment.LoadCommentPort;
 import com.blog.workspace.application.out.post.ContentBlockPort;
 import com.blog.workspace.application.out.post.DeletePostPort;
 import com.blog.workspace.application.out.post.LoadPostPort;
 import com.blog.workspace.application.out.post.SavePostPort;
 import com.blog.workspace.application.out.user.UserPort;
-import com.blog.workspace.application.service.exception.NotEqualPostDeleteException;
-import com.blog.workspace.application.service.exception.NotEqualPostUpdateException;
+import com.blog.workspace.application.service.exception.NotEqualDeleteException;
+import com.blog.workspace.application.service.exception.NotEqualUpdateException;
 import com.blog.workspace.application.service.exception.NotRequestException;
+import com.blog.workspace.domain.comment.Comment;
 import com.blog.workspace.domain.post.ContentBlock;
 import com.blog.workspace.domain.post.ContentType;
 import com.blog.workspace.domain.post.Post;
@@ -35,22 +39,26 @@ import java.util.NoSuchElementException;
 @Transactional
 public class PostService implements PostUseCase {
 
-    private static final Logger log = LogManager.getLogger(PostService.class);
     private final SavePostPort savePort;
     private final LoadPostPort loadPort;
     private final DeletePostPort deletePort;
 
     // 의존성
     private final ContentBlockPort contentPort;
+    private final LoadCommentPort commentPort;
+
     private final UserPort userPort;
+    private final CommentUseCase commentUseCase;
 
     /// 생성자
-    public PostService(SavePostPort savePort, LoadPostPort loadPort, DeletePostPort deletePort, ContentBlockPort contentPort, UserPort userPort) {
+    public PostService(SavePostPort savePort, LoadPostPort loadPort, DeletePostPort deletePort, ContentBlockPort contentPort, LoadCommentPort commentPort, UserPort userPort, CommentUseCase commentUseCase) {
         this.savePort = savePort;
         this.loadPort = loadPort;
         this.deletePort = deletePort;
         this.contentPort = contentPort;
+        this.commentPort = commentPort;
         this.userPort = userPort;
+        this.commentUseCase = commentUseCase;
     }
 
     @Override
@@ -84,13 +92,23 @@ public class PostService implements PostUseCase {
                 .orElseThrow(() -> new NoSuchElementException("해당 Id를 가진 게시글이 존재하지 않습니다."));
 
         // 게시글 작성자 조회
-        User user = userPort.findMe(post.getUserId())
-                .orElseThrow(() -> new NoSuchElementException("해당 게시글을 작성한 유저가 존재하지 않습니다."));
+        User user = getUser(post.getUserId());
 
         // 컨텐츠 블록 추가하기
         List<ContentBlock> contents = contentPort.loadBlocks(post.getId());
-        return PostDetailResponse.from(post, user, contents);
+
+        // 댓글 추가하기
+        List<CommentResponse> comments = getComments(post.getId());
+
+        /// 응답 DTO 
+        PostDetailResponse response = PostDetailResponse.from(post, user, contents);
+        response.changeComments(comments);
+        response.changeCommentCount(comments.size());
+
+        return response;
     }
+
+
 
     // 게시글 목록 조회
     @Override
@@ -116,7 +134,11 @@ public class PostService implements PostUseCase {
                     .map(ContentBlock::getContent)
                     .orElse(null);
 
-            PostListResponse response = PostListResponse.from(post, userResponse, contentBlock, thumbnail);
+            /// 댓글 개수 처리
+            List<Comment> comments = commentPort.loadCommentsByPostId(post.getId());
+            int commentCount = comments.size();
+
+            PostListResponse response = PostListResponse.from(post, userResponse, contentBlock, thumbnail, commentCount);
             arrayList.add(response);
         });
 
@@ -139,7 +161,7 @@ public class PostService implements PostUseCase {
 
         /// 유저 검증 조건 처리
         if (!post.getUserId().equals(userId)) {
-            throw new NotEqualPostUpdateException("글 작성자가 아니기에 게시글을 수정할 수 없습니다.");
+            throw new NotEqualUpdateException("글 작성자가 아니기에 게시글을 수정할 수 없습니다.");
         }
 
         ///  글 수정하기
@@ -156,7 +178,7 @@ public class PostService implements PostUseCase {
         boolean checked = loadPort.checkPostByUserId(userId, postId);
 
         if (!checked) {
-            throw new NotEqualPostDeleteException("게시글 작성자와 삭제 요청자가 서로 다릅니다.");
+            throw new NotEqualDeleteException("게시글 작성자와 삭제 요청자가 서로 다릅니다.");
         }
 
         // 게시글 자체 삭제
@@ -191,5 +213,34 @@ public class PostService implements PostUseCase {
         }
     }
 
+    /// 내부 함수
+    private User getUser(Long userId) {
+        return userPort.findMe(userId)
+                .orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
+    }
+
+    private List<CommentResponse> getComments(Long postId) {
+
+        /// 초기 설정
+        List<CommentResponse> commentResponses = new ArrayList<>();
+
+        /// 가져오기
+        List<Comment> comments = commentPort.loadCommentsByPostId(postId);
+
+        if (comments.isEmpty()){
+            return commentResponses;
+        }
+
+        comments.forEach(comment -> {
+            /// 유저 정보 처리
+            User commentUser = getUser(comment.getUserId());
+
+            /// 댓글 내용 처리
+            CommentResponse response = CommentResponse.from(comment, commentUser);
+            commentResponses.add(response);
+        });
+
+        return commentResponses;
+    }
 
 }
