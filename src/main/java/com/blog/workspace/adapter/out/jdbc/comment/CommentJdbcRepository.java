@@ -33,8 +33,11 @@ public class CommentJdbcRepository {
 
     public Optional<CommentJdbc> findById(Long id) {
         String sql = "SELECT * FROM comment WHERE id = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, CommentJdbcRowMapper(), id));
+        return jdbcTemplate.query(sql, CommentJdbcRowMapper(), id)
+                .stream()
+                .findFirst();
     }
+
 
     public List<CommentJdbc> findByPostId(Long postId) {
         String sql = "SELECT * FROM comment WHERE post_id = ? ORDER BY created_at ASC";

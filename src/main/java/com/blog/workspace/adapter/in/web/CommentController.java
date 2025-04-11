@@ -42,7 +42,7 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ApiResponse<String> deleteComment(@RequestUserId Long userId, @PathVariable Long commentId) {
 
-        commentService.deleteComment(commentId, userId);
+        commentService.deleteComment(userId, commentId);
 
         return ApiResponse.ok("댓글이 삭제 되었습니다.");
     }

@@ -14,6 +14,7 @@ public class CommentJdbc {
     private LocalDateTime updatedAt;
 
     private CommentJdbc(Long id, Long postId, Long userId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
         this.postId = postId;
         this.userId = userId;
         this.content = content;
