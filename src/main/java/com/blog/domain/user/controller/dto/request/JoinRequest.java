@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record JoinRequest(
         @Email
@@ -24,7 +24,7 @@ public record JoinRequest(
         String nickname,
 
         @NotNull
-        LocalDate birth,
+        LocalDateTime birth,
 
         @NotBlank
         @Size(max = 30)

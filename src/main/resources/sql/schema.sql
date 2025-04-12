@@ -33,6 +33,7 @@ CREATE TABLE `comment` (
 );
 
 CREATE TABLE post_content (
+
                               id BIGINT PRIMARY KEY AUTO_INCREMENT,
                               post_id BIGINT NOT NULL,
                               type VARCHAR(20) NOT NULL, -- TEXT or IMAGE

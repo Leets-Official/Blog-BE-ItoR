@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -31,10 +32,9 @@ public class UserRepository {
         String sql = "INSERT INTO user (email, password, name, nickname, introduction, birth, profile_image, provider) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        java.sql.Date sqlBirth = null;
-        if (joinUser.getBirth() != null) {
-            sqlBirth = java.sql.Date.valueOf(joinUser.getBirth());
-        }
+        LocalDateTime birth = joinUser.getBirth(); // LocalDateTime
+        java.sql.Date sqlBirth = (birth != null) ? java.sql.Date.valueOf(birth.toLocalDate()) : null;
+
 
         jdbcTemplate.update(
                 sql,
@@ -74,7 +74,7 @@ public class UserRepository {
                     rs.getString("password"),
                     rs.getString("name"),
                     rs.getString("nickname"),
-                    rs.getDate("birth") != null ? rs.getDate("birth").toLocalDate() : null,
+                    rs.getDate("birth") != null ? rs.getDate("birth").toLocalDate().atStartOfDay() : null,
                     rs.getString("introduction"),
                     rs.getString("profile_image"),
                     rs.getString("provider")

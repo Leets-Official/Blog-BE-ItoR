@@ -8,14 +8,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -53,7 +49,7 @@ public class PostRepository {
                         rs.getLong("id"),
                         rs.getLong("user_id"),
                         rs.getString("title"),
-                        rs.getTimestamp("created_at").toLocalDateTime().toLocalDate()
+                        rs.getTimestamp("created_at").toLocalDateTime()
                 ), postId
         ));
     }
@@ -67,11 +63,9 @@ public class PostRepository {
                     rs.getLong("user_id"),
                     rs.getString("title"),
                     rs.getTimestamp("created_at")
-                            .toLocalDateTime()
-                            .toLocalDate(),
+                            .toLocalDateTime(),
                     rs.getTimestamp("updated_at")
                             .toLocalDateTime()
-                            .toLocalDate()
             );
         }, userId);
     }

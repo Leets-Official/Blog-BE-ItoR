@@ -1,27 +1,27 @@
 package com.blog.global.common;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public abstract class BaseDomain {
 
-    protected LocalDate createdAt;
-    protected LocalDate updatedAt;
+    protected LocalDateTime createdAt;
+    protected LocalDateTime updatedAt;
 
-    public BaseDomain(LocalDate createdAt, LocalDate updatedAt) {
+    public BaseDomain(LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public BaseDomain(LocalDate createdAt) {
+    public BaseDomain(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     public BaseDomain() {}
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 

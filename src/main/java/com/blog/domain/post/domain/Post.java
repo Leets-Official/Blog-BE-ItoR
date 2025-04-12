@@ -2,13 +2,8 @@ package com.blog.domain.post.domain;
 
 import com.blog.domain.post.controller.dto.request.PostRequest;
 import com.blog.global.common.BaseDomain;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 
 public class Post extends BaseDomain {
 
@@ -18,7 +13,7 @@ public class Post extends BaseDomain {
     private int commentCount = 0;
 
     // 생성자
-    public Post(Long id, Long userId, String title, LocalDate createdAt) {
+    public Post(Long id, Long userId, String title, LocalDateTime createdAt) {
         super(createdAt);
         this.id = id;
         this.userId = userId;
@@ -32,7 +27,7 @@ public class Post extends BaseDomain {
         this.title = title;
     }
 
-    public Post(Long id, Long userId, String title, LocalDate createdAt, LocalDate updatedAt) {
+    public Post(Long id, Long userId, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
         this.id = id;
         this.userId = userId;
@@ -68,7 +63,7 @@ public class Post extends BaseDomain {
         this.title = title;
     }
 
-    public void updateUpdatedAt(LocalDate now) {
+    public void updateUpdatedAt(LocalDateTime now) {
         if (now == null) {
             throw new IllegalArgumentException("업데이트 시간은 비어있을 수 없습니다.");
         }

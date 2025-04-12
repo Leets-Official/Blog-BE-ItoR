@@ -5,7 +5,6 @@ import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.exception.CustomException;
 import com.blog.global.exception.ErrorCode;
-import com.blog.global.response.ApiResponse;
 import com.blog.global.security.PasswordUtil;
 import org.springframework.stereotype.Service;
 
