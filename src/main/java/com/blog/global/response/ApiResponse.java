@@ -28,3 +28,4 @@ public record ApiResponse<T>(
         return new ApiResponse<>(e.getErrorCode().getHttpStatus(), false, null, ExceptionDto.of(e.getErrorCode()));
     }
 }
+

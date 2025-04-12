@@ -2,7 +2,7 @@ package com.blog.domain.user.domain;
 
 import com.blog.global.common.BaseDomain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class User extends BaseDomain {
 
@@ -12,7 +12,7 @@ public class User extends BaseDomain {
     private String password;
     private String name;
     private String nickname;
-    private LocalDate birth;
+    private LocalDateTime birth;
     private String introduction;
     private String profileImage;
     private Provider provider;
@@ -20,7 +20,7 @@ public class User extends BaseDomain {
     public User() {
     }
 
-    public User(String email, String password, String name, String nickname, LocalDate birth, String introduction, String profileImage, String provider) {
+    public User(String email, String password, String name, String nickname, LocalDateTime birth, String introduction, String profileImage, String provider) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -40,7 +40,7 @@ public class User extends BaseDomain {
     }
 
     // 🔹 정적 팩토리 메서드 추가 (더 명확한 의미 전달)
-    public static User createSocialUser(String email, String password, String name, String nickname, LocalDate birth, String introduction, String profileImage, String provider) {
+    public static User createSocialUser(String email, String password, String name, String nickname, LocalDateTime birth, String introduction, String profileImage, String provider) {
         return new User(email, password, name, nickname, birth, introduction, profileImage, provider);
     }
 
@@ -75,7 +75,7 @@ public class User extends BaseDomain {
         return name;
     }
 
-    public LocalDate getBirth() {
+    public LocalDateTime getBirth() {
         return birth;
     }
 

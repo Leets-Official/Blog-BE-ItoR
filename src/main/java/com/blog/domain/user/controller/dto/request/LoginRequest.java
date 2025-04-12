@@ -3,18 +3,11 @@ package com.blog.domain.user.controller.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class LoginRequest {
-    private String email;
-    private String password;
+public record LoginRequest(
+        @Email
+        @NotBlank
+        String email,
 
-    @Email
-    @NotBlank
-    public String getEmail() {
-        return email;
-    }
-
-    @NotBlank
-    public String getPassword() {
-        return password;
-    }
-}
+        @NotBlank
+        String password
+) {}

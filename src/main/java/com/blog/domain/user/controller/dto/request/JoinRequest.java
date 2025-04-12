@@ -5,66 +5,39 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public class JoinRequest {
+public record JoinRequest(
+        @Email
+        @NotBlank
+        String email,
 
-    @Email
-    @NotBlank
-    private String email;
+        @NotBlank
+        String password,
 
-    @NotBlank
-    private String password;
+        @NotBlank
+        @Size(max = 10)
+        String name,
 
-    @NotBlank
-    @Size(max = 10)
-    private String name;
+        @NotBlank
+        @Size(max = 20)
+        String nickname,
 
-    @NotBlank
-    @Size(max = 20)
-    private String nickname;
+        @NotNull
+        LocalDateTime birth,
 
-    @NotNull
-    private LocalDate birth;
+        @NotBlank
+        @Size(max = 30)
+        String introduction,
 
-    @NotBlank
-    @Size(max = 30)
-    private String introduction;
+        String profileImage,
 
-    private String profileImage;
-
-    private String provider = "email";
-
-    // Getters
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public LocalDate getBirth() {
-        return birth;
-    }
-
-    public String getIntroduction() {
-        return introduction;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public String getProvider() {
-        return provider;
+        String provider
+) {
+    public JoinRequest {
+        // provider 기본값 설정
+        if (provider == null) {
+            provider = "email";
+        }
     }
 }
