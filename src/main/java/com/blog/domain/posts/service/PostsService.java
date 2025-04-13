@@ -18,23 +18,15 @@ import java.util.List;
 @Service
 public class PostsService {
 
-    private final TokenService tokenService;
     private final UsersService usersService;
     private final PostsRepository postsRepository;
     private final PostBlockService postBlockService;
 
-    public PostsService(TokenService tokenService, UsersService usersService,
+    public PostsService(UsersService usersService,
                         PostBlockService postBlockService, PostsRepository postsRepository){
-        this.tokenService = tokenService;
         this.usersService = usersService;
         this.postBlockService = postBlockService;
         this.postsRepository = postsRepository;
-    }
-
-    // userId 추출
-    public int extractUserIdFromHeader(String authHeader){
-
-        return tokenService.extractUserIdFromHeader(authHeader);
     }
 
     // 게시글 등록
