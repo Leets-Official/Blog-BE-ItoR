@@ -93,25 +93,9 @@ public class Users {
 
 
     // 정적 팩토리 메소드 - User 담기
-    public static Users fromResultSet(ResultSet rs) {
-        try {
-            return new Users(
-                    rs.getInt("id"),
-                    rs.getString("email"),
-                    rs.getString("name"),
-                    rs.getString("nickname"),
-                    rs.getString("password"),
-                    rs.getString("profile_image"),
-                    rs.getBoolean("social"),
-                    rs.getString("introduce"),
-                    rs.getObject("birth", LocalDate.class),
-                    rs.getObject("created_at", LocalDateTime.class),
-                    rs.getObject("updated_at", LocalDateTime.class)
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.DATABASE_ERROR);
-        }
+    public static Users of(int id, String email, String name, String nickname, String password, String profile_image,
+                           Boolean social, String introduce, LocalDate birth, LocalDateTime created_at, LocalDateTime updated_at) {
+        return new Users(id, email, name, nickname, password, profile_image, social, introduce, birth, created_at, updated_at);
     }
 
     // Getter & Setter

@@ -9,16 +9,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
     private final JwtUtil jwtUtil;
+    private final AdminConfig adminConfig;
 
-    public WebMvcConfig(JwtUtil jwtUtil) {
+    public WebMvcConfig(JwtUtil jwtUtil, AdminConfig adminConfig) {
         this.jwtUtil = jwtUtil;
+        this.adminConfig = adminConfig;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new PermissionInterceptor(jwtUtil))
+
+        registry.addInterceptor(new PermissionInterceptor(jwtUtil, adminConfig))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/auth/**", "/login/**", "/admin/**", "/users/**");
+                .excludePathPatterns("/auth/**", "/login/**", "/posts/list");
     }
 
 }
