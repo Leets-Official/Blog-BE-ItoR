@@ -1,12 +1,5 @@
 package com.blog.domain.posts.domain;
 
-import com.blog.common.response.CustomException;
-import com.blog.common.response.ErrorCode;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-
 public class PostBlocks {
     private int id;
     private int post_id;
@@ -33,32 +26,14 @@ public class PostBlocks {
         return new PostBlocks(post_id, content, image_url);
     }
 
-    public static PostBlocks fromResultSet(ResultSet rs) {
-        try {
-            return new PostBlocks(
-                    rs.getInt("post_id"),
-                    rs.getString("content"),
-                    rs.getString("image_url")
-            );
-        } catch (SQLException e){
-
-            throw new CustomException(ErrorCode.DATABASE_ERROR);
-        }
+    public static PostBlocks ofWithId(int id, int postId, String content, String imageUrl) {
+        return new PostBlocks(id, postId, content, imageUrl);
     }
 
-    public static PostBlocks fromResultSetWithId(ResultSet rs) {
-        try {
-            return new PostBlocks(
-                    rs.getInt("id"),
-                    rs.getInt("post_id"),
-                    rs.getString("content"),
-                    rs.getString("image_url")
-            );
-        } catch (SQLException e){
-
-            throw new CustomException(ErrorCode.DATABASE_ERROR);
-        }
+    public static PostBlocks of(int postId, String content, String imageUrl) {
+        return new PostBlocks(postId, content, imageUrl);
     }
+
 
     // Getter & Setter
     public void changePostId(int post_id) {

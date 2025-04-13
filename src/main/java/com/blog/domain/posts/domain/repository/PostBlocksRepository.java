@@ -27,13 +27,24 @@ public class PostBlocksRepository {
     public List<PostBlocks> getPostBlockListByPostId(int postId){
         String sql = "SELECT post_id, content, image_url FROM post_blocks WHERE post_id = ?";
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> PostBlocks.fromResultSet(rs), postId);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> PostBlocks.of(
+                        rs.getInt("post_id"),
+                        rs.getString("content"),
+                        rs.getString("image_url")
+                )
+                , postId);
     }
 
     public List<PostBlocks> getPostBlockListWithIdByPostId(int postId){
         String sql = "SELECT * FROM post_blocks WHERE post_id = ? ORDER BY id ";
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> PostBlocks.fromResultSetWithId(rs), postId);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> PostBlocks.ofWithId(
+                        rs.getInt("id"),
+                        rs.getInt("post_id"),
+                        rs.getString("content"),
+                        rs.getString("image_url")
+                )
+                , postId);
     }
 
     public void updatePostBlock(int id, PostBlocks postBlock){

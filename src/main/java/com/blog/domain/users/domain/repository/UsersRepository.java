@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Repository
 public class UsersRepository {
 
@@ -118,7 +120,19 @@ public class UsersRepository {
 
         try {
 
-            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Users.fromResultSet(rs),
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Users.of(
+                            rs.getInt("id"),
+                            rs.getString("email"),
+                            rs.getString("name"),
+                            rs.getString("nickname"),
+                            rs.getString("password"),
+                            rs.getString("profile_image"),
+                            rs.getBoolean("social"),
+                            rs.getString("introduce"),
+                            rs.getObject("birth", LocalDate.class),
+                            rs.getObject("created_at", LocalDateTime.class),
+                            rs.getObject("updated_at", LocalDateTime.class)
+                    ),
                     request.email(), hashedPassword);
         } catch (EmptyResultDataAccessException e) {
 
@@ -154,7 +168,19 @@ public class UsersRepository {
 
         try {
 
-            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Users.fromResultSet(rs), name);
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Users.of(
+                            rs.getInt("id"),
+                            rs.getString("email"),
+                            rs.getString("name"),
+                            rs.getString("nickname"),
+                            rs.getString("password"),
+                            rs.getString("profile_image"),
+                            rs.getBoolean("social"),
+                            rs.getString("introduce"),
+                            rs.getObject("birth", LocalDate.class),
+                            rs.getObject("created_at", LocalDateTime.class),
+                            rs.getObject("updated_at", LocalDateTime.class)
+                    ), name);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
 
