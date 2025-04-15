@@ -5,6 +5,7 @@ import com.blog.domain.comments.api.dto.response.CommentsResponse;
 import com.blog.domain.comments.domain.Comments;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.yaml.snakeyaml.tokens.CommentToken;
 
 import java.util.List;
 
@@ -42,5 +43,23 @@ public class CommentsRepository {
                 comment
         );
         }, postId);
+    }
+
+    public int getCommentsUserId(int commentId){
+        String sql = "SELECT user_id FROM comments WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(sql, int.class, commentId);
+    }
+
+    public void updateComment(int commentId, CommentsRequest request){
+        String sql = "UPDATE comments SET content = ? WHERE id = ?";
+
+        jdbcTemplate.update(sql, request.content(), commentId);
+    }
+
+    public void deleteComment(int commentId){
+        String sql = "DELETE FROM comments WHERE id = ?";
+
+        jdbcTemplate.update(sql, commentId);
     }
 }

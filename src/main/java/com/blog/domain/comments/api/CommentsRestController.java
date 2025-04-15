@@ -33,4 +33,30 @@ public class CommentsRestController {
         return ApiResponse.ok("댓글이 작성되었습니다.");
     }
 
+    // 수정
+    @PatchMapping("{commentId}")
+    public ApiResponse<String> updateComments(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable("commentId") int commentId,
+            @RequestBody CommentsRequest request){
+
+        int userId = tokenService.extractUserIdFromHeader(authorization);
+
+        commentsService.updateComment(userId, commentId, request);
+
+        return ApiResponse.ok("댓글 수정 성공했습니다.");
+    }
+
+    // 삭제
+    @DeleteMapping("{commentId}")
+    public ApiResponse<String> deleteComments(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable("commentId") int commentId){
+
+        int userId = tokenService.extractUserIdFromHeader(authorization);
+
+        commentsService.deleteComment(userId, commentId);
+
+        return ApiResponse.ok("댓글 삭제 성공했습니다.");
+    }
 }

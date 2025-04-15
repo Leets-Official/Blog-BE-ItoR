@@ -1,5 +1,7 @@
 package com.blog.domain.comments.service;
 
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.comments.api.dto.request.CommentsRequest;
 import com.blog.domain.comments.api.dto.response.CommentsResponse;
 import com.blog.domain.comments.domain.Comments;
@@ -27,5 +29,29 @@ public class CommentsService {
 
     public List<CommentsResponse> getCommentsListByPostId(int postId){
         return commentsRepository.getCommentsListByPostId(postId);
+    }
+
+    public void updateComment(int userId, int commentId, CommentsRequest request){
+
+        validateCommentOwnership(userId, commentId);
+
+        commentsRepository.updateComment(commentId, request);
+    }
+
+    public void deleteComment(int userId, int commentId){
+
+        validateCommentOwnership(userId, commentId);
+
+        commentsRepository.deleteComment(commentId);
+    }
+
+    // 글쓴이와 사용자 같은지
+    public void validateCommentOwnership(int userId, int commentId) {
+        int ownerId = commentsRepository.getCommentsUserId(commentId);
+
+        if (userId != ownerId) {
+
+            throw new CustomException(ErrorCode.NO_EDIT_PERMISSION);
+        }
     }
 }
