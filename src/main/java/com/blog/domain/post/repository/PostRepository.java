@@ -65,6 +65,7 @@ public class PostRepository {
                     rs.getLong("id"),
                     rs.getLong("user_id"),
                     rs.getString("title"),
+                    rs.getInt("comment_count"),
                     rs.getTimestamp("created_at")
                             .toLocalDateTime(),
                     rs.getTimestamp("updated_at")
