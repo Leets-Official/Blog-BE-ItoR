@@ -4,6 +4,7 @@ import com.blog.domain.post.controller.dto.request.PostRequest;
 import com.blog.global.common.BaseDomain;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class Post extends BaseDomain {
 
@@ -37,6 +38,7 @@ public class Post extends BaseDomain {
     public static Post of(Long userId, PostRequest postRequest) {
         return new Post(userId, postRequest.title());
     }
+
 
     // Getter
     public Long getId() {
@@ -73,6 +75,11 @@ public class Post extends BaseDomain {
     // commentCount +1
     public void incrementCommentCount() {
         this.commentCount++;
+    }
+
+    // commentCount -1
+    public void decreaseCommentCount(int count) {
+        this.commentCount = Math.max(0, this.commentCount - count);
     }
 
 
