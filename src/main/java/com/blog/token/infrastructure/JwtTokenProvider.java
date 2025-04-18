@@ -114,4 +114,34 @@ public class JwtTokenProvider {
     private String base64UrlEncode(byte[] bytes) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
+
+    public static String parseUserId(String token) {
+        String[] parts = token.split("\\.");
+        if (parts.length != 3) throw new RuntimeException("JWT 구조가 잘못됨");
+
+        String payload = parts[1];
+        String payloadJson = new String(Base64.getUrlDecoder().decode(payload), StandardCharsets.UTF_8);
+
+        String[] entries = payloadJson.replace("{", "")
+                .replace("}", "")
+                .replace("\"", "")
+                .split(",");
+
+        for (String entry : entries) {
+            if (entry.trim().startsWith("sub:")) {
+                return entry.split(":")[1].trim();
+            }
+        }
+
+        throw new RuntimeException("sub 필드가 없음");
+    }
+
+    public Integer extractUserId(String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        return Integer.parseInt(parseUserId(token));
+    }
+
+
 }
