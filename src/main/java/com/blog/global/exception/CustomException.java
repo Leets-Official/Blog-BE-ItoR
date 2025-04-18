@@ -9,6 +9,8 @@ public class CustomException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+
+
     public String getMessage() {
         return errorCode.getMessage();
     }

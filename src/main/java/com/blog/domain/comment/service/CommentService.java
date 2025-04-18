@@ -9,12 +9,16 @@ import com.blog.domain.post.domain.Post;
 import com.blog.domain.post.repository.PostRepository;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
+import com.blog.global.exception.CustomException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.blog.global.exception.ErrorCode.ACCESS_DENY;
+import static com.blog.global.exception.ErrorCode.POST_NOT_FOUND;
 
 @Service
 public class CommentService {
@@ -33,7 +37,7 @@ public class CommentService {
     @Transactional
     public void registerComment(@Valid CommentRequest request, Long userId) {
         Post post = postRepository.findById(request.postId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         // 댓글 생성 및 저장
         Comment comment = Comment.of(userId, request);
@@ -90,8 +94,10 @@ public class CommentService {
 
     private void validateCommentOwner(Comment comment, Long userId) {
         if (!comment.getUserId().equals(userId)) {
-            throw new RuntimeException("작성자만 수정할 수 있습니다.");
+            throw new CustomException(ACCESS_DENY);
         }
     }
+    
+    
 
 }
