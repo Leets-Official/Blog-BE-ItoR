@@ -42,17 +42,21 @@ public class PostRepository {
 
     // postId로 게시물 탐색
     public Optional<Post> findById(Long postId) {
-        String sql = "select * from post where id = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(
+        String sql = "SELECT * FROM post WHERE id = ?";
+        List<Post> results = jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> new Post(
                         rs.getLong("id"),
                         rs.getLong("user_id"),
                         rs.getString("title"),
                         rs.getTimestamp("created_at").toLocalDateTime()
-                ), postId
-        ));
+                ),
+                postId
+        );
+
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
+
 
     // 전체 조회
     public List<Post> findAllByUserId(Long userId) {
