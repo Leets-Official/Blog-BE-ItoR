@@ -1,5 +1,7 @@
 package com.blog.domain.post.service;
 
+import com.blog.domain.comment.controller.dto.response.CommentResponse;
+import com.blog.domain.comment.service.CommentService;
 import com.blog.domain.post.controller.dto.request.PostContentDto;
 import com.blog.domain.post.controller.dto.response.PostListResponse;
 import com.blog.domain.post.controller.dto.response.PostResponse;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,11 +30,13 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostContentRepository postContentRepository;
     private final UserRepository userRepository;
+    private final CommentService commentService;
 
-    public PostService(PostRepository postRepository, PostContentRepository postContentRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, PostContentRepository postContentRepository, UserRepository userRepository, CommentService commentService) {
         this.postRepository = postRepository;
         this.postContentRepository = postContentRepository;
         this.userRepository = userRepository;
+        this.commentService = commentService;
     }
 
 
@@ -64,7 +69,12 @@ public class PostService {
         List<PostContent> postContent = postContentRepository.findByPostIdOrderBySequence(postId);
 
         boolean isOwner = post.getUserId().equals(userId);// 본인 글인지 판단
-        return PostResponse.from(post, postContent, user, isOwner);
+        List<CommentResponse> commentResponse = commentService.getAllCommentsByPostId(postId);
+
+        return PostResponse.withComments(
+                PostResponse.from(post, postContent, user, isOwner),
+                commentResponse
+        );
     }
 
 
@@ -114,8 +124,15 @@ public class PostService {
         Post post = validatePost(postId);
         validateOwner(post, userId);
 
+        // 1. 댓글 먼저 삭제 (댓글 수 가져오기 전에)
+        int deletedCommentCount = commentService.deleteAllCommentsByPostId(postId);
+
+        // 2. 댓글 수 감소 (0으로 초기화 가능)
+        post.decreaseCommentCount(deletedCommentCount);
+
         deletePostContents(postId);
         deletePostEntity(post);
+        //댓글도 함께 삭제
     }
 
     private void deletePostContents(Long postId) {
@@ -142,6 +159,8 @@ public class PostService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_POST_ACCESS);
         }
     }
+
+
 
 
 }
