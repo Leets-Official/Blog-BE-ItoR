@@ -4,7 +4,6 @@ import com.blog.domain.post.controller.dto.request.PostRequest;
 import com.blog.global.common.BaseDomain;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class Post extends BaseDomain {
 

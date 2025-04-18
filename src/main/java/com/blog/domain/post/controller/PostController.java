@@ -1,8 +1,5 @@
 package com.blog.domain.post.controller;
 
-import com.blog.domain.comment.controller.dto.response.CommentResponse;
-import com.blog.domain.comment.domain.Comment;
-import com.blog.domain.comment.service.CommentService;
 import com.blog.domain.post.controller.dto.request.PostRequest;
 import com.blog.domain.post.controller.dto.response.PostListResponse;
 import com.blog.domain.post.controller.dto.response.PostResponse;
@@ -11,7 +8,6 @@ import com.blog.global.exception.CustomException;
 import com.blog.global.exception.ErrorCode;
 import com.blog.global.response.ApiResponse;
 import com.blog.global.security.aop.GetUserId;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 

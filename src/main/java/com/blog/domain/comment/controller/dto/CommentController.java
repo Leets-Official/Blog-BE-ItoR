@@ -16,11 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
-    private final PostService postService;
 
-    public CommentController(CommentService commentService, PostService postService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
-        this.postService = postService;
     }
 
     // 댓글 등록
