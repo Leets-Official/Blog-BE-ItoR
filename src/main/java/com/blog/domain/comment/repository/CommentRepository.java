@@ -34,9 +34,15 @@ public class CommentRepository {
     }
 
     // 댓글 삭제
-    public int deleteByPostId(Long postId) {
+    public int deleteByCommentId(Long commentId) {
+        String sql = "DELETE FROM comment WHERE id = ?";
+        return jdbcTemplate.update(sql, commentId);
+    }
+
+    // 모든 댓글 삭제
+    public void deleteAllByPostId(Long postId) {
         String sql = "DELETE FROM comment WHERE post_id = ?";
-        return jdbcTemplate.update(sql, postId); // 반환값은 삭제된 행 수
+        jdbcTemplate.update(sql, postId);
     }
 
     // 댓글 조회

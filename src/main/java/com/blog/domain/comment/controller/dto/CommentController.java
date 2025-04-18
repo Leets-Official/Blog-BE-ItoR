@@ -4,6 +4,7 @@ package com.blog.domain.comment.controller.dto;
 import com.blog.domain.comment.controller.dto.request.CommentRequest;
 import com.blog.domain.comment.controller.dto.request.CommentUpdatedRequest;
 import com.blog.domain.comment.service.CommentService;
+import com.blog.domain.post.service.PostService;
 import com.blog.global.response.ApiResponse;
 import com.blog.global.security.aop.GetUserId;
 import jakarta.validation.Valid;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
+    private final PostService postService;
 
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, PostService postService) {
         this.commentService = commentService;
+        this.postService = postService;
     }
 
     // 댓글 등록

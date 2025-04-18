@@ -11,6 +11,7 @@ import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,7 @@ public class CommentService {
     }
 
     // 댓글 등록
+    @Transactional
     public void registerComment(@Valid CommentRequest request, Long userId) {
         Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
@@ -37,10 +39,12 @@ public class CommentService {
         Comment comment = Comment.of(userId, request);
         commentRepository.save(comment);
 
-        post.incrementCommentCount(); // 내부적으로 count++ 해주는 메서드
+        postRepository.incrementCommentCount(request.postId());
+        System.out.println(post.getCommentCount());
     }
 
     // 댓글 수정
+    @Transactional
     public void updateComment(Long userId, Long commentId, CommentUpdatedRequest request) {
         Comment comment = getCommentsByCommentId(commentId);
         validateCommentOwner(comment, userId);
@@ -49,15 +53,22 @@ public class CommentService {
     }
 
     // 댓글 삭제
-    public int deleteComment(Long userId, Long commentId) {
+    @Transactional
+    public void deleteComment(Long userId, Long commentId) {
         Comment comment = getCommentsByCommentId(commentId);
         validateCommentOwner(comment, userId);
-        return commentRepository.deleteByPostId(commentId);
+
+        int count = commentRepository.deleteByCommentId(commentId); // 이름 수정
+        Long postId = comment.getPostId(); // postId 가져오기
+
+        postRepository.decreaseCommentCount(postId, count);
     }
 
+
     // 모든 댓글 삭제
-    public int deleteAllCommentsByPostId(Long postId) {
-        return commentRepository.deleteByPostId(postId);
+    @Transactional
+    public void deleteAllCommentsByPostId(Long postId) {
+        commentRepository.deleteAllByPostId(postId);
     }
 
     // 댓글 조회

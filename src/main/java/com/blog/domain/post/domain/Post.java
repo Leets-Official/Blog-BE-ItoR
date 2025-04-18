@@ -14,11 +14,12 @@ public class Post extends BaseDomain {
     private int commentCount = 0;
 
     // 생성자
-    public Post(Long id, Long userId, String title, LocalDateTime createdAt) {
+    public Post(Long id, Long userId, String title, int commentCount,LocalDateTime createdAt) {
         super(createdAt);
         this.id = id;
         this.userId = userId;
         this.title = title;
+        this.commentCount = commentCount;
         this.createdAt = createdAt;
     }
 
@@ -34,6 +35,8 @@ public class Post extends BaseDomain {
         this.userId = userId;
         this.title = title;
     }
+
+
 
     public static Post of(Long userId, PostRequest postRequest) {
         return new Post(userId, postRequest.title());
@@ -72,15 +75,5 @@ public class Post extends BaseDomain {
         this.updatedAt = now;
     }
 
-    // commentCount +1
-    public void incrementCommentCount() {
-        this.commentCount++;
-    }
-
-    // commentCount -1
-    public void decreaseCommentCount(int count) {
-        this.commentCount = Math.max(0, this.commentCount - count);
-    }
-
-
 }
+

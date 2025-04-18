@@ -124,15 +124,9 @@ public class PostService {
         Post post = validatePost(postId);
         validateOwner(post, userId);
 
-        // 1. 댓글 먼저 삭제 (댓글 수 가져오기 전에)
-        int deletedCommentCount = commentService.deleteAllCommentsByPostId(postId);
-
-        // 2. 댓글 수 감소 (0으로 초기화 가능)
-        post.decreaseCommentCount(deletedCommentCount);
-
+        commentService.deleteAllCommentsByPostId(postId);
         deletePostContents(postId);
         deletePostEntity(post);
-        //댓글도 함께 삭제
     }
 
     private void deletePostContents(Long postId) {
