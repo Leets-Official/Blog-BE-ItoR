@@ -3,6 +3,7 @@ package com.blog.domain.comment.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -50,6 +51,12 @@ public class CommentRepositoryImpl implements CommentRepository {
 
 	}
 
+	@Override
+	public Optional<Comment> findById(int commentId) {
+		String sql = "SELECT * FROM comment WHERE commentId = ?";
+		List<Comment> list = jdbcTemplate.query(sql, (rs, rn) -> mapRow(rs), commentId);
+		return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
+	}
 
 	private Comment mapRow(ResultSet rs) throws SQLException {
 		return new Comment(
