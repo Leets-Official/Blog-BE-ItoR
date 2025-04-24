@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.blog.domain.comment.domain.Comment;
-import com.blog.domain.post.domain.Post;
 
 @Repository
 public class CommentRepositoryImpl implements CommentRepository {
