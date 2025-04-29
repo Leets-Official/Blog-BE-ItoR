@@ -62,11 +62,12 @@ public class CommentService {
 	public List<CommentResponseDto> getCommentsByPost(int postId) {
 		return commentRepository.findByPostId(postId).stream()
 			.map(c -> {
-				User u = userService.findById(c.getUserId());
+				String nickname = userService.findNicknameByUserId(c.getUserId());
+				String profileUrl = userService.findProfileImageUrlByUserId(c.getUserId());
 				return new CommentResponseDto(
 					c.getCommentId(),
-					u.getNickname(),
-					u.getProfileImageUrl(),
+					nickname,
+					profileUrl,
 					c.getContent(),
 					c.getCreatedAt().toLocalDate()
 				);
