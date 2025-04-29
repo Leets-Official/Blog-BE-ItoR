@@ -13,7 +13,6 @@ public interface CommentRepository {
 	boolean update(Comment comment);
 	boolean delete(int commentId);
 	Optional<Comment> findById(int commentId);
-	List<CommentResponseDto> findResponsesByPostId(int postId);
 
 
 }
