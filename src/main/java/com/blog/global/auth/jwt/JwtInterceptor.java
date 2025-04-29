@@ -2,6 +2,9 @@ package com.blog.global.auth.jwt;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.blog.global.config.error.ErrorCode;
+import com.blog.global.config.error.exception.CommonException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -18,17 +21,13 @@ public class JwtInterceptor implements HandlerInterceptor {
 		String authHeader = request.getHeader("Authorization");
 
 		if( authHeader == null || !authHeader.startsWith("Bearer ")) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("올바르지 않은 Authorization Header");
-			return false;
+			throw new CommonException(ErrorCode.INVALID_TOKEN);
 		}
 
 		String token = authHeader.substring(7);
 
 		if (!jwtUtil.validateToken(token)) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("올바르지 않거나 만료된 토큰");
-			return false;
+			throw new CommonException(ErrorCode.INVALID_TOKEN);
 		}
 
 		String userId = jwtUtil.extractUserId(token);
