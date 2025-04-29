@@ -35,11 +35,7 @@ public class CommentController {
 	public ResponseEntity<GlobalResponseDto<Void>> createComment(@RequestHeader("Authorization") String bearerToken, @PathVariable int postId, @RequestBody
 		CommentRequestDto commentRequestDto) {
 		String userIdStr = jwtUtil.parseUserIdFromBearerToken(bearerToken);
-		if (userIdStr == null) {
-			return ResponseEntity
-				.badRequest()
-				.body(GlobalResponseDto.error("유효하지 않은 토큰입니다."));
-		}
+
 		int userId = Integer.parseInt(userIdStr);
 		commentService.addComment(userId, postId, commentRequestDto);
 		return ResponseEntity.ok(GlobalResponseDto.success(null));
@@ -58,44 +54,27 @@ public class CommentController {
 
 	// 댓글 수정
 	@PutMapping("/{commentId}")
-	public ResponseEntity<GlobalResponseDto<Void>> updateComment(@RequestHeader("Authorization") String bearerToken, @PathVariable                    int postId, @PathVariable int commentId, @RequestBody CommentRequestDto commentRequestDto
-	) {
-		String userIdStr = jwtUtil.parseUserIdFromBearerToken(bearerToken);
-		if (userIdStr == null) {
-			return ResponseEntity
-				.badRequest()
-				.body(GlobalResponseDto.error("유효하지 않은 토큰입니다."));
-		}
-		int userId = Integer.parseInt(userIdStr);
-		boolean ok = commentService.updateComment(userId, commentId, commentRequestDto);
-		if (!ok) {
-			return ResponseEntity
-				.status(403)
-				.body(GlobalResponseDto.error("댓글 수정 권한이 없습니다."));
-		}
+	public ResponseEntity<GlobalResponseDto<Void>> update(
+		@RequestHeader("Authorization") String bearer,
+		@PathVariable int postId,
+		@PathVariable int commentId,
+		@RequestBody  CommentRequestDto dto) {
+
+		int userId = Integer.parseInt(jwtUtil.parseUserIdFromBearerToken(bearer));
+		commentService.updateComment(userId, commentId, dto);
 		return ResponseEntity.ok(GlobalResponseDto.success(null));
 	}
 
 	// 댓글 삭제
 	@DeleteMapping("/{commentId}")
-	public ResponseEntity<GlobalResponseDto<Void>> deleteComment(
-		@RequestHeader("Authorization") String bearerToken,
+	public ResponseEntity<GlobalResponseDto<Void>> delete(
+		@RequestHeader("Authorization") String bearer,
 		@PathVariable int postId,
-		@PathVariable int commentId
-	) {
-		String userIdStr = jwtUtil.parseUserIdFromBearerToken(bearerToken);
-		if (userIdStr == null) {
-			return ResponseEntity
-				.badRequest()
-				.body(GlobalResponseDto.error("유효하지 않은 토큰입니다."));
-		}
-		int userId = Integer.parseInt(userIdStr);
-		boolean ok = commentService.deleteComment(userId, commentId);
-		if (!ok) {
-			return ResponseEntity
-				.status(403)
-				.body(GlobalResponseDto.error("댓글 삭제 권한이 없습니다."));
-		}
+		@PathVariable int commentId) {
+
+		int userId = Integer.parseInt(jwtUtil.parseUserIdFromBearerToken(bearer));
+		commentService.deleteComment(userId, commentId);
 		return ResponseEntity.ok(GlobalResponseDto.success(null));
 	}
+
 }
