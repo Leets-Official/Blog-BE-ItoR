@@ -26,6 +26,10 @@ public enum ErrorCode {
 	POST_ALREADY_DELETED(400, "POST_ALREADY_DELETED", "이미 삭제된 게시글입니다."),
 	FORBIDDEN_POST_ACCESS(403, "FORBIDDEN_POST_ACCESS", "해당 게시글에 대한 권한이 없습니다."),
 
+	//comments 관련
+	COMMENT_NOT_FOUND(404, "COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다."),
+	UNAUTHORIZED_COMMENT_ACCESS(403, "UNAUTHORZIED_COMMENT_ACCESS", "댓글에 관한 권한이 없습니다."),
+
 	//파싱관련
 	SERIALIZE_FAILED(500, "SERIALIZE_FAILED", "직렬화에 오류가 발생했습니다.");
 
