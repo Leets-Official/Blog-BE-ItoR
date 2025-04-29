@@ -21,8 +21,18 @@ public class WebConfig  implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new JwtInterceptor(jwtUtil))
-			.addPathPatterns("/api/**") // 인증이 필요한 경로들은 /api로 시작
-			.excludePathPatterns("/auth/**", "/posts/list/**"); //로그인,회원가입은 Jwt 검사 제외
-
+			// 인증이 필요한 모든 댓글·포스트 쓰기/수정/삭제 경로
+			.addPathPatterns(
+				"/posts/*/comments/**",
+				"/posts",         // POST /posts
+				"/posts/**"       // PUT/DELETE /posts/{id}
+			)
+			// 인증 불필요한 경로
+			.excludePathPatterns(
+				"/auth/**",
+				"/posts/list/**",    // GET /posts/list
+				"/posts/*/comments", // GET /posts/{id}/comments
+				"/posts/*/comments/" // trailing slash
+			);
 	}
 }
