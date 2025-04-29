@@ -13,6 +13,8 @@ import com.blog.domain.comment.dto.CommentResponseDto;
 import com.blog.domain.comment.repository.CommentRepository;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.service.UserService;
+import com.blog.global.config.error.ErrorCode;
+import com.blog.global.config.error.exception.CommonException;
 
 @Service
 public class CommentService {
@@ -32,31 +34,28 @@ public class CommentService {
 		commentRepository.save(c);
 	}
 
-	public boolean updateComment(int userId, int commentId, CommentRequestDto req) {
-		Optional<Comment> opt = commentRepository.findById(commentId);
-		if (opt.isEmpty() || opt.get().getUserId() != userId) {
-			return false;
-		}
-		Comment orig = opt.get();
-		LocalDateTime now = LocalDateTime.now();
+	public void updateComment(int loginUserId, int commentId, CommentRequestDto req) {
+		Comment c = commentRepository.findById(commentId)
+			.orElseThrow(() -> new CommonException(ErrorCode.COMMENT_NOT_FOUND));
+
+		if (c.getUserId() != loginUserId)
+			throw new CommonException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
+
 		Comment updated = new Comment(
-			commentId,
-			userId,
-			orig.getPostId(),
-			req.content(),
-			orig.getCreatedAt(),
-			now,
-			orig.getDeletedAt()
-		);
-		return commentRepository.update(updated);
+			commentId, loginUserId, c.getPostId(),
+			req.content(), c.getCreatedAt(), LocalDateTime.now(), c.getDeletedAt());
+
+		commentRepository.update(updated);
 	}
 
-	public boolean deleteComment(int userId, int commentId) {
-		Optional<Comment> opt = commentRepository.findById(commentId);
-		if (opt.isEmpty() || opt.get().getUserId() != userId) {
-			return false;
-		}
-		return commentRepository.delete(commentId);
+	public void deleteComment(int loginUserId, int commentId) {
+		Comment c = commentRepository.findById(commentId)
+			.orElseThrow(() -> new CommonException(ErrorCode.COMMENT_NOT_FOUND));
+
+		if (c.getUserId() != loginUserId)
+			throw new CommonException(ErrorCode.UNAUTHORIZED_COMMENT_ACCESS);
+
+		commentRepository.delete(commentId);
 	}
 
 	public List<CommentResponseDto> getCommentsByPost(int postId) {
