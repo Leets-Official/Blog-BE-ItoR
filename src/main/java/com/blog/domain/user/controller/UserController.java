@@ -33,16 +33,11 @@ public class UserController {
 	) {
 		int userId = Integer.parseInt(jwtUtil.parseUserIdFromBearerToken(bearerToken));
 
-		User updatedUser = userService.updateProfile(
+		UserProfileUpdateResponseDto response = userService.updateProfile(
 			userId,
-			requestDto.passWord(),
-			requestDto.nickname(),
+			requestDto.password(),
+			requestDto.nickName(),
 			requestDto.profileImageUrl()
-		);
-
-		UserProfileUpdateResponseDto response = new UserProfileUpdateResponseDto(
-			updatedUser.getNickName(),
-			updatedUser.getProfileImageUrl()
 		);
 
 		return ResponseEntity.ok(GlobalResponseDto.success(response));
