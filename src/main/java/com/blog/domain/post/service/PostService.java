@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.blog.domain.comment.dto.CommentResponseDto;
+import com.blog.domain.comment.service.CommentService;
 import com.blog.domain.post.domain.ContentBlock;
 import com.blog.domain.post.domain.Post;
 import com.blog.domain.post.domain.PostImage;
@@ -30,14 +32,16 @@ public class PostService {
 	private final PostImageRepository postImageRepository;
 	private final ObjectMapper objectMapper;
 	private final UserService userService;
+	private final CommentService commentService;
 	//댓글 추후 추가 예정
 
 	public PostService(PostRepository postRepository, PostImageRepository postImageRepository,
-		ObjectMapper objectMapper, UserService userService) {
+		ObjectMapper objectMapper, UserService userService, CommentService commentService) {
 		this.postRepository = postRepository;
 		this.postImageRepository = postImageRepository;
 		this.objectMapper = objectMapper;
 		this.userService = userService;
+		this.commentService = commentService;
 	}
 
 	@Transactional //글 생성
@@ -69,7 +73,9 @@ public class PostService {
 
 		List<ContentBlock> content = deserialize(post.getContent());
 		String nickname = userService.findNicknameByUserId(post.getUserId());
-		int commentCount = 0;
+		List<CommentResponseDto> comments =
+			commentService.getCommentsByPost(postId);
+		int commentCount = comments.size();
 
 		return new PostDetailResponseDto(
 			post.getPostId(),
@@ -78,7 +84,7 @@ public class PostService {
 			commentCount,
 			post.getTitle(),
 			content,
-			List.of()
+			comments
 		);
 	}
 

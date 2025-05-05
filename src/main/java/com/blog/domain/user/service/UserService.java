@@ -24,4 +24,10 @@ public class UserService {
 		return userOpt.map(User::getNickName)
 			.orElse(null);
 	}
+
+	public String findProfileImageUrlByUserId(int userId) {
+		Optional<User> userOpt = userRepository.findById(userId);
+		return userOpt.map(User::getProfileImageUrl)
+			.orElse(null);
+	}
 }

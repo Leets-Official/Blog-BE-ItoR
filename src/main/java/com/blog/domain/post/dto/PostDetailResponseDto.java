@@ -3,6 +3,7 @@ package com.blog.domain.post.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.blog.domain.comment.dto.CommentResponseDto;
 import com.blog.domain.post.domain.ContentBlock;
 
 public class PostDetailResponseDto {
@@ -13,10 +14,10 @@ public class PostDetailResponseDto {
 	private int commentCount;
 	private String title;
 	private List<ContentBlock> contentBlocks;
-	private List<Object> comments; // 댓글 구현 시 CommentResponseDto로 변
+	private List<CommentResponseDto> comments;
 
 	public PostDetailResponseDto(int postId, String nickname, LocalDateTime createdAt, int commentCount, String title,
-		List<ContentBlock> contentBlocks, List<Object> comments) {
+		List<ContentBlock> contentBlocks, List<CommentResponseDto> comments) {
 		this.postId = postId;
 		this.nickname = nickname;
 		this.createdAt = createdAt;
@@ -50,7 +51,7 @@ public class PostDetailResponseDto {
 		return contentBlocks;
 	}
 
-	public List<Object> getComments() {
+	public List<CommentResponseDto> getComments() {
 		return comments;
 	}
 
