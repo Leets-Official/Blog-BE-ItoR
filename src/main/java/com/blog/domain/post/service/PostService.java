@@ -1,5 +1,7 @@
 package com.blog.domain.post.service;
 
+import com.blog.domain.comment.controller.dto.response.CommentResponse;
+import com.blog.domain.comment.service.CommentService;
 import com.blog.domain.post.controller.dto.request.PostContentDto;
 import com.blog.domain.post.controller.dto.response.PostListResponse;
 import com.blog.domain.post.controller.dto.response.PostResponse;
@@ -27,11 +29,13 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostContentRepository postContentRepository;
     private final UserRepository userRepository;
+    private final CommentService commentService;
 
-    public PostService(PostRepository postRepository, PostContentRepository postContentRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, PostContentRepository postContentRepository, UserRepository userRepository, CommentService commentService) {
         this.postRepository = postRepository;
         this.postContentRepository = postContentRepository;
         this.userRepository = userRepository;
+        this.commentService = commentService;
     }
 
 
@@ -64,7 +68,12 @@ public class PostService {
         List<PostContent> postContent = postContentRepository.findByPostIdOrderBySequence(postId);
 
         boolean isOwner = post.getUserId().equals(userId);// 본인 글인지 판단
-        return PostResponse.from(post, postContent, user, isOwner);
+        List<CommentResponse> commentResponse = commentService.getAllCommentsByPostId(postId);
+
+        return PostResponse.withComments(
+                PostResponse.from(post, postContent, user, isOwner),
+                commentResponse
+        );
     }
 
 
@@ -114,6 +123,7 @@ public class PostService {
         Post post = validatePost(postId);
         validateOwner(post, userId);
 
+        commentService.deleteAllCommentsByPostId(postId);
         deletePostContents(postId);
         deletePostEntity(post);
     }
@@ -142,6 +152,8 @@ public class PostService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_POST_ACCESS);
         }
     }
+
+
 
 
 }
