@@ -2,12 +2,16 @@ package com.blog.domain.user.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.blog.domain.post.dto.PostSummaryDto;
+import com.blog.domain.post.repository.PostRepository;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.domain.UserType;
+import com.blog.domain.user.dto.UserInfoResponseDto;
 import com.blog.domain.user.dto.UserProfileUpdateResponseDto;
 import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.config.error.ErrorCode;
@@ -17,9 +21,11 @@ import com.blog.global.config.error.exception.CommonException;
 public class UserService {
 
 	private UserRepository userRepository;
+	private PostRepository postRepository;
 
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, PostRepository postRepository) {
 		this.userRepository = userRepository;
+		this.postRepository = postRepository;
 	}
 
 	public String findNicknameByUserId(int userId) {
@@ -47,6 +53,20 @@ public class UserService {
 		return new UserProfileUpdateResponseDto(
 			updatedUser.getNickName(),
 			updatedUser.getProfileImageUrl()
+		);
+	}
+
+	public UserInfoResponseDto getUserProfile(int userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
+
+		List<PostSummaryDto> posts = postRepository.findAllByUserId(userId);
+
+		return new UserInfoResponseDto(
+			user.getProfileImageUrl(),
+			user.getNickName(),
+			user.getIntroduce(),
+			posts
 		);
 	}
 
