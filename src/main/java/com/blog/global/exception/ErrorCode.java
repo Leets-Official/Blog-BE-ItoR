@@ -32,7 +32,8 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "요청한 댓글을 찾을 수 없습니다."),
     INVALID_FILE_FORMAT(4001, HttpStatus.BAD_REQUEST, "업로드된 파일 형식이 올바르지 않습니다."),
     INVALID_INPUT(4002, HttpStatus.BAD_REQUEST, "입력값이 올바르지 않습니다."),
-    ACCESS_DENY(4003, HttpStatus.FORBIDDEN, "접근이 거부되었습니다.");
+    ACCESS_DENY(4003, HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
+    NULL_VALUE(4004, HttpStatus.BAD_REQUEST, "Null 값이 들어왔습니다.");
 
 
     private final Integer code;

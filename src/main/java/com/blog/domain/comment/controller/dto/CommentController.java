@@ -4,7 +4,6 @@ package com.blog.domain.comment.controller.dto;
 import com.blog.domain.comment.controller.dto.request.CommentRequest;
 import com.blog.domain.comment.controller.dto.request.CommentUpdatedRequest;
 import com.blog.domain.comment.service.CommentService;
-import com.blog.domain.post.service.PostService;
 import com.blog.global.exception.CustomException;
 import com.blog.global.response.ApiResponse;
 import com.blog.global.security.aop.GetUserId;
