@@ -31,7 +31,10 @@ public enum ErrorCode {
 	UNAUTHORIZED_COMMENT_ACCESS(403, "c40302", "댓글에 관한 권한이 없습니다."),
 
 	//파싱관련
-	SERIALIZE_FAILED(500, "c50008", "직렬화에 오류가 발생했습니다.");
+	SERIALIZE_FAILED(500, "c50008", "직렬화에 오류가 발생했습니다."),
+
+	//헤더관련
+	MISSING_AUTH_HEADER(401, "c40103", "Authorization 헤더가 누락되었습니다.");
 
 	private final int status;
 	private final String code;

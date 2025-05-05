@@ -2,13 +2,16 @@ package com.blog.global.config.error.exception;
 
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.blog.global.common.dto.GlobalResponseDto;
+import com.blog.global.config.error.ErrorCode;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice
@@ -47,5 +50,13 @@ public class GlobalExceptionHandler {
 		}
 		return ResponseEntity.badRequest().body(GlobalResponseDto.error(errorMessage));
 	}
+
+	@ExceptionHandler(MissingRequestHeaderException.class)
+	public ResponseEntity<GlobalResponseDto<?>> handleMissingHeader(MissingRequestHeaderException ex) {
+		return ResponseEntity
+			.status(ErrorCode.MISSING_AUTH_HEADER.getStatus())
+			.body(GlobalResponseDto.fail(ErrorCode.MISSING_AUTH_HEADER));
+	}
+
 
 }
