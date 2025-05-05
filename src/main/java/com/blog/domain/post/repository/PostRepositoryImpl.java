@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import com.blog.domain.post.domain.Post;
+import com.blog.domain.post.dto.PostSummaryDto;
 
 @Repository
 public class PostRepositoryImpl implements PostRepository {
@@ -88,6 +89,20 @@ public class PostRepositoryImpl implements PostRepository {
 	public boolean softDelete(int postId) {
 		String sql = "UPDATE posts SET deletedAt = NOW() WHERE postId = ?";
 		return jdbcTemplate.update(sql,postId)==1;
+	}
+
+	@Override
+	public List<PostSummaryDto> findAllByUserId(int userId) {
+		String sql = "SELECT postId, title FROM posts WHERE userId = ? ORDER BY createdAt DESC";
+		return jdbcTemplate.query(sql, postSummaryRowMapper(), userId);
+	}
+
+
+	private RowMapper<PostSummaryDto> postSummaryRowMapper() {
+		return (rs, rowNum) -> new PostSummaryDto(
+			rs.getInt("postId"),
+			rs.getString("title")
+		);
 	}
 
 	private RowMapper<Post> postRowMapper() {
