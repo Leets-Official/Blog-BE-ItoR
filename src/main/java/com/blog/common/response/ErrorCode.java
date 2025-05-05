@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
     // 404 Not Found
+    NOT_FOUND_POST_ID(404, HttpStatus.NOT_FOUND, "존재하지 않는 postId입니다."),
     NOT_FOUND_END_POINT(404, HttpStatus.NOT_FOUND, "존재하지 않는 API입니다."),
     USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."),
     // 403 Forbidden

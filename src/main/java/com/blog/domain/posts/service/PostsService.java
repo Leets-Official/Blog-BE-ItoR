@@ -4,9 +4,11 @@ import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
 import com.blog.domain.comments.api.dto.response.CommentsResponse;
 import com.blog.domain.comments.service.CommentsService;
+import com.blog.domain.posts.api.dto.request.PostListRequest;
 import com.blog.domain.posts.api.dto.request.PostsRequest;
 import com.blog.domain.posts.api.dto.response.PostListResponse;
 import com.blog.domain.posts.api.dto.response.PostResponse;
+import com.blog.domain.posts.api.dto.response.PostSummary;
 import com.blog.domain.posts.domain.PostBlocks;
 import com.blog.domain.posts.domain.Posts;
 import com.blog.domain.posts.domain.repository.PostsRepository;
@@ -43,9 +45,13 @@ public class PostsService {
     }
 
     // 게시글 목록 조회
-    public PostListResponse getPostsList(){
+    public PostListResponse getPostsList(PostListRequest request){
+        int page = request.page() <= 0 ? 0 : request.page();
+        int offset = (page - 1) * 5;
 
-        return new PostListResponse(postsRepository.getPostsList());
+        List<PostSummary> posts = postsRepository.getPostsList(offset);
+
+        return new PostListResponse(postBlockService.mapPostBlocks(posts));
     }
 
     // 게시글 상세 조회

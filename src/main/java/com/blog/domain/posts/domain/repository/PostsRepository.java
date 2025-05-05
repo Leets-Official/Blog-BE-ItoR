@@ -1,6 +1,7 @@
 package com.blog.domain.posts.domain.repository;
 
 
+import com.blog.domain.posts.api.dto.response.PostBlockResponse;
 import com.blog.domain.posts.api.dto.response.PostSummary;
 import com.blog.domain.posts.domain.Posts;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,7 +11,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class PostsRepository {
@@ -37,17 +42,47 @@ public class PostsRepository {
         return keyHolder.getKey().intValue();
     }
 
-    public List<PostSummary> getPostsList(){
+    public List<PostSummary> getPostsList(int offset){
         String sql = " SELECT p.id AS post_id, p.subject, u.nickname, p.created_at FROM posts p " +
-                "JOIN users u ON p.user_id = u.id ";
-        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                "JOIN users u ON p.user_id = u.id ORDER BY p.id DESC LIMIT 5 OFFSET ?";
+        List<PostSummary> posts = jdbcTemplate.query(sql, new Object[]{offset}, (rs, rowNum) ->
                 new PostSummary(
                         rs.getInt("post_id"),
                         rs.getString("nickname"),
                         rs.getString("subject"),
+                        new ArrayList<>(),
                         rs.getTimestamp("created_at").toLocalDateTime()
                 )
         );
+
+        if (posts.isEmpty()) return posts;
+
+        List<Integer> ids = posts.stream().map(PostSummary::postId).toList();
+        String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
+
+        String blockSql = "SELECT post_id, content, image_url FROM post_blocks WHERE post_id IN (" + placeholders + ")";
+        Map<Integer, List<PostBlockResponse>> blockMap = jdbcTemplate.query(blockSql, ids.toArray(), (rs, i) ->
+                Map.entry(
+                        rs.getInt("post_id"),
+                        new PostBlockResponse(
+                                rs.getString("content"),
+                                rs.getString("image_url")
+                        )
+                )
+        ).stream().collect(Collectors.groupingBy(
+                Map.Entry::getKey,
+                Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+        ));
+
+        return posts.stream()
+                .map(p -> new PostSummary(
+                        p.postId(),
+                        p.nickname(),
+                        p.subject(),
+                        blockMap.getOrDefault(p.postId(), List.of()),
+                        p.createdAt()
+                ))
+                .toList();
     }
 
     public Posts getPostByPostId(int postId){
