@@ -3,11 +3,10 @@ package com.blog.domain.comments.api;
 import com.blog.common.response.ApiResponse;
 import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
+import com.blog.common.response.ResponseCode;
 import com.blog.domain.comments.api.dto.request.CommentsRequest;
-import com.blog.domain.comments.domain.repository.CommentsRepository;
 import com.blog.domain.comments.service.CommentsService;
 import com.blog.domain.users.service.TokenService;
-import org.apache.el.parser.Token;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,7 +35,7 @@ public class CommentsRestController {
 
         commentsService.addComments(userId, request);
 
-        return ApiResponse.ok("댓글이 작성되었습니다.");
+        return ApiResponse.ok(ResponseCode.COMMENT_CREATE_SUCCESS);
     }
 
     // 수정
@@ -54,7 +53,7 @@ public class CommentsRestController {
 
         commentsService.updateComment(userId, commentId, request);
 
-        return ApiResponse.ok("댓글 수정 성공했습니다.");
+        return ApiResponse.ok(ResponseCode.COMMENT_UPDATE_SUCCESS);
     }
 
     // 삭제
@@ -71,6 +70,6 @@ public class CommentsRestController {
 
         commentsService.deleteComment(userId, commentId);
 
-        return ApiResponse.ok("댓글 삭제 성공했습니다.");
+        return ApiResponse.ok(ResponseCode.COMMENT_DELETE_SUCCESS);
     }
 }

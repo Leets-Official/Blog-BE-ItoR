@@ -3,6 +3,7 @@ package com.blog.domain.posts.api;
 import com.blog.common.response.ApiResponse;
 import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
+import com.blog.common.response.ResponseCode;
 import com.blog.domain.posts.api.dto.request.PostsRequest;
 import com.blog.domain.posts.api.dto.response.PostListResponse;
 import com.blog.domain.posts.api.dto.response.PostResponse;
@@ -37,7 +38,7 @@ public class PostsRestController {
 
         postsService.createPost(userId, request);
 
-        return ApiResponse.ok("게시글이 작성 되었습니다.");
+        return ApiResponse.ok(ResponseCode.POST_CREATE_SUCCESS);
     }
 
     // 목록 조회
@@ -70,7 +71,7 @@ public class PostsRestController {
         int userId = tokenService.extractUserIdFromHeader(authorization);
         postsService.updatePost(userId, postId, request);
 
-        return ApiResponse.ok("수정 성공 했습니다.");
+        return ApiResponse.ok(ResponseCode.POST_UPDATE_SUCCESS);
     }
 
     // 삭제
@@ -86,6 +87,6 @@ public class PostsRestController {
         int userId = tokenService.extractUserIdFromHeader(authorization);
         postsService.deletePost(userId, postId);
 
-        return ApiResponse.ok("삭제 성공 했습니다.");
+        return ApiResponse.ok(ResponseCode.POST_DELETE_SUCCESS);
     }
 }
