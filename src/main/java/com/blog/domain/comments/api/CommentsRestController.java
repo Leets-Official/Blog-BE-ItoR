@@ -1,6 +1,8 @@
 package com.blog.domain.comments.api;
 
 import com.blog.common.response.ApiResponse;
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.comments.api.dto.request.CommentsRequest;
 import com.blog.domain.comments.domain.repository.CommentsRepository;
 import com.blog.domain.comments.service.CommentsService;
@@ -23,8 +25,12 @@ public class CommentsRestController {
     // 생성
     @PostMapping
     public ApiResponse<String> createComments(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody CommentsRequest request){
+
+        if (authorization == null || authorization.isEmpty()){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
 
         int userId = tokenService.extractUserIdFromHeader(authorization);
 
@@ -36,9 +42,13 @@ public class CommentsRestController {
     // 수정
     @PatchMapping("{commentId}")
     public ApiResponse<String> updateComments(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable("commentId") int commentId,
             @RequestBody CommentsRequest request){
+
+        if (authorization == null || authorization.isEmpty()){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
 
         int userId = tokenService.extractUserIdFromHeader(authorization);
 
@@ -50,8 +60,12 @@ public class CommentsRestController {
     // 삭제
     @DeleteMapping("{commentId}")
     public ApiResponse<String> deleteComments(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable("commentId") int commentId){
+
+        if (authorization == null || authorization.isEmpty()){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
 
         int userId = tokenService.extractUserIdFromHeader(authorization);
 

@@ -1,6 +1,8 @@
 package com.blog.domain.posts.api;
 
 import com.blog.common.response.ApiResponse;
+import com.blog.common.response.CustomException;
+import com.blog.common.response.ErrorCode;
 import com.blog.domain.posts.api.dto.request.PostsRequest;
 import com.blog.domain.posts.api.dto.response.PostListResponse;
 import com.blog.domain.posts.api.dto.response.PostResponse;
@@ -24,10 +26,14 @@ public class PostsRestController {
     // 생성
     @PostMapping()
     public ApiResponse<String> createPost(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody PostsRequest request){
 
-        int userId = tokenService.extractUserIdFromHeader(authHeader);
+        if (authorization == null || authorization.isEmpty()){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        int userId = tokenService.extractUserIdFromHeader(authorization);
 
         postsService.createPost(userId, request);
 
@@ -53,11 +59,15 @@ public class PostsRestController {
     // 수정
     @PatchMapping("/{postId}")
     public ApiResponse<String> updatePost(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable("postId") int postId,
             @RequestBody PostsRequest request){
 
-        int userId = tokenService.extractUserIdFromHeader(authHeader);
+        if (authorization == null || authorization.isEmpty()){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        int userId = tokenService.extractUserIdFromHeader(authorization);
         postsService.updatePost(userId, postId, request);
 
         return ApiResponse.ok("수정 성공 했습니다.");
@@ -66,10 +76,14 @@ public class PostsRestController {
     // 삭제
     @DeleteMapping("/{postId}")
     public ApiResponse<String> updatePost(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable("postId") int postId){
 
-        int userId = tokenService.extractUserIdFromHeader(authHeader);
+        if (authorization == null || authorization.isEmpty()){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        int userId = tokenService.extractUserIdFromHeader(authorization);
         postsService.deletePost(userId, postId);
 
         return ApiResponse.ok("삭제 성공 했습니다.");
