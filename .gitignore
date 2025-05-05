@@ -40,4 +40,4 @@ out/
 /docker/.env
 
 ### external-credentials ###
-/src/main/resources/external-credentials/
+/src/main/resources/**
