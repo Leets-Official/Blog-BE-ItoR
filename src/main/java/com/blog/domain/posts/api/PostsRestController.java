@@ -4,6 +4,7 @@ import com.blog.common.response.ApiResponse;
 import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
 import com.blog.common.response.ResponseCode;
+import com.blog.domain.posts.api.dto.request.PostListRequest;
 import com.blog.domain.posts.api.dto.request.PostsRequest;
 import com.blog.domain.posts.api.dto.response.PostListResponse;
 import com.blog.domain.posts.api.dto.response.PostResponse;
@@ -41,12 +42,12 @@ public class PostsRestController {
         return ApiResponse.ok(ResponseCode.POST_CREATE_SUCCESS);
     }
 
-    // 목록 조회
-    // 페이징 추가하기
+    // 목록 조회 - size : 5로 고정
     @GetMapping("/list")
-    public ApiResponse<PostListResponse> postList(){
+    public ApiResponse<PostListResponse> postList(
+            @ModelAttribute PostListRequest request){
 
-        return ApiResponse.ok(postsService.getPostsList());
+        return ApiResponse.ok(postsService.getPostsList(request));
     }
 
     // 게시글 상세 조회

@@ -1,9 +1,11 @@
 package com.blog.domain.posts.domain.repository;
 
+import com.blog.domain.posts.api.dto.response.PostBlockResponse;
 import com.blog.domain.posts.domain.PostBlocks;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -66,5 +68,23 @@ public class PostBlocksRepository {
         String sql = "DELETE FROM post_blocks WHERE post_id = ?";
 
         jdbcTemplate.update(sql, postId);
+    }
+
+    public List<PostBlockResponse> findPostBlocks(List<Integer> postIds) {
+        if (postIds.isEmpty()) return Collections.emptyList();
+
+        String placeholders = String.join(",", Collections.nCopies(postIds.size(), "?"));
+        String sql = """
+                    SELECT post_id, content, image_url
+                    FROM post_blocks
+                    WHERE post_id IN (%s)
+                """.formatted(placeholders);
+
+        return jdbcTemplate.query(sql, postIds.toArray(), (rs, rowNum) ->
+                new PostBlockResponse(
+                        rs.getString("content"),
+                        rs.getString("image_url")
+                )
+        );
     }
 }
