@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 public class Comment extends BaseDomain {
     private Long id;
-    private Long userId;
-    private Long postId;
+    private long userId;// db저장할때 null값 허용안됨
+    private long postId;
     private String content;
 
     public Comment(Long id, Long userId, Long postId, String content) {
