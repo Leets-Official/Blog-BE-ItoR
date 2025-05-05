@@ -22,6 +22,7 @@ public class Posts {
     }
 
     public Posts(int id, int user_id, String subject, LocalDateTime created_at, LocalDateTime updated_at) {
+        this.id = id;
         this.user_id = user_id;
         this.subject = subject;
         this.created_at = created_at;
@@ -33,19 +34,8 @@ public class Posts {
         return new Posts(userId, subject);
     }
 
-    public static Posts fromResultSet(ResultSet rs) {
-        try{
-            return new Posts(
-                    rs.getInt("id"),
-                    rs.getInt("user_id"),
-                    rs.getString("subject"),
-                    rs.getTimestamp("created_at").toLocalDateTime(),
-                    rs.getTimestamp("updated_at").toLocalDateTime()
-            );
-        } catch (SQLException e){
-
-            throw new CustomException(ErrorCode.DATABASE_ERROR);
-        }
+    public static Posts of(int id, int user_id, String subject, LocalDateTime created_at, LocalDateTime updated_at) {
+        return new Posts(id, user_id, subject, created_at, updated_at);
     }
 
     // Getter & Setter

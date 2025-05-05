@@ -2,13 +2,14 @@ package com.blog.domain.posts.service;
 
 import com.blog.common.response.CustomException;
 import com.blog.common.response.ErrorCode;
+import com.blog.domain.comments.api.dto.response.CommentsResponse;
+import com.blog.domain.comments.service.CommentsService;
 import com.blog.domain.posts.api.dto.request.PostsRequest;
 import com.blog.domain.posts.api.dto.response.PostListResponse;
 import com.blog.domain.posts.api.dto.response.PostResponse;
 import com.blog.domain.posts.domain.PostBlocks;
 import com.blog.domain.posts.domain.Posts;
 import com.blog.domain.posts.domain.repository.PostsRepository;
-import com.blog.domain.users.service.TokenService;
 import com.blog.domain.users.service.UsersService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +22,14 @@ public class PostsService {
     private final UsersService usersService;
     private final PostsRepository postsRepository;
     private final PostBlockService postBlockService;
+    private final CommentsService commentsService;
 
-    public PostsService(UsersService usersService,
-                        PostBlockService postBlockService, PostsRepository postsRepository){
+    public PostsService(UsersService usersService, PostBlockService postBlockService,
+                        PostsRepository postsRepository, CommentsService commentsService){
         this.usersService = usersService;
         this.postBlockService = postBlockService;
         this.postsRepository = postsRepository;
+        this.commentsService = commentsService;
     }
 
     // 게시글 등록
@@ -53,12 +56,16 @@ public class PostsService {
 
         List<PostBlocks> block = postBlockService.getPostBlockListByPostId(postId);
 
+        // 댓글 조회
+        List<CommentsResponse> comments = commentsService.getCommentsListByPostId(postId);
+
         return new PostResponse(
                 postId,
                 nickname,
                 post.getSubject(),
                 post.getCreatedAt(),
-                block
+                block,
+                comments
         );
     }
 

@@ -1,7 +1,6 @@
 package com.blog.domain.posts.domain.repository;
 
-import com.blog.domain.posts.api.dto.response.PostListResponse;
-import com.blog.domain.posts.api.dto.response.PostResponse;
+
 import com.blog.domain.posts.api.dto.response.PostSummary;
 import com.blog.domain.posts.domain.Posts;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -55,7 +53,13 @@ public class PostsRepository {
     public Posts getPostByPostId(int postId){
         String sql = "SELECT * FROM posts WHERE id = ?";
 
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Posts.fromResultSet(rs), postId);
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> Posts.of(
+                rs.getInt("id"),
+                rs.getInt("user_id"),
+                rs.getString("subject"),
+                rs.getTimestamp("created_at").toLocalDateTime(),
+                rs.getTimestamp("updated_at").toLocalDateTime()
+        ), postId);
     }
 
     public int getPostUserId(int postId){
