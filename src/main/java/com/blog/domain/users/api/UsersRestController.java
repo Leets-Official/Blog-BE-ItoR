@@ -23,7 +23,7 @@ public class UsersRestController {
     // 닉네임, 비밀번호, 프로필 사진을 변경
     @PatchMapping("/me")
     public ApiResponse<UsersResultResponse> usersUpdateInfo(
-            @RequestBody UsersUpdateRequest request) throws NoSuchAlgorithmException {
+            @RequestBody UsersUpdateRequest request) {
 
         return usersService.userUpdateInfo(request);
     }

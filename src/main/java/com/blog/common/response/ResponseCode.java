@@ -4,7 +4,10 @@ import org.springframework.http.HttpStatus;
 
 public enum ResponseCode {
 
-    // 포스트
+    // 로그아웃
+    LOGOUT_SUCCESS(200, HttpStatus.OK, "로그아웃 성공했습니다."),
+
+    // 게시글
     POST_CREATE_SUCCESS(201, HttpStatus.CREATED, "게시글이 작성 되었습니다."),
     POST_DELETE_SUCCESS(200, HttpStatus.OK, "게시글 삭제 성공했습니다."),
     POST_UPDATE_SUCCESS(200, HttpStatus.OK, "게시글 수정 성공 했습니다."),
