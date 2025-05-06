@@ -12,6 +12,14 @@ public class PostUpdateRequest {
 
     private List<ContentRequest> content;
 
+
+    public PostUpdateRequest(String title, List<ContentRequest> content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    /**@Getter
+     */
     public String getTitle() {
         return title;
     }
