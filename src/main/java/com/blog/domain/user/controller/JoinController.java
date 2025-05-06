@@ -6,10 +6,7 @@ import com.blog.global.exception.CustomException;
 import com.blog.global.exception.ErrorCode;
 import com.blog.global.response.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -30,5 +27,14 @@ public class JoinController {
         return ApiResponse.ok("회원가입이 완료되었습니다.");
     }
 
+    @DeleteMapping("/{userId}")
+    public ApiResponse<String> deleteUser(@PathVariable long userId) {
+        System.out.println("deleteUser = " + userId);
+        userService.deleteUser(userId);
+        return ApiResponse.ok("회원탈퇴가 완료되었습니다.");
+
+    }
+
 
 }
+

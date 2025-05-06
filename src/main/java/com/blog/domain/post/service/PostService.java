@@ -1,6 +1,6 @@
 package com.blog.domain.post.service;
 
-import com.blog.domain.comment.controller.dto.response.CommentResponse;
+import com.blog.domain.comment.controller.response.CommentResponse;
 import com.blog.domain.comment.service.CommentService;
 import com.blog.domain.post.controller.dto.request.PostContentDto;
 import com.blog.domain.post.controller.dto.response.PostListResponse;

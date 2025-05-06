@@ -7,6 +7,7 @@ import com.blog.global.exception.CustomException;
 import com.blog.global.exception.ErrorCode;
 import com.blog.global.security.PasswordUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -67,6 +68,15 @@ public class UserService {
                 joinRequest.profileImage(),
                 joinRequest.provider()
         );
+    }
+
+    // 유저 탈퇴
+    @Transactional
+    public void deleteUser(long userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        System.out.println("탈퇴할 유저 : " + user.getId());
+        userRepository.deleteUser(user.getId());
     }
 
 }

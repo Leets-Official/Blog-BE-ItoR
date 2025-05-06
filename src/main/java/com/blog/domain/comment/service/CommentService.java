@@ -1,8 +1,8 @@
 package com.blog.domain.comment.service;
 
-import com.blog.domain.comment.controller.dto.request.CommentRequest;
-import com.blog.domain.comment.controller.dto.request.CommentUpdatedRequest;
-import com.blog.domain.comment.controller.dto.response.CommentResponse;
+import com.blog.domain.comment.controller.request.CommentRequest;
+import com.blog.domain.comment.controller.request.CommentUpdatedRequest;
+import com.blog.domain.comment.controller.response.CommentResponse;
 import com.blog.domain.comment.domain.Comment;
 import com.blog.domain.comment.repository.CommentRepository;
 import com.blog.domain.post.domain.Post;
