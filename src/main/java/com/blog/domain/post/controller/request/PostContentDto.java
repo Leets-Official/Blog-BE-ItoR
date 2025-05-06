@@ -1,4 +1,4 @@
-package com.blog.domain.post.controller.dto.request;
+package com.blog.domain.post.controller.request;
 
 import com.blog.domain.post.domain.ContentType;
 import com.blog.domain.post.domain.PostContent;

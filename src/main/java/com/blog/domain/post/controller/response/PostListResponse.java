@@ -1,13 +1,11 @@
-package com.blog.domain.post.controller.dto.response;
+package com.blog.domain.post.controller.response;
 
-import com.blog.domain.post.controller.dto.request.PostContentDto;
-import com.blog.domain.post.domain.ContentType;
+import com.blog.domain.post.controller.request.PostContentDto;
 import com.blog.domain.post.domain.Post;
 import com.blog.domain.post.domain.PostContent;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record PostListResponse(
         long postId,

@@ -1,7 +1,7 @@
-package com.blog.domain.post.controller.dto.response;
+package com.blog.domain.post.controller.response;
 
 import com.blog.domain.comment.controller.response.CommentResponse;
-import com.blog.domain.post.controller.dto.request.PostContentDto;
+import com.blog.domain.post.controller.request.PostContentDto;
 import com.blog.domain.post.domain.Post;
 import com.blog.domain.post.domain.PostContent;
 import com.blog.domain.user.domain.User;
@@ -9,7 +9,7 @@ import com.blog.domain.user.domain.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.blog.domain.post.controller.dto.response.AuthorSummary.toAuthorSummary;
+import static com.blog.domain.post.controller.response.AuthorSummary.toAuthorSummary;
 
 public record PostResponse(
         long postId,
