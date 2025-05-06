@@ -30,21 +30,10 @@ public class MyPageService {
         User existingUser = userRepository.findByUserIdForMyPage(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        User updatedUser = mergeUserInfo(existingUser, req);
+        // 변경 사항만 반영
+        existingUser.updateMyPageInfo(req);
 
-        return userRepository.updateUser(updatedUser);
-    }
-
-    private User mergeUserInfo(User old, UpdateRequest req) {
-        return new User(
-                req.name() != null ? req.name() : old.getName(),
-                req.email() != null ? req.email() : old.getEmail(),
-                req.password() != null ? req.password() : old.getPassword(),
-                req.nickname() != null ? req.nickname() : old.getNickname(),
-                req.birth() != null ? req.birth() : old.getBirth(),
-                req.profileImage() != null ? req.profileImage() : old.getProfileImage(),
-                req.introduction() != null ? req.introduction() : old.getIntroduction()
-        );
+        return userRepository.updateUser(existingUser);
     }
 
 

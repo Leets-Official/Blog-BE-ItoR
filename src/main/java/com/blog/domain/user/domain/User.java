@@ -1,5 +1,6 @@
 package com.blog.domain.user.domain;
 
+import com.blog.domain.user.controller.request.UpdateRequest;
 import com.blog.global.common.BaseDomain;
 import java.time.LocalDateTime;
 
@@ -93,6 +94,16 @@ public class User extends BaseDomain {
 
     public Provider getProvider() {
         return provider;
+    }
+
+
+    // 도메인 메서드
+    public void updateMyPageInfo(UpdateRequest req) {
+        if (req.name() != null) this.name = req.name();
+        if (req.nickname() != null) this.nickname = req.nickname();
+        if (req.introduction() != null) this.introduction = req.introduction();
+        if (req.birth() != null) this.birth = req.birth();
+        if (req.profileImage() != null) this.profileImage = req.profileImage();
     }
 
 }
