@@ -25,7 +25,7 @@ public class JoinController {
         return ApiResponse.ok("회원가입이 완료되었습니다.");
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping
     public ApiResponse<String> deleteUser(@GetUserId Long userId) {
         userService.deleteUser(userId);
         return ApiResponse.ok("회원탈퇴가 완료되었습니다.");

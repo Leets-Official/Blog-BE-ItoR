@@ -39,8 +39,8 @@ public class LoginController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ApiResponse<String> logout(HttpServletRequest request) {
-        tokenService.deleteRefreshTokenByLogout(request);
+    public ApiResponse<String> logout(HttpServletRequest request,HttpServletResponse response) {
+        tokenService.deleteRefreshTokenByLogout(request,response);
         return ApiResponse.ok("로그아웃 성공");
     }
 
