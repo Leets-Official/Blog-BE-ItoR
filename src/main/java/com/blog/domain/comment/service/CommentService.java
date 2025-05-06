@@ -5,7 +5,6 @@ import com.blog.domain.comment.controller.request.CommentUpdatedRequest;
 import com.blog.domain.comment.controller.response.CommentResponse;
 import com.blog.domain.comment.domain.Comment;
 import com.blog.domain.comment.repository.CommentRepository;
-import com.blog.domain.post.domain.Post;
 import com.blog.domain.post.repository.PostRepository;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
@@ -36,22 +35,19 @@ public class CommentService {
     // 댓글 등록
     @Transactional
     public void registerComment(@Valid CommentRequest request, Long userId) {
-        Post post = postRepository.findById(request.postId())
+        postRepository.findById(request.postId())
                 .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
-        // 댓글 생성 및 저장
         Comment comment = Comment.of(userId, request);
         commentRepository.save(comment);
 
         postRepository.incrementCommentCount(request.postId());
-        System.out.println(post.getCommentCount());
     }
 
     // 댓글 수정
     @Transactional
     public void updateComment(Long userId, Long commentId, CommentUpdatedRequest request) {
-        Comment comment = getCommentsByCommentId(commentId);
-        validateCommentOwner(comment, userId);
+        Comment comment = getAuthorizedComment(userId, commentId);
         comment.updateContent(request.content());
         commentRepository.update(comment);
     }
@@ -59,15 +55,10 @@ public class CommentService {
     // 댓글 삭제
     @Transactional
     public void deleteComment(Long userId, Long commentId) {
-        Comment comment = getCommentsByCommentId(commentId);
-        validateCommentOwner(comment, userId);
-
-        int count = commentRepository.deleteByCommentId(commentId); // 이름 수정
-        Long postId = comment.getPostId(); // postId 가져오기
-
-        postRepository.decreaseCommentCount(postId, count);
+        Comment comment = getAuthorizedComment(userId, commentId);
+        int count = commentRepository.deleteByCommentId(commentId);
+        postRepository.decreaseCommentCount(comment.getPostId(), count);
     }
-
 
     // 모든 댓글 삭제
     @Transactional
@@ -92,12 +83,13 @@ public class CommentService {
                 .toList();
     }
 
-    private void validateCommentOwner(Comment comment, Long userId) {
+    // 댓글 조회 + 권한 검증 메서드 추가
+    private Comment getAuthorizedComment(Long userId, Long commentId) {
+        Comment comment = getCommentsByCommentId(commentId);
         if (!comment.getUserId().equals(userId)) {
             throw new CustomException(ACCESS_DENY);
         }
+        return comment;
     }
-    
-    
 
 }

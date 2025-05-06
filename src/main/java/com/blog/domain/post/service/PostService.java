@@ -2,11 +2,11 @@ package com.blog.domain.post.service;
 
 import com.blog.domain.comment.controller.response.CommentResponse;
 import com.blog.domain.comment.service.CommentService;
-import com.blog.domain.post.controller.dto.request.PostContentDto;
-import com.blog.domain.post.controller.dto.response.PostListResponse;
-import com.blog.domain.post.controller.dto.response.PostResponse;
+import com.blog.domain.post.controller.request.PostContentDto;
+import com.blog.domain.post.controller.response.PostListResponse;
+import com.blog.domain.post.controller.response.PostResponse;
 import com.blog.domain.post.domain.Post;
-import com.blog.domain.post.controller.dto.request.PostRequest;
+import com.blog.domain.post.controller.request.PostRequest;
 import com.blog.domain.post.domain.PostContent;
 import com.blog.domain.post.repository.PostContentRepository;
 import com.blog.domain.post.repository.PostRepository;
@@ -21,9 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
+@Transactional
 public class PostService {
 
     private final PostRepository postRepository;
@@ -38,50 +38,29 @@ public class PostService {
         this.commentService = commentService;
     }
 
-
-    // 글 저장
-    @Transactional
-    public void savePost(Long userId, @Valid PostRequest postRequest) {
+    public void createPost(Long userId, PostRequest postRequest) {
+        PostValidator.validateUser(userRepository, userId);
         Post post = Post.of(userId, postRequest);
-        Long postId = postRepository.save(post); // 먼저 저장하여 postId 확보
+        Long postId = postRepository.save(post);
 
-        int sequence = 0;
-        for (PostContentDto postContentDto : postRequest.contents()) {
-            PostContent content = createPostContent(postId, postContentDto, sequence++);
-            postContentRepository.save(content);
-        }
+        // PostContent 저장
+        postRequest.contents().forEach((contentDto) -> postContentRepository.save(PostContentMapper.mapFromDto(postId, contentDto)));
     }
 
-    // 글 내용 저장 메서드 추출
-    private PostContent createPostContent(Long postId, PostContentDto postContentDto, int sequence) {
-        return switch (postContentDto.type()) {
-            case TEXT -> PostContent.text(postId, postContentDto.data(), sequence);
-            case IMAGE -> PostContent.image(postId, postContentDto.data(), sequence);
-            default -> throw new CustomException(ErrorCode.POST_TYPE_NOT_FOUND);
-        };
-    }
-
-    // 개별 조회
     public PostResponse getPost(Long userId, Long postId) {
-        User user = validateUser(userId);
-        Post post = validatePost(postId);
+        User user = PostValidator.validateUser(userRepository, userId);  // User validation
+        Post post = PostValidator.validatePostAccess(postRepository, postId, userId);  // Post & owner validation
         List<PostContent> postContent = postContentRepository.findByPostIdOrderBySequence(postId);
 
-        boolean isOwner = post.getUserId().equals(userId);// 본인 글인지 판단
+        boolean isOwner = post.getUserId().equals(userId);
         List<CommentResponse> commentResponse = commentService.getAllCommentsByPostId(postId);
 
-        return PostResponse.withComments(
-                PostResponse.from(post, postContent, user, isOwner),
-                commentResponse
-        );
+        return PostResponse.withComments(PostResponse.from(post, postContent, user, isOwner), commentResponse);
     }
 
-
-    // 전체 조회
     public List<PostListResponse> getPostList(Long userId) {
         List<Post> posts = postRepository.findAllByUserId(userId);
 
-        // 유저가 쓴 글만 가져오기
         return posts.stream()
                 .map(post -> {
                     List<PostContent> postContents = postContentRepository.findByPostIdOrderBySequence(post.getId());
@@ -92,9 +71,9 @@ public class PostService {
 
     @Transactional
     public void updatePost(Long userId, Long postId, @Valid PostRequest postRequest) {
-        User user = validateUser(userId);
-        Post post = validatePost(postId);
-        validateOwner(post, userId);
+        PostValidator.validatePostAccess(postRepository, postId, userId);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         updatePostInfo(post, postRequest);
         updatePostContents(postId, postRequest);
@@ -106,54 +85,27 @@ public class PostService {
         postRepository.update(post);
     }
 
-    private void updatePostContents(Long postId, PostRequest postRequest) {
-        List<PostContent> newContents = IntStream.range(0, postRequest.contents().size())
-                .mapToObj(i -> {
-                    var dto = postRequest.contents().get(i);
-                    return new PostContent(postId, dto.type(), dto.data(), i);
-                })
-                .collect(Collectors.toList());
-
+    @Transactional
+    public void updatePostContents(Long postId, PostRequest postRequest) {
+        List<PostContent> newContents = PostContentMapper.mapFromDtos(postId, postRequest.contents());
         postContentRepository.update(newContents);
     }
 
     @Transactional
     public void deletePost(Long userId, Long postId) {
-        User user = validateUser(userId);
-        Post post = validatePost(postId);
-        validateOwner(post, userId);
-
+        PostValidator.validatePostAccess(postRepository, postId, userId);  // User, Post, Owner validation
         commentService.deleteAllCommentsByPostId(postId);
         deletePostContents(postId);
-        deletePostEntity(post);
+        deletePostEntity(postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND)));
     }
 
-    private void deletePostContents(Long postId) {
+    @Transactional
+    public void deletePostContents(Long postId) {
         postContentRepository.deleteByPostId(postId);
     }
 
-    private void deletePostEntity(Post post) {
+    @Transactional
+    public void deletePostEntity(Post post) {
         postRepository.deleteById(post.getId());
     }
-
-    // 검증 메서드
-    private User validateUser(Long userId) {
-        return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    private Post validatePost(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-    }
-
-    private void validateOwner(Post post, Long userId) {
-        if (!post.getUserId().equals(userId)) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_POST_ACCESS);
-        }
-    }
-
-
-
-
 }
