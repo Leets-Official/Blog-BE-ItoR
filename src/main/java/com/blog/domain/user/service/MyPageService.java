@@ -1,15 +1,12 @@
 package com.blog.domain.user.service;
 
-import com.blog.domain.user.controller.dto.request.UpdateRequest;
-import com.blog.domain.user.domain.Provider;
+import com.blog.domain.user.controller.request.UpdateRequest;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.exception.CustomException;
 import com.blog.global.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class MyPageService {

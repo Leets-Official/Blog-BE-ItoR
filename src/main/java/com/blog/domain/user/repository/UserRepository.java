@@ -90,7 +90,6 @@ public class UserRepository {
 
     public void deleteUser(Long userId) {
         String sql = "DELETE FROM user WHERE id = ?";
-        System.out.println("delete userId : " + userId);
 
         try {
             int deletedCount = jdbcTemplate.update(sql, userId);

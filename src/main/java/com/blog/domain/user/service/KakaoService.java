@@ -64,7 +64,6 @@ public class KakaoService {
 
     //  카카오 유저 정보 가져오기
     public Map<String, Object> getKakaoUserInfo(String accessToken) {
-        System.out.println(accessToken);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 

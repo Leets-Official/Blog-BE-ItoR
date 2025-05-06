@@ -1,12 +1,9 @@
 package com.blog.domain.user.domain;
 
-import com.blog.domain.user.controller.dto.request.UpdateRequest;
 import com.blog.global.common.BaseDomain;
-
 import java.time.LocalDateTime;
 
 public class User extends BaseDomain {
-
 
     private Long id;
     private String email;
@@ -18,6 +15,7 @@ public class User extends BaseDomain {
     private String profileImage;
     private Provider provider;
 
+    // constructor
     public User() {
     }
 
@@ -31,8 +29,6 @@ public class User extends BaseDomain {
         this.profileImage = profileImage;
         this.provider = Provider.valueOf(provider);
     }
-
-
 
     public User(Long id, String email, String password) {
         this.id = id;
@@ -62,19 +58,7 @@ public class User extends BaseDomain {
         this.profileImage = profileImage;
     }
 
-    public static User createSocialUser(String email, String password, String name, String nickname, LocalDateTime birth, String introduction, String profileImage, String provider) {
-        return new User(email, password, name, nickname, birth, introduction, profileImage, provider);
-    }
-
-    public static User createBasicUser(Long id, String email, String password) {
-        return new User(id, email, password);
-    }
-
-    public static User of(UpdateRequest updateRequest) {
-        return new User(updateRequest.email(), updateRequest.password(), updateRequest.name(), updateRequest.nickname(), updateRequest.birth(), updateRequest.introduction(), updateRequest.profileImage());
-    }
-
-
+   // getter
     public Long getId() {
         return id;
     }
@@ -87,15 +71,14 @@ public class User extends BaseDomain {
         return password;
     }
 
-
     public String getNickname() {
         return nickname;
     }
 
-
     public String getProfileImage() {
         return profileImage;
     }
+
     public String getName() {
         return name;
     }
@@ -110,18 +93,6 @@ public class User extends BaseDomain {
 
     public Provider getProvider() {
         return provider;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 }

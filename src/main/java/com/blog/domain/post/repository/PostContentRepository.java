@@ -1,7 +1,6 @@
 package com.blog.domain.post.repository;
 
 import com.blog.domain.post.domain.ContentType;
-import com.blog.domain.post.domain.Post;
 import com.blog.domain.post.domain.PostContent;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -56,6 +55,7 @@ public class PostContentRepository {
         }
     }
 
+    // post삭제
     public void deleteByPostId(Long postId) {
         String sql = "DELETE FROM post_content WHERE post_id = ?";
         jdbcTemplate.update(sql, postId);

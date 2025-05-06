@@ -1,18 +1,11 @@
 package com.blog.domain.user.controller;
 
-import com.blog.domain.user.controller.dto.request.JoinRequest;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.service.KakaoService;
-import com.blog.domain.user.service.LoginService;
-import com.blog.domain.user.service.TokenService;
 import com.blog.domain.user.service.UserService;
 import com.blog.global.exception.CustomException;
-import com.blog.global.exception.ErrorCode;
 import com.blog.global.response.ApiResponse;
-import com.blog.global.security.CustomTokenUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

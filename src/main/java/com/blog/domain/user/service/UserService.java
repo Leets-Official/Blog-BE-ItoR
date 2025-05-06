@@ -1,6 +1,6 @@
 package com.blog.domain.user.service;
 
-import com.blog.domain.user.controller.dto.request.JoinRequest;
+import com.blog.domain.user.controller.request.JoinRequest;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.exception.CustomException;
@@ -75,7 +75,6 @@ public class UserService {
     public void deleteUser(long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        System.out.println("탈퇴할 유저 : " + user.getId());
         userRepository.deleteUser(user.getId());
     }
 
