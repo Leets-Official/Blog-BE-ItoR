@@ -3,6 +3,8 @@ package com.blog.workspace.application.in.auth;
 import com.blog.workspace.adapter.in.web.dto.request.UserRegisterRequest;
 import com.blog.workspace.domain.user.User;
 
+import java.io.IOException;
+
 public interface RegisterUserUseCase {
 
     /*
@@ -13,6 +15,6 @@ public interface RegisterUserUseCase {
      */
 
     // 자체 회원가입
-    User registerUser(UserRegisterRequest request);
+    User registerUser(UserRegisterRequest request) throws IOException;
 
 }
