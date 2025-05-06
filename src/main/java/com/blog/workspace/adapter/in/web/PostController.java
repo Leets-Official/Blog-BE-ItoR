@@ -54,7 +54,7 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping("/{postId}")
-    ApiResponse<String> updatePost(@RequestUserId Long userId,  @PathVariable Long postId, @RequestBody PostUpdateRequest request) throws IOException {
+    ApiResponse<String> updatePost(@RequestUserId Long userId,  @PathVariable Long postId, @ModelAttribute PostUpdateRequest request) throws IOException {
 
         postService.updatePost(postId, userId, request);
 

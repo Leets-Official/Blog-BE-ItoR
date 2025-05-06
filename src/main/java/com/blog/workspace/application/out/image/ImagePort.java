@@ -19,18 +19,8 @@ public interface ImagePort {
     // 이미지 하나 저장
     String uploadFiles(MultipartFile multipartFile) throws IOException;
 
-    // 이미지 여러개 저장
-    List<String> uploadFiles(List<MultipartFile> multipartFiles) throws IOException;
-
-    /// LoadPort
-    // 이미지 조회
-    ResponseEntity<Resource> getFile(String fileName);
-
     /// DeletePort
     // 이미지 하나 삭제
     void deleteFile(String fileName);
-
-    // 이미지 여러개 삭제
-    void deleteFiles(List<String> fileName);
 
 }
