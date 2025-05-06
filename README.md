@@ -14,43 +14,99 @@
 
 ## 디렉토리
 ```
-/blog-backend
- ├── src
- │   ├── main
- │   │   ├── java/com/blog/app
- │   │   │   ├── config/             # 설정 파일 (보안, CORS 등)
- │   │   │   ├── auth/               # 인증 관련 (로그인, 회원가입)
- │   │   │   │   ├── controller/     # Auth 컨트롤러
- │   │   │   │   ├── dao/            # Auth DAO
- │   │   │   │   ├── mapper/         # Auth Mapper
- │   │   │   │   ├── service/        # Auth 서비스
- │   │   │   │   ├── vo/             # Auth VO (Value Object)
- │   │   │   ├── member/             # 회원 관련
- │   │   │   │   ├── controller/     # Member 컨트롤러
- │   │   │   │   ├── dao/            # Member DAO
- │   │   │   │   ├── mapper/         # Member Mapper
- │   │   │   │   ├── service/        # Member 서비스
- │   │   │   │   ├── vo/             # Member VO
- │   │   │   ├── post/               # 게시물 관련
- │   │   │   │   ├── controller/     # Post 컨트롤러
- │   │   │   │   ├── dao/            # Post DAO
- │   │   │   │   ├── mapper/         # Post Mapper
- │   │   │   │   ├── service/        # Post 서비스
- │   │   │   │   ├── vo/             # Post VO
- │   │   │   ├── comment/            # 댓글 관련
- │   │   │   │   ├── controller/     # Comment 컨트롤러
- │   │   │   │   ├── dao/            # Comment DAO
- │   │   │   │   ├── mapper/         # Comment Mapper
- │   │   │   │   ├── service/        # Comment 서비스
- │   │   │   │   ├── vo/             # Comment VO
- │   │   │   ├── image/              # 이미지 업로드 관련
- │   │   │   │   ├── controller/     # Image 컨트롤러
- │   │   │   │   ├── service/        # Image 서비스
- │   │   │   ├── BlogApplication.java # 메인 애플리케이션
- │   │   ├── resources
- │   │   │   ├── application.yml     # 환경설정 파일
- │   ├── test                        # 테스트 코드
- ├── pom.xml                         # Maven 설정 파일
- └── README.md                        # 프로젝트 설명
+Blog-BE-ItoR/
+├── .gitattributes
+├── .gitignore
+├── build.gradle
+├── main.iml
+├── uploads/
+├── src/
+│  ├── main/
+│  │  ├── java/
+│  │  │  └── com/
+│  │  │     └── blog/
+│  │  │        ├── BlogApplication.java
+│  │  │        ├── config/
+│  │  │        │  └── WebMvcConfig.java
+│  │  │        ├── comment/
+│  │  │        │  ├── controller/
+│  │  │        │  │  └── CommentController.java
+│  │  │        │  ├── dao/
+│  │  │        │  │  └── CommentDao.java
+│  │  │        │  ├── exception/
+│  │  │        │  │  └── CommentException.java
+│  │  │        │  ├── mapper/
+│  │  │        │  │  └── CommentMapper.java
+│  │  │        │  ├── record/
+│  │  │        │  │  ├── CommentCreateRecord.java
+│  │  │        │  │  └── CommentRecord.java
+│  │  │        │  └── service/
+│  │  │        │     ├── CommentService.java
+│  │  │        │     └── CommentServiceImpl.java
+│  │  │        ├── member/
+│  │  │        │  ├── controller/
+│  │  │        │  │  └── MemberController.java
+│  │  │        │  ├── mapper/
+│  │  │        │  │  └── MemberMapper.java
+│  │  │        │  ├── service/
+│  │  │        │  │  └── MemberService.java
+│  │  │        │  └── vo/
+│  │  │        │     └── MemberVo.java
+│  │  │        ├── kakaologin/
+│  │  │        │  ├── config/
+│  │  │        │  │  └── WebConfig.java
+│  │  │        │  ├── controller/
+│  │  │        │  │  └── KakaoLoginController.java
+│  │  │        │  ├── service/
+│  │  │        │  │  └── KakaoLoginService.java
+│  │  │        │  └── util/
+│  │  │        │     └── KakaoLoginUtil.java
+│  │  │        ├── mypage/
+│  │  │        │  ├── controller/
+│  │  │        │  │  └── MyPageController.java
+│  │  │        │  ├── mapper/
+│  │  │        │  │  └── MyPageMapper.java
+│  │  │        │  ├── record/
+│  │  │        │  │  ├── MyInfoRecord.java
+│  │  │        │  │  ├── MyInfoUpdateRecord.java
+│  │  │        │  │  ├── PasswordChangeRecord.java
+│  │  │        │  │  └── ProfileImgUploadRecord.java
+│  │  │        │  └── service/
+│  │  │        │     └── MyPageService.java
+│  │  │        └── post/
+│  │  │           ├── controller/
+│  │  │           │  └── PostController.java
+│  │  │           ├── dao/
+│  │  │           │  └── PostDao.java
+│  │  │           ├── exception/
+│  │  │           │  └── PostException.java
+│  │  │           ├── mapper/
+│  │  │           │  └── PostMapper.java
+│  │  │           ├── record/
+│  │  │           │  └── PostRecord.java
+│  │  │           └── service/
+│  │  │              ├── PostService.java
+│  │  │              └── PostServiceImpl.java
+│  │  ├── resources/
+│  │  │  ├── application.properties
+│  │  │  ├── mapper/
+│  │  │  │  ├── CommentMapper.xml
+│  │  │  │  ├── MemberMapper.xml
+│  │  │  │  ├── MyPageMapper.xml
+│  │  │  │  ├── OauthMapper.xml
+│  │  │  │  └── PostMapper.xml
+│  │  │  └── static/
+│  │  │     └── (css, js, images…)
+│  │  └── webapp/
+│  │     └── WEB-INF/
+│  │        └── views/
+│  │           ├── kakaologin.jsp
+│  │           └── (기타 .jsp 파일)
+│  └── test/
+│     └── java/
+│        └── com/
+│           └── blog/
+│              └── (단위 테스트)
+
 ```
 
