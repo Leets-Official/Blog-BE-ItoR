@@ -1,7 +1,7 @@
 package com.blog.post.record;
 
 public record PostRecord<LocalDateTime>(
-        Long id,                    // 게시글 ID
+        Long   id,                    // 게시글 ID
         String title,               // 제목
         String previewContent,      // 내용 요약 (SUBSTRING 처리 등)
         String thumbnailUrl,        // 썸네일 이미지 URL

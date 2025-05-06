@@ -8,7 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan(basePackages = {
 		"com.blog.member.mapper",
 		"com.blog.oauth.mapper",
-		"com.blog.post.mapper"
+		"com.blog.post.mapper",
+		"com.blog.comment.mapper"
 })
 
 public class BlogApplication {

@@ -24,7 +24,6 @@ public interface PostMapper {
     String selectAuthorId(@Param("postId") Long postId);
 
 
-
     //--------등록-----------
 
     //게시글 등록

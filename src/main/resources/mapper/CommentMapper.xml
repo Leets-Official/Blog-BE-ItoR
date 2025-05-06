@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.comment.mapper.CommentMapper">
+
+    <!-- 댓글 작성자 조회 -->
+    <select id="selectWriterId" resultType="String">
+        SELECT member_id
+        FROM COMMENT
+        WHERE comment_num = #{commentNum}
+    </select>
+
+
+    <insert id="insertComment" parameterType="com.blog.comment.record.CommentCreateRecord">
+        INSERT INTO COMMENT (member_id, post_id, content)
+        VALUES (#{memberId}, #{postId}, #{content})
+    </insert>
+
+
+    <select id="findByPostId" resultType="com.blog.comment.record.CommentRecord">
+        SELECT
+            comment_num AS commentNum,
+            member_id AS memberId,
+            post_id AS postId,
+            content,
+            created_at AS createdAt,
+            updated_at AS updateAt,
+            is_deleted AS isDeleted
+        FROM COMMENT
+        WHERE post_id = #{postId}
+          AND is_deleted = FALSE
+        ORDER BY created_at ASC
+    </select>
+
+    <update id="update" parameterType="com.blog.comment.record.CommentRecord">
+        UPDATE COMMENT
+        SET content = #{content},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE comment_num = #{commentNum}
+    </update>
+
+    <update id="delete">
+        UPDATE COMMENT
+        SET is_deleted = TRUE,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE comment_num = #{commentNum}
+    </update>
+
+</mapper>
