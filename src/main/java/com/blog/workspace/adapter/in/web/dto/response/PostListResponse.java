@@ -42,7 +42,7 @@ public class PostListResponse {
     }
 
     /// 정적 팩토리 메서드
-    public static PostListResponse from(Post post, UserPostResponse user, String content, String thumbnail) {
+    public static PostListResponse from(Post post, UserPostResponse user, String content, String thumbnail, int commentCount) {
 
         // 시간 관련 정보
         String date = DateFormatUtil.formatPostDate(post.getCreated());
@@ -51,7 +51,7 @@ public class PostListResponse {
             thumbnail = "default.jpeg";
         }
 
-        return new PostListResponse(post.getId(), post.getTitle(), thumbnail, date, 0, user, content);
+        return new PostListResponse(post.getId(), post.getTitle(), thumbnail, date, commentCount, user, content);
     }
 
     /// @Getter

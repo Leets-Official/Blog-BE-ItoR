@@ -7,17 +7,16 @@ import java.time.LocalDateTime;
 public class CommentJdbc {
 
     private Long id;
-    private final Long boardId;
-    private final Long userId;
-    private final Long parentId;
-    private final String content;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private Long postId;
+    private Long userId;
+    private String content;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public CommentJdbc(Long boardId, Long userId, Long parentId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.boardId = boardId;
+    private CommentJdbc(Long id, Long postId, Long userId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.postId = postId;
         this.userId = userId;
-        this.parentId = parentId;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -26,9 +25,9 @@ public class CommentJdbc {
     /// from
     public static CommentJdbc from(Comment comment) {
         return new CommentJdbc(
-                comment.getBoardId(),
+                null,
+                comment.getPostId(),
                 comment.getUserId(),
-                comment.getParentId(),
                 comment.getContent(),
                 comment.getCreated(),
                 comment.getUpdated()
@@ -37,14 +36,35 @@ public class CommentJdbc {
 
     /// toDomain
     public Comment toDomain() {
-        return new Comment(
-                this.id,
-                this.boardId,
-                this.userId,
-                this.parentId,
-                this.content,
-                this.createdAt,
-                this.updatedAt
-        );
+        return Comment.fromDB(id, postId, userId, content, createdAt, updatedAt);
+    }
+
+    /// DB용 및 수정용
+    public static CommentJdbc fromDB(Long id, Long postId, Long userId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return new CommentJdbc(id, postId, userId, content, createdAt, updatedAt);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }

@@ -20,10 +20,20 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /// 공통 처리 메서드
+    private ApiResponse<ExceptionDto> handleCustomException(CustomException customException, Exception e) {
+        log.error("에러 로그 : {}", e.getMessage(), e);
+        return ApiResponse.fail(customException);
+    }
+
+    /// 예외 처리
+    // 최하위 예외처리
     @ExceptionHandler(Exception.class)
     public ApiResponse<ExceptionDto> handleException(Exception e) {
 
-        return ApiResponse.fail(new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, null));
+        // 예외 클래스 생성
+        CustomException exception = new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, null);
+        return handleCustomException(exception, e);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -33,85 +43,63 @@ public class GlobalExceptionHandler {
         // 검증 에러 메시지 출력
         String errorMsg = e.getBindingResult().getFieldError().getDefaultMessage();
 
-        log.error(" 에러 로그 :{}", errorMsg);
-
         CustomException exception = new CustomException(ErrorCode.BAD_REQUEST, errorMsg);
-
-        return ApiResponse.fail(exception);
+        return handleCustomException(exception, e);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public ApiResponse<ExceptionDto> handleNoSuchElementException(NoSuchElementException e) {
 
-        log.error(" 에러 로그 :{}", e.getMessage());
-
         CustomException exception = new CustomException(ErrorCode.NOT_FOUND_END_POINT, null);
-
-        return ApiResponse.fail(exception);
+        return handleCustomException(exception, e);
     }
 
-    /// 회원가입 관련 에러 처리
+    /// 특정 에러 처리
+    // 유저
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DuplicationUserException.class)
-    public ApiResponse<ExceptionDto> handleException(DuplicationUserException e) {
+    @ExceptionHandler({
+            DuplicationUserException.class,
+            NotSamePasswordException.class,
+            NotEqualLoginPassword.class,
+            NotEmailException.class
+    })
+    public ApiResponse<ExceptionDto> handleUserExceptions(Exception e) {
 
-        log.error(" 에러 로그 :{}", e.getMessage());
+        CustomException exception = null;
 
-        return ApiResponse.fail(new CustomException(ErrorCode.USER_BAD_REQUEST, e.getMessage()));
+        if (e instanceof DuplicationUserException) {
+            exception = new CustomException(ErrorCode.USER_BAD_REQUEST, null);
+        } else if (e instanceof NotSamePasswordException) {
+            exception = new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, null);
+        } else if (e instanceof NotEqualLoginPassword) {
+            exception = new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, null);
+        } else if (e instanceof NotEmailException) {
+            exception = new CustomException(ErrorCode.NO_EMAIL, null);
+        }
+
+        return handleCustomException(exception, e);
     }
 
+    // 게시글, 댓글 관련 예외 처리
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotSamePasswordException.class)
-    public ApiResponse<ExceptionDto> handlePasswordException(NotSamePasswordException e) {
+    @ExceptionHandler({
+            NotEqualUpdateException.class,
+            NotEqualDeleteException.class,
+            NotRequestException.class
+    })
+    public ApiResponse<ExceptionDto> handlePostExceptions(RuntimeException e) {
+        CustomException exception = null;
 
-        log.error(" 에러 로그 :{}", e.getMessage());
+        if (e instanceof NotEqualUpdateException) {
+            exception = new CustomException(ErrorCode.NO_UPDATE, null);
+        } else if (e instanceof NotEqualDeleteException) {
+            exception = new CustomException(ErrorCode.NO_DELETE, null);
+        } else if (e instanceof NotRequestException) {
+            exception = new CustomException(ErrorCode.NO_UPDATE_PARAM, null);
+        }
 
-        return ApiResponse.fail(new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, e.getMessage()));
-    }
-
-    /// 로그인 관련 에러처리
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotEqualLoginPassword.class)
-    public ApiResponse<ExceptionDto> handlePasswordException(NotEqualLoginPassword e) {
-
-        log.error(" 에러 로그 :{}", e.getMessage());
-
-        return ApiResponse.fail(new CustomException(ErrorCode.USER_PASSWORD_BAD_REQUEST, null));
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotEmailException.class)
-    public ApiResponse<ExceptionDto> handlePasswordException(NotEmailException e) {
-
-        log.error(" 에러 로그 :{}", e.getMessage());
-
-        return ApiResponse.fail(new CustomException(ErrorCode.NO_EMAIL, null));
-    }
-
-    /// 게시글 관련 에러처리
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotEqualPostUpdateException.class)
-    public ApiResponse<ExceptionDto> handlePostUpdateException(NotEqualPostUpdateException e) {
-        return ApiResponse.fail(new CustomException(ErrorCode.NO_UPDATE, null));
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotEqualPostDeleteException.class)
-    public ApiResponse<ExceptionDto> handlePostDeleteException(NotEqualPostDeleteException e) {
-
-        log.error(" 에러 로그 :{}", e.getMessage());
-
-        return ApiResponse.fail(new CustomException(ErrorCode.NO_DELETE, null));
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotRequestException.class)
-    public ApiResponse<ExceptionDto> handleNotRequestException(NotRequestException e) {
-
-        log.error(" 에러 로그 :{}", e.getMessage());
-
-        return ApiResponse.fail(new CustomException(ErrorCode.NO_UPDATE_PARAM, null));
+        return handleCustomException(exception, e);
     }
 
 }
