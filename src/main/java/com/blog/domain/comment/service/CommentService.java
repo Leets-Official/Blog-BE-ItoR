@@ -54,4 +54,12 @@ public class CommentService {
   public void deleteComment(UUID id) {
     commentRepository.deleteById(id);
   }
+
+  public List<CommentResponse> getCommentsByAuthor(UUID authorId) {
+    return commentRepository.findByAuthorId(authorId)
+        .stream()
+        .map(CommentResponse::from)
+        .collect(Collectors.toList());
+  }
+
 }
