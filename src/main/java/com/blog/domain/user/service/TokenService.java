@@ -6,6 +6,8 @@ import com.blog.global.security.CustomTokenUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 
@@ -62,9 +64,7 @@ public class TokenService {
 
     }
 
-    // 로그아웃할때, 토큰을 삭제
-    public void deleteRefreshTokenByLogout(HttpServletRequest request) {
-
+    public void deleteRefreshTokenByLogout(HttpServletRequest request, HttpServletResponse response) {
         String token = getTokenFromRequest(request);
 
         // 토큰에서 사용자 정보 추출 (디코딩)
@@ -73,7 +73,18 @@ public class TokenService {
         // userId가 Long 형식이라면
         Long userId = Long.valueOf(user.get("userId").toString());
 
+        // 토큰 삭제
         tokenStore.removeToken(userId);
+
+        // 쿠키에서 userId 삭제
+        ResponseCookie cookie = ResponseCookie.from("userId", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0) // 즉시 만료
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     //  쿠키에 UserId 추가하기

@@ -1,6 +1,8 @@
 package com.blog.global.security.aop;
 
 import com.blog.domain.user.service.TokenService;
+import com.blog.global.exception.CustomException;
+import com.blog.global.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -26,7 +28,12 @@ public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        return tokenService.getUserIdFromCookie(request); // 👈 여기에서 꺼내줌
+        Long userId = tokenService.getUserIdFromCookie(request);
 
+        if (userId == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND_IN_COOKIE);
+        }
+
+        return userId;
     }
 }

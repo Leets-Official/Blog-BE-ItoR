@@ -1,8 +1,8 @@
 package com.blog.domain.post.controller;
 
-import com.blog.domain.post.controller.dto.request.PostRequest;
-import com.blog.domain.post.controller.dto.response.PostListResponse;
-import com.blog.domain.post.controller.dto.response.PostResponse;
+import com.blog.domain.post.controller.request.PostRequest;
+import com.blog.domain.post.controller.response.PostListResponse;
+import com.blog.domain.post.controller.response.PostResponse;
 import com.blog.domain.post.service.PostService;
 import com.blog.global.exception.CustomException;
 import com.blog.global.exception.ErrorCode;
@@ -18,7 +18,6 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-//    private final TokenService tokenService;
 
     public PostController(PostService postService) {
         this.postService = postService;
@@ -27,13 +26,7 @@ public class PostController {
     // 글 등록
     @PostMapping
     public ApiResponse<String> createPost(@GetUserId Long userId, @Valid @RequestBody PostRequest postRequest) {
-
-        // 로그인이 되어 있지 않으면 로그인 페이지 URL 반환
-        if (userId == null) {
-            return ApiResponse.fail(new CustomException(ErrorCode.USER_NOT_FOUND));
-        }
-
-        postService.savePost(userId, postRequest);
+        postService.createPost(userId, postRequest);
         return ApiResponse.ok("정상적으로 등록되었습니다.");
     }
 
@@ -42,7 +35,6 @@ public class PostController {
     public ApiResponse<List<PostListResponse>> getPostList(@GetUserId Long userId) {
         List<PostListResponse> posts = postService.getPostList(userId);
         return ApiResponse.ok(posts);
-
     }
 
     // 글 상세 조회

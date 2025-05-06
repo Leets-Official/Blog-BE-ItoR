@@ -1,11 +1,10 @@
 package com.blog.domain.user.domain;
 
+import com.blog.domain.user.controller.request.UpdateRequest;
 import com.blog.global.common.BaseDomain;
-
 import java.time.LocalDateTime;
 
 public class User extends BaseDomain {
-
 
     private Long id;
     private String email;
@@ -17,6 +16,7 @@ public class User extends BaseDomain {
     private String profileImage;
     private Provider provider;
 
+    // constructor
     public User() {
     }
 
@@ -31,25 +31,35 @@ public class User extends BaseDomain {
         this.provider = Provider.valueOf(provider);
     }
 
-
-
     public User(Long id, String email, String password) {
         this.id = id;
         this.email = email;
         this.password = password;
     }
 
-    // 🔹 정적 팩토리 메서드 추가 (더 명확한 의미 전달)
-    public static User createSocialUser(String email, String password, String name, String nickname, LocalDateTime birth, String introduction, String profileImage, String provider) {
-        return new User(email, password, name, nickname, birth, introduction, profileImage, provider);
+    public User(long id, String email, String password, String name, String nickname, LocalDateTime localDateTime, String introduction, String profileImage, String provider) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.birth = localDateTime;
+        this.introduction = introduction;
+        this.profileImage = profileImage;
+        this.provider = Provider.valueOf(provider);
     }
 
-    public static User createBasicUser(Long id, String email, String password) {
-        return new User(id, email, password);
+    public User(String email, String password, String name, String nickname, LocalDateTime birth, String introduction, String profileImage) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.birth = birth;
+        this.introduction = introduction;
+        this.profileImage = profileImage;
     }
 
-
-
+   // getter
     public Long getId() {
         return id;
     }
@@ -62,15 +72,14 @@ public class User extends BaseDomain {
         return password;
     }
 
-
     public String getNickname() {
         return nickname;
     }
 
-
     public String getProfileImage() {
         return profileImage;
     }
+
     public String getName() {
         return name;
     }
@@ -87,16 +96,14 @@ public class User extends BaseDomain {
         return provider;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    // 도메인 메서드
+    public void updateMyPageInfo(UpdateRequest req) {
+        if (req.name() != null) this.name = req.name();
+        if (req.nickname() != null) this.nickname = req.nickname();
+        if (req.introduction() != null) this.introduction = req.introduction();
+        if (req.birth() != null) this.birth = req.birth();
+        if (req.profileImage() != null) this.profileImage = req.profileImage();
     }
 
 }

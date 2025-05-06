@@ -1,6 +1,6 @@
 package com.blog.domain.post.domain;
 
-import com.blog.domain.post.controller.dto.request.PostRequest;
+import com.blog.domain.post.controller.request.PostRequest;
 import com.blog.global.common.BaseDomain;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class Post extends BaseDomain {
 
     private Long id;
-    private Long userId;
+    private long userId;
     private String title;
     private int commentCount = 0;
 
@@ -36,11 +36,9 @@ public class Post extends BaseDomain {
         this.commentCount = commentCount;
     }
 
-
     public static Post of(Long userId, PostRequest postRequest) {
         return new Post(userId, postRequest.title());
     }
-
 
     // Getter
     public Long getId() {
@@ -61,16 +59,10 @@ public class Post extends BaseDomain {
 
     // 도메인 메서드
     public void updateTitle(@NotBlank String title) {
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("제목은 비어있을 수 없습니다.");
-        }
         this.title = title;
     }
 
-    public void updateUpdatedAt(LocalDateTime now) {
-        if (now == null) {
-            throw new IllegalArgumentException("업데이트 시간은 비어있을 수 없습니다.");
-        }
+    public void updateUpdatedAt(@NotBlank LocalDateTime now) {
         this.updatedAt = now;
     }
 

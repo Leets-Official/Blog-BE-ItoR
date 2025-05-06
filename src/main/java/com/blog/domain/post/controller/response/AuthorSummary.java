@@ -1,4 +1,4 @@
-package com.blog.domain.post.controller.dto.response;
+package com.blog.domain.post.controller.response;
 
 import com.blog.domain.user.domain.User;
 
