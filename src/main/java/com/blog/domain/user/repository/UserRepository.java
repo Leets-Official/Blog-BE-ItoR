@@ -45,6 +45,12 @@ public class UserRepository {
     return users.stream().findFirst();
   }
 
+  public void deleteByEmail(String email) {
+    String sql = "DELETE FROM user WHERE email = ?";
+    jdbcTemplate.update(sql, email);
+  }
+
+
   private RowMapper<User> userRowMapper() {
     return (rs, rowNum) -> new User(
         UUID.fromString(rs.getString("id")),
