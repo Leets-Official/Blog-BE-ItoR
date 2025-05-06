@@ -12,6 +12,11 @@ public class PostRequest {
     @NotNull(message = "글 작성은 필수입니다.")
     private List<ContentRequest> content;
 
+    public PostRequest(String title, List<ContentRequest> content) {
+        this.title = title;
+        this.content = content;
+    }
+
     public String getTitle() {
         return title;
     }

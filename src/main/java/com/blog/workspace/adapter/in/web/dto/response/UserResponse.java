@@ -9,12 +9,14 @@ public class UserResponse {
 
     private final Long id;
     private final String nickname;
+    private final String imageUrl;
     private final String description;
 
     public UserResponse(User user) {
         this.id = user.getId();
         this.nickname = user.getNickname();
         this.description = user.getDescription();
+        this.imageUrl = user.getImageUrl();
     }
 
     /// @Getter
@@ -28,5 +30,9 @@ public class UserResponse {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 }

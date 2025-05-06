@@ -12,6 +12,7 @@ import com.blog.workspace.adapter.in.web.dto.response.UserPostResponse;
 import com.blog.workspace.application.in.comment.CommentUseCase;
 import com.blog.workspace.application.in.post.PostUseCase;
 import com.blog.workspace.application.out.comment.LoadCommentPort;
+import com.blog.workspace.application.out.image.ImagePort;
 import com.blog.workspace.application.out.post.ContentBlockPort;
 import com.blog.workspace.application.out.post.DeletePostPort;
 import com.blog.workspace.application.out.post.LoadPostPort;
@@ -25,11 +26,10 @@ import com.blog.workspace.domain.post.ContentBlock;
 import com.blog.workspace.domain.post.ContentType;
 import com.blog.workspace.domain.post.Post;
 import com.blog.workspace.domain.user.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,21 +48,21 @@ public class PostService implements PostUseCase {
     private final LoadCommentPort commentPort;
 
     private final UserPort userPort;
-    private final CommentUseCase commentUseCase;
+    private final ImagePort imagePort;
 
     /// 생성자
-    public PostService(SavePostPort savePort, LoadPostPort loadPort, DeletePostPort deletePort, ContentBlockPort contentPort, LoadCommentPort commentPort, UserPort userPort, CommentUseCase commentUseCase) {
+    public PostService(SavePostPort savePort, LoadPostPort loadPort, DeletePostPort deletePort, ContentBlockPort contentPort, LoadCommentPort commentPort, UserPort userPort, CommentUseCase commentUseCase, ImagePort imagePort) {
         this.savePort = savePort;
         this.loadPort = loadPort;
         this.deletePort = deletePort;
         this.contentPort = contentPort;
         this.commentPort = commentPort;
         this.userPort = userPort;
-        this.commentUseCase = commentUseCase;
+        this.imagePort = imagePort;
     }
 
     @Override
-    public Post savePost(PostRequest request, Long userId) {
+    public Post savePost(PostRequest request, Long userId) throws IOException {
 
         /// 유저 검증
         userPort.findMe(userId)
@@ -78,7 +78,7 @@ public class PostService implements PostUseCase {
         /// 내용 블럭 저장
         // 순서를 위한 변수 설정
         int ord = 0;
-        createContenetBlock(contents, savedPost, ord);
+        createContentBlock(contents, savedPost, ord);
 
         return savedPost;
     }
@@ -147,7 +147,7 @@ public class PostService implements PostUseCase {
 
     // 게시글 수정
     @Override
-    public Post updatePost(Long postId, Long userId, PostUpdateRequest request) {
+    public Post updatePost(Long postId, Long userId, PostUpdateRequest request) throws IOException {
 
         /// 제목과 내용이 모두 비어 있는 경우 예외 처리
         if ((request.getTitle() == null || request.getTitle().trim().isEmpty()) &&
@@ -190,15 +190,24 @@ public class PostService implements PostUseCase {
 
     /// 내부 함수
     // 블록 생성
-    private void createContenetBlock(List<ContentRequest> contents, Post savedPost, int ord) {
+    private void createContentBlock(List<ContentRequest> contents, Post savedPost, int ord) throws IOException {
         for (ContentRequest content : contents) {
-            ContentBlock contentBlock = ContentBlock.of(savedPost.getId(), content.getType(), content.getContent(), ++ord);
+
+            String blockContent;
+
+            if (content.getType() == ContentType.IMAGE) {
+                blockContent = imagePort.uploadFiles(content.getImage());
+            } else {
+                blockContent = content.getContent();
+            }
+
+            ContentBlock contentBlock = ContentBlock.of(savedPost.getId(), content.getType(), blockContent, ++ord);
             contentPort.saveBlock(contentBlock);
         }
     }
 
     // 글 수정하기
-    private void changePost(PostUpdateRequest request, Post post) {
+    private void changePost(PostUpdateRequest request, Post post) throws IOException {
         // 제목이 요청에 있으면 수정
         if (request.getTitle() != null && !request.getTitle().isEmpty()) {
             post.changeTitle(request.getTitle());
@@ -209,7 +218,7 @@ public class PostService implements PostUseCase {
             contentPort.deleteBlockByPost(post.getId());
 
             // 새롭게 내용을 저장
-            createContenetBlock(request.getContent(), post, 0);
+            createContentBlock(request.getContent(), post, 0);
         }
     }
 

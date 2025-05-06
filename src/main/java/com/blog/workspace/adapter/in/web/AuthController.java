@@ -12,12 +12,17 @@ import com.blog.workspace.domain.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     // 자체 회원가입
     private final RegisterUserUseCase registerService;
 
@@ -36,7 +41,7 @@ public class AuthController {
 
     /// 자체 회원가입 기능
     @PostMapping
-    public ApiResponse<String> register(@RequestBody @Valid UserRegisterRequest request) {
+    public ApiResponse<String> register(@ModelAttribute UserRegisterRequest request) throws IOException {
 
         registerService.registerUser(request);
         return ApiResponse.ok("회원 가입 성공했습니다.");

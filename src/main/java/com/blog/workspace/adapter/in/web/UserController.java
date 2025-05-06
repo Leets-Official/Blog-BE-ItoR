@@ -9,6 +9,8 @@ import com.blog.workspace.application.in.user.UpdateUserUseCase;
 import com.blog.workspace.domain.user.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -31,7 +33,7 @@ public class UserController {
     }
 
     @PutMapping()
-    public ApiResponse<String> updateMyInfo(@RequestUserId Long userId, @RequestBody UserUpdateRequest request) {
+    public ApiResponse<String> updateMyInfo(@RequestUserId Long userId, @ModelAttribute UserUpdateRequest request) throws IOException {
 
         updateService.updateUser(userId, request);
         return ApiResponse.ok("수정되었습니다.");
