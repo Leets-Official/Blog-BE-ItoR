@@ -25,9 +25,7 @@ public class MyPageController {
     @GetMapping
     public ApiResponse<MypageResponse> getMyPage(@GetUserId Long userId) {
         User user = myPageService.getMyPageInfo(userId);
-        if (user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
+
         MypageResponse myPageInfo = MypageResponse.from(user);
 
         return ApiResponse.ok(myPageInfo);
