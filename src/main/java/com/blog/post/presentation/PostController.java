@@ -26,7 +26,7 @@ public class PostController {
             @RequestBody PostRequest request,
             @RequestHeader("Authorization") String token
     ) {
-        Integer userId = jwtTokenProvider.extractUserId(token);
+        int userId = jwtTokenProvider.extractUserId(token);
         PostResponse response = postService.createPost(request, userId);
         return ResponseEntity.ok(response);
     }
@@ -37,26 +37,26 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> getPost(@PathVariable Integer postId) {
+    public ResponseEntity<PostResponse> getPost(@PathVariable int postId) {
         return ResponseEntity.ok(postService.getPostById(postId));
     }
 
     @PutMapping("/{postId}")
     public ResponseEntity<PostResponse> updatePost(
-            @PathVariable Integer postId,
+            @PathVariable int postId,
             @RequestBody PostRequest request,
             @RequestHeader("Authorization") String token
     ) {
-        Integer userId = jwtTokenProvider.extractUserId(token);
+        int userId = jwtTokenProvider.extractUserId(token);
         return ResponseEntity.ok(postService.updatePost(postId, request, userId));
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(
-            @PathVariable Integer postId,
+            @PathVariable int postId,
             @RequestHeader("Authorization") String token
     ) {
-        Integer userId = jwtTokenProvider.extractUserId(token);
+        int userId = jwtTokenProvider.extractUserId(token);
         postService.deletePost(postId, userId);
         return ResponseEntity.ok().build();
     }

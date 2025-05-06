@@ -15,7 +15,7 @@ public class DatabaseTest {
 
     @Test
     public void testDatabaseConnection() {
-        Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+        int result = jdbcTemplate.queryForObject("SELECT 1", int.class);
 
         assertNotNull(result);
         assertEquals(1, result);

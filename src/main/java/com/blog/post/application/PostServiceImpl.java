@@ -7,6 +7,7 @@ import com.blog.post.presentation.dto.PostResponse;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse createPost(PostRequest request, Integer userId) {
+    public PostResponse createPost(PostRequest request, int userId) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         Post post = buildPostFromRequest(request, userId, now);
         postRepository.save(post);
@@ -33,13 +34,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getPostById(Integer postId) {
+    public PostResponse getPostById(int postId) {
         Post post = postRepository.findById(postId);
         return convertToPostResponse(post);
     }
 
     @Override
-    public PostResponse updatePost(Integer postId, PostRequest request, Integer userId) {
+    public PostResponse updatePost(int postId, PostRequest request, int userId) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
         Post post = new Post(postId, userId, request.getTitle(), null, now, null);
@@ -53,7 +54,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(Integer postId, Integer userId) {
+    public void deletePost(int postId, int userId) {
         postRepository.deleteContents(postId, userId);
         postRepository.delete(postId, userId);
     }
@@ -65,16 +66,14 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
     }
 
-    // 🔽 아래는 private helper 메서드 🔽
-
-    private Post buildPostFromRequest(PostRequest request, Integer userId, Timestamp now) {
-        return new Post(null, userId, request.getTitle(), now, now, null);
+    private Post buildPostFromRequest(PostRequest request, int userId, Timestamp now) {
+        return new Post(0, userId, request.getTitle(), now, now, new ArrayList<>());
     }
 
-    private List<PostContent> convertToPostContents(PostRequest request, Integer postId, Integer userId) {
+    private List<PostContent> convertToPostContents(PostRequest request, int postId, int userId) {
         return request.getContents().stream()
                 .map(dto -> new PostContent(
-                        null,
+                        0,
                         postId,
                         userId,
                         PostContentType.from(dto.getContentType()),

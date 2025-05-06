@@ -14,11 +14,11 @@ public interface PostRepository {
     List<Post> findAll();
 
     // 게시물 단건 조회
-    Post findById(Integer postId);
+    Post findById(int postId);
 
     // 게시물 삭제
-    void delete(Integer postId, Integer userId);
+    void delete(int postId, int userId);
 
     // 게시물 내용 삭제
-    void deleteContents(Integer postId, Integer userId);
+    void deleteContents(int postId, int userId);
 }

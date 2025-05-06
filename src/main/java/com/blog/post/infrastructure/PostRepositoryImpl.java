@@ -56,7 +56,7 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public Post findById(Integer postId) {
+    public Post findById(int postId) {
         String sql = "SELECT * FROM posts WHERE post_id = ?";
         Post post = jdbc.queryForObject(sql, postRowMapper(), postId);
 
@@ -68,13 +68,13 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public void delete(Integer postId, Integer userId) {
+    public void delete(int postId, int userId) {
         String sql = "DELETE FROM posts WHERE post_id = ? AND user_id = ?";
         jdbc.update(sql, postId, userId);
     }
 
     @Override
-    public void deleteContents(Integer postId, Integer userId) {
+    public void deleteContents(int postId, int userId) {
         String sql = "DELETE FROM contents WHERE post_id = ? AND user_id = ?";
         jdbc.update(sql, postId, userId);
     }

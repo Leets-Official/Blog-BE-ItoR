@@ -3,17 +3,17 @@ package com.blog.post.presentation.dto;
 import java.util.List;
 
 public class PostResponse {
-    private Integer postId;
-    private Integer userId;
+    private int postId;
+    private int userId;
     private String title;
     private String createdAt;
     private List<PostContentDto> contents;
 
-    public Integer getPostId() { return postId; }
-    public void setPostId(Integer postId) { this.postId = postId; }
+    public int getPostId() { return postId; }
+    public void setPostId(int postId) { this.postId = postId; }
 
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

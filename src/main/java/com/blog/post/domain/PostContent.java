@@ -2,20 +2,20 @@ package com.blog.post.domain;
 
 public class PostContent {
 
-    private Integer contentId;
-    private Integer postId;
-    private Integer userId;
+    private int contentId;
+    private int postId;
+    private int userId;
     private PostContentType contentType;
     private String content;
-    private Integer order;
+    private int order;
 
     public PostContent(
-            Integer contentId,
-            Integer postId,
-            Integer userId,
+            int contentId,
+            int postId,
+            int userId,
             PostContentType contentType,
             String content,
-            Integer order
+            int order
     ) {
         this.contentId = contentId;
         this.postId = postId;
@@ -25,13 +25,13 @@ public class PostContent {
         this.order = order;
     }
 
-    public Integer getContentId() { return contentId; }
-    public Integer getPostId() { return postId; }
-    public Integer getUserId() { return userId; }
+    public int getContentId() { return contentId; }
+    public int getPostId() { return postId; }
+    public int getUserId() { return userId; }
     public PostContentType getContentType() { return contentType; }
     public String getContent() { return content; }
-    public Integer getOrder() { return order; }
+    public int getOrder() { return order; }
 
     public void setContent(String content) { this.content = content; }
-    public void setOrder(Integer order) { this.order = order; }
+    public void setOrder(int order) { this.order = order; }
 }

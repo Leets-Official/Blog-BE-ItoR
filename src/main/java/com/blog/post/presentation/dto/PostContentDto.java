@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class PostContentDto {
     private String contentType;  // "text" or "image"
     private String content;
-    private Integer order;
+    private int order;
 
     @JsonProperty("content_type")
     public String getContentType() { return contentType; }
@@ -18,8 +18,8 @@ public class PostContentDto {
         this.content = content;
     }
 
-    public Integer getOrder() { return order; }
-    public void setOrder(Integer order) {
+    public int getOrder() { return order; }
+    public void setOrder(int order) {
         this.order = order;
     }
 }
