@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.mypage.mapper.MyPageMapper">
+
+    <select id="selectMyInfo" resultType="com.blog.mypage.record.MyInfoRecord">
+        SELECT
+            m.id                   AS memberId,
+            m.name                 AS name,
+            m.nick                 AS nickname,
+            m.email                AS email,
+            m.bio                  AS intro,
+            DATE_FORMAT(m.birthdate, '%Y-%m-%d') AS birthday,
+            p.profile_img_url      AS profileImgUrl,
+            NULL                   AS profileImgUrl
+        FROM MEMBER m
+        LEFT JOIN PROFILE_IMG p
+        ON m.id = p.member_id
+        WHERE m.id = #{memberId}
+    </select>
+
+    <update id="updateMyInfo">
+        UPDATE MEMBER
+        SET name      = #{name},
+            nick      = #{nickname},
+            bio       = #{intro},
+            birthdate = #{birthday}
+        WHERE id = #{memberId}
+    </update>
+
+    <delete id="deleteProfileImg">
+        DELETE FROM PROFILE_IMG
+        WHERE member_id = #{memberId}
+    </delete>
+
+    <insert id="insertProfileImg">
+        INSERT INTO PROFILE_IMG (
+            member_id, profile_img_url, uploaded_at
+        ) VALUES (
+                     #{memberId}, #{url}, NOW()
+                 )
+    </insert>
+
+    <select id="selectPassword" resultType="String">
+        SELECT pwd
+        FROM MEMBER
+        WHERE id = #{memberId}
+    </select>
+
+    <update id="updatePassword">
+        UPDATE MEMBER
+        SET pwd = #{newPwd}
+        WHERE id  = #{memberId}
+    </update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>
