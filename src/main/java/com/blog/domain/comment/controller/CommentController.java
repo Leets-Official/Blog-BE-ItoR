@@ -1,10 +1,9 @@
-package com.blog.domain.comment.controller.dto;
+package com.blog.domain.comment.controller;
 
 
-import com.blog.domain.comment.controller.dto.request.CommentRequest;
-import com.blog.domain.comment.controller.dto.request.CommentUpdatedRequest;
+import com.blog.domain.comment.controller.request.CommentRequest;
+import com.blog.domain.comment.controller.request.CommentUpdatedRequest;
 import com.blog.domain.comment.service.CommentService;
-import com.blog.domain.post.service.PostService;
 import com.blog.global.response.ApiResponse;
 import com.blog.global.security.aop.GetUserId;
 import jakarta.validation.Valid;

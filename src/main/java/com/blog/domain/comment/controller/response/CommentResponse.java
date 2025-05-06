@@ -1,4 +1,4 @@
-package com.blog.domain.comment.controller.dto.response;
+package com.blog.domain.comment.controller.response;
 
 import com.blog.domain.comment.domain.Comment;
 

@@ -1,4 +1,4 @@
-package com.blog.domain.comment.controller.dto.request;
+package com.blog.domain.comment.controller.request;
 
 import jakarta.validation.constraints.NotBlank;
 
