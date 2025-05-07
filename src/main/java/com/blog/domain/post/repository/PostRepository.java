@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.blog.domain.post.domain.Post;
+import com.blog.domain.post.dto.PostSummaryDto;
 
 public interface PostRepository {
 
@@ -14,5 +15,6 @@ public interface PostRepository {
 	int countAll ();
 	boolean update(Post post);
 	boolean softDelete(int postId);
+	List<PostSummaryDto> findAllByUserId(int userId);
 
 }
