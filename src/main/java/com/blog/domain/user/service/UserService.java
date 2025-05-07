@@ -11,15 +11,18 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
   private final UserRepository userRepository;
+  private final JdbcTemplate jdbcTemplate;
   private static final String SALT = "random_salt_value";
 
-  public UserService(UserRepository userRepository) {
+  public UserService(UserRepository userRepository, JdbcTemplate jdbcTemplate) {
     this.userRepository = userRepository;
+    this.jdbcTemplate = jdbcTemplate;
   }
 
   public void registerUser(String nickname, String password, String email, String profileImageUrl) {
@@ -42,4 +45,14 @@ public class UserService {
   public Optional<User> findUserByEmail(String email) {
     return userRepository.findByEmail(email);
   }
+
+  public void deleteByEmail(String email) {
+    userRepository.deleteByEmail(email);
+  }
+
+  public void updateProfileImage(String email, String imageUrl) {
+    String sql = "UPDATE user SET profile_image_url = ?, updated_at = ? WHERE email = ?";
+    jdbcTemplate.update(sql, imageUrl, LocalDateTime.now(), email);
+  }
+
 }
