@@ -50,10 +50,8 @@ public class UserService {
 		userRepository.update(updatedUser);
 
 		// 여기서 DTO로 변환해서 리턴
-		return new UserProfileUpdateResponseDto(
-			updatedUser.getNickName(),
-			updatedUser.getProfileImageUrl()
-		);
+		return UserProfileUpdateResponseDto.from(updatedUser);
+
 	}
 
 	public UserInfoResponseDto getUserProfile(int userId) {
