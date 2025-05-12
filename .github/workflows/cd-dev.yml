@@ -44,4 +44,4 @@ jobs:
           script: |
             cd /home/ubuntu/app/docker/
             docker load -i spring.tar
-            docker-compose up -d spring
+            docker-compose up -d

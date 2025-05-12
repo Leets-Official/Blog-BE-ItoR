@@ -1,12 +1,5 @@
 services:
-  ### 키키하이 도커 이미지
-  spring:
-    image: kikihi/server:latest
-    container_name: kkh-app
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
+
 
   # mysql 이미지
   mysql:
