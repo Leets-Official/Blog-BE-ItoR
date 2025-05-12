@@ -21,6 +21,7 @@ import java.util.List;
 @Service
 public class PostsService {
 
+    private static final int PAGE_SIZE = 5;
     private final UsersService usersService;
     private final PostsRepository postsRepository;
     private final PostBlockService postBlockService;
@@ -45,9 +46,9 @@ public class PostsService {
     }
 
     // 게시글 목록 조회
-    public PostListResponse getPostsList(PostListRequest request){
-        int page = request.page() <= 0 ? 0 : request.page();
-        int offset = (page - 1) * 5;
+    public PostListResponse getPostsList(int page) {
+        int safePage = Math.max(page, 1);
+        int offset = (safePage - 1) * PAGE_SIZE;
 
         List<PostSummary> posts = postsRepository.getPostsList(offset);
 

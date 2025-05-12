@@ -47,7 +47,7 @@ public class PostsRestController {
     public ApiResponse<PostListResponse> postList(
             @ModelAttribute PostListRequest request){
 
-        return ApiResponse.ok(postsService.getPostsList(request));
+        return ApiResponse.ok(postsService.getPostsList(request.page()));
     }
 
     // 게시글 상세 조회
