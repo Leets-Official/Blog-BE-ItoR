@@ -4,8 +4,6 @@ import com.blog.domain.post.controller.request.PostRequest;
 import com.blog.domain.post.controller.response.PostListResponse;
 import com.blog.domain.post.controller.response.PostResponse;
 import com.blog.domain.post.service.PostService;
-import com.blog.global.exception.CustomException;
-import com.blog.global.exception.ErrorCode;
 import com.blog.global.response.ApiResponse;
 import com.blog.global.security.aop.GetUserId;
 import jakarta.validation.Valid;
