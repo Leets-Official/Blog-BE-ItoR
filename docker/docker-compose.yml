@@ -1,4 +1,15 @@
 services:
+
+  spring:
+    image: eedoy/leets:latest
+    container_name: leets-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - backend-bridge
+
   mysql:
     image: mysql:8.0
     container_name: leets-mysql
@@ -7,3 +18,9 @@ services:
       - .env
     ports:
       - "3306:3306"
+    networks:
+      - backend-bridge
+
+networks:
+  backend-bridge:
+    driver: bridge
