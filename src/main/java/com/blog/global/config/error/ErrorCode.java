@@ -7,6 +7,8 @@ public enum ErrorCode {
 	INVALID_PASSWORD(401, "c40101", "비밀번호가 일치하지 않습니다."),
 	PASSWORD_MISMATCH(400, "c40002", "비밀번호가 일치하지 않습니다."),
 	EMAIL_ALREADY_EXISTS(400, "c40003", "이미 사용 중인 이메일입니다."),
+	NICKNAME_ALREADY_EXISTS(409, "c40901", "이미 사용 중인 닉네임입니다."),
+
 
 	//Access & Refresh Token 관련
 	INVALID_TOKEN(401, "c40102", "토큰이 유효하지 않습니다."),
@@ -32,6 +34,10 @@ public enum ErrorCode {
 
 	//파싱관련
 	SERIALIZE_FAILED(500, "c50008", "직렬화에 오류가 발생했습니다."),
+
+	//수정관련
+	NO_UPDATABLE_FIELDS(400, "c40006", ""),
+	NO_CHANGES_DETECTED(400, "c40007", "변경된 내용이 없습니다."),
 
 	//헤더관련
 	MISSING_AUTH_HEADER(401, "c40103", "Authorization 헤더가 누락되었습니다.");

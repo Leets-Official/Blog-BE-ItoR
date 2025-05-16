@@ -58,6 +58,17 @@ public class UserRepositoryImpl implements UserRepository {
 
 	}
 
+	@Override
+	public void update(User user) {
+		String sql = "UPDATE users SET password = ?, nickName = ?, profileImageUrl = ? WHERE userId = ?";
+		jdbc.update(sql,
+			user.getPassword(),
+			user.getNickName(),
+			user.getProfileImageUrl(),
+			user.getUserId()
+		);
+	}
+
 	private RowMapper<User> userRowMapper() {
 		return (rs, rowNum) -> new User(
 			rs.getInt("userId"),
