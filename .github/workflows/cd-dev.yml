@@ -12,37 +12,18 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout source code
+      - name: 1. Checkout source code
         uses: actions/checkout@v3
 
-      - name: .env 생성
+      - name: 2. .env 생성
         run: echo "${{ secrets.ENV }}" > .env
 
-      - name: .env 파일 EC2에 전송
-        uses: appleboy/scp-action@master
+      - name: 3. Docker 이미지 Prod 서버 배포
+        uses: appleboy/ssh-action@master  # SSH를 사용하여 EC2에서 명령 실행
         with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: ".env"
-          target: "/home/ubuntu/app/docker/"
-
-      - name: docker-compose.yml 전달
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "./docker/docker-compose.yml"
-          target: "/home/ubuntu/app/"
-
-      - name: EC2에서 docker-compose 실행
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_PUBLIC_IP }}
+          host: ${{ secrets.EC2_PUBLIC_IP }}  # EC2 퍼블릭 IP
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/app/docker/
-            docker load -i spring.tar
-            docker compose up -d spring
+            sudo docker pull ${{secrets.DOCKER_USERNAME}}/server:latest
+            sudo ~/deploy.sh
