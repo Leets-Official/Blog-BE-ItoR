@@ -23,8 +23,8 @@ jobs:
           host: ${{ secrets.EC2_PUBLIC_IP }}  # EC2 퍼블릭 IP
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-        script: |
-          sudo docker stop leets-server || true
-          sudo docker rm leets-server || true
-          sudo docker pull ${{secrets.DOCKER_USERNAME}}/leets-server:latest
-          sudo docker run -d --name leets-server -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/leets-server:latest
+          script: |
+            sudo docker stop leets-server || true
+            sudo docker rm leets-server || true
+            sudo docker pull ${{secrets.DOCKER_USERNAME}}/leets-server:latest
+            sudo docker run -d --name leets-server -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/leets-server:latest
