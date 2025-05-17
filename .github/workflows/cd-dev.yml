@@ -24,6 +24,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+            cd /home/ubuntu/server
             sudo docker stop leets-server || true
             sudo docker rm leets-server || true
             sudo docker pull ${{secrets.DOCKER_USERNAME}}/leets-server:latest
