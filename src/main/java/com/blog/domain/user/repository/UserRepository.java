@@ -70,6 +70,7 @@ public class UserRepository {
         String sql = "SELECT * FROM `user` WHERE id = ?";
         try {
             RowMapper<User> rowMapper = (rs, rowNum) -> new User(
+                    rs.getLong("id"),
                     rs.getString("email"),
                     rs.getString("password"),
                     rs.getString("name"),
@@ -86,4 +87,64 @@ public class UserRepository {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
     }
+
+    public void deleteUser(Long userId) {
+        String sql = "DELETE FROM user WHERE id = ?";
+
+        try {
+            int deletedCount = jdbcTemplate.update(sql, userId);
+
+            if (deletedCount == 0) {
+                // 삭제된 행이 없다면 예외 발생
+                throw new CustomException(ErrorCode.USER_NOT_FOUND);
+            }
+        } catch (DataAccessException e) {
+            // 데이터 접근 오류 시 예외 처리
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN); // 예외 코드에 맞게 변경
+        }
+    }
+
+    // 마이페이지 정보 가져오기
+    public Optional<User> findByUserIdForMyPage(Long userId) {
+        String sql = "SELECT * FROM `user` WHERE id = ?";
+        try {
+            RowMapper<User> rowMapper = (rs, rowNum) -> new User(
+                    rs.getLong("id"),
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getString("name"),
+                    rs.getString("nickname"),
+                    rs.getDate("birth") != null ? rs.getDate("birth").toLocalDate().atStartOfDay() : null,
+                    rs.getString("introduction"),
+                    rs.getString("profile_image"),
+                    rs.getString("provider")
+            );
+
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{userId}, rowMapper));
+
+        } catch (EmptyResultDataAccessException e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
+    // 마이페이지 수정
+    public User updateUser(User user) {
+        String sql = "UPDATE user SET name = ?, nickname = ?, introduction = ?, birth = ?, profile_image = ? WHERE id = ?";
+        LocalDateTime birth = user.getBirth(); // LocalDateTime
+        java.sql.Date sqlBirth = (birth != null) ? java.sql.Date.valueOf(birth.toLocalDate()) : null;
+
+        jdbcTemplate.update(
+                sql,
+                user.getName(),
+                user.getNickname(),
+                user.getIntroduction(),
+                sqlBirth,
+                user.getProfileImage(),
+                user.getId()
+        );
+        return user;
+    }
+
 }
+
+

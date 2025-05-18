@@ -1,12 +1,13 @@
 package com.blog.domain.user.service;
 
-import com.blog.domain.user.controller.dto.request.JoinRequest;
+import com.blog.domain.user.controller.request.JoinRequest;
 import com.blog.domain.user.domain.User;
 import com.blog.domain.user.repository.UserRepository;
 import com.blog.global.exception.CustomException;
 import com.blog.global.exception.ErrorCode;
 import com.blog.global.security.PasswordUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -67,6 +68,14 @@ public class UserService {
                 joinRequest.profileImage(),
                 joinRequest.provider()
         );
+    }
+
+    // 유저 탈퇴
+    @Transactional
+    public void deleteUser(long userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        userRepository.deleteUser(user.getId());
     }
 
 }

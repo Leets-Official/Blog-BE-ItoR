@@ -1,6 +1,6 @@
 package com.blog.domain.comment.domain;
 
-import com.blog.domain.comment.controller.dto.request.CommentRequest;
+import com.blog.domain.comment.controller.request.CommentRequest;
 import com.blog.global.common.BaseDomain;
 
 import java.time.LocalDateTime;

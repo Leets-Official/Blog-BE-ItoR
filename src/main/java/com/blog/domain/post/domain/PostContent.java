@@ -3,7 +3,7 @@ package com.blog.domain.post.domain;
 public class PostContent {
 
     private Long id;
-    private Long postId;
+    private long postId;
     private ContentType type; // TEXT, IMAGE
     private String content;
     private int sequence; // 순서
@@ -22,6 +22,15 @@ public class PostContent {
         this.sequence = sequence;
     }
 
+    public static PostContent text(Long postId, String text, int sequence) {
+        return new PostContent(postId,ContentType.TEXT,text,sequence);
+    }
+
+    public static PostContent image(Long postId, String imageUrl, int sequence) {
+        return new PostContent(postId, ContentType.IMAGE, imageUrl, sequence);
+    }
+
+    // getter
     public int getSequence() {
         return sequence;
     }
@@ -42,12 +51,5 @@ public class PostContent {
         return id;
     }
 
-    public static PostContent text(Long postId, String text, int sequence) {
-        return new PostContent(postId,ContentType.TEXT,text,sequence);
-    }
-
-    public static PostContent image(Long postId, String imageUrl, int sequence) {
-        return new PostContent(postId, ContentType.IMAGE, imageUrl, sequence);
-    }
 }
 

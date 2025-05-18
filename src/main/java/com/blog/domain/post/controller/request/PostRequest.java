@@ -1,4 +1,4 @@
-package com.blog.domain.post.controller.dto.request;
+package com.blog.domain.post.controller.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
