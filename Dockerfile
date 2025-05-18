@@ -1,5 +1,5 @@
-# Java 17 기반 이미지 사용
-FROM eclipse-temurin:17-jdk
+# Java 21 기반 이미지 사용
+FROM eclipse-temurin:21-jdk
 
 # JAR 파일이 복사될 위치
 WORKDIR /app
