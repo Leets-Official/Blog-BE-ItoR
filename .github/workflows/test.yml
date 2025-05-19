@@ -2,9 +2,7 @@ name: PR 테스트
 
 on:
   pull_request:
-    branches:
-      - "전수현/main"
-      - "전수현/6주차"
+    branches: [ "전수현/main", "전수현/6주차" ]
 
 jobs:
   test:
@@ -37,15 +35,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: application.yml 파일 생성 (Base64 디코딩)
+      - name: application.yml 파일 생성
         run: |
-          echo "${{ secrets.APPLICATION_YML_B64 }}" | base64 -d > src/main/resources/application.yml
-          echo "===== application.yml 내용 확인 ====="
-          cat src/main/resources/application.yml
-
-      - name: 플레이스홀더 확인
-        run: |
-          grep -o '\${[^}]*}' src/main/resources/application.yml || echo "No placeholders found"
+          echo "${{ secrets.APPLICATION_YML }}" | base64 -d > src/main/resources/application.yml
 
       - name: Wait for MySQL to be ready
         run: |
@@ -59,7 +51,7 @@ jobs:
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582
 
       - name: Clean build and test with Gradle
-        run: ./gradlew clean test --info
+        run: ./gradlew clean test --stacktrace --info
 
       - name: Test 결과 출력
         uses: EnricoMi/publish-unit-test-result-action@v2
