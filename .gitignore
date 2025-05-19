@@ -37,3 +37,5 @@ out/
 .vscode/
 
 *.yml
+!docker/docker-compose.yml
+!.github/workflows/*.yml
