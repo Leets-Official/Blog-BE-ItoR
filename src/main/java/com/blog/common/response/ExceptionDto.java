@@ -1,14 +1,15 @@
 package com.blog.common.response;
 
 import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
 
 public record ExceptionDto(
-        @NotNull Integer code,
+        @NotNull HttpStatus httpStatus,
         @NotNull String message
 ) {
     public static ExceptionDto of(ErrorCode errorCode) {
         return new ExceptionDto(
-                errorCode.getCode(),
+                errorCode.getHttpStatus(),
                 errorCode.getMessage()
         );
     }
