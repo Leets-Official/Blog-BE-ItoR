@@ -5,7 +5,8 @@ FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
 # Gradle로 빌드된 JAR 파일을 복사 (build/libs에 있는 경우)
-COPY build/libs/*.jar app.jar
+COPY build/libs/blog-0.0.1-SNAPSHOT.jar app.jar
+
 
 # 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
