@@ -116,7 +116,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             # docker-compose 명령어 실행
-            cd /home/ubuntu/app/compose/
+            cd /home/ubuntu/app/docker/
             docker compose pull spring
             docker compose up -d spring
 
