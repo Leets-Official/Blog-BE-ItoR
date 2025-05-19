@@ -82,7 +82,7 @@ jobs:
           username: ec2-user                  # 마찬가지로 ec2-user로 변경
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ec2-user/app/docker/     # 경로도 ec2-user 경로로 변경
-            docker compose pull app
-            docker compose down
-            docker compose up -d
+            cd /home/ec2-user/app/docker/
+            docker-compose pull app
+            docker-compose down
+            docker-compose up -d
