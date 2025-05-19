@@ -25,6 +25,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         String uri = request.getRequestURI();
 
+        if (uri.startsWith("/auth") || uri.startsWith("/login") || uri.equals("/posts/list")) {
+            return true;
+        }
+
         // GET 요청이고 /posts/{postId} 형태면 통과
         if (method.equals("GET") && uri.matches("/posts/\\d+")) {
             return true;
