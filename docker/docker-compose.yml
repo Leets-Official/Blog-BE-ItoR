@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: soo0711/blog:latest  # ← build 대신 image 사용
     ports:
       - "8080:8080"
     depends_on:
