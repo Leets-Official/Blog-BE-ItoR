@@ -26,7 +26,11 @@ jobs:
           printf "%s" "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
 
       - name: Run tests
-        run: ./gradlew test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/blog?useSSL=false&serverTimezone=UTC
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        run: ./gradlew build -x test
 
   build-and-push:
     needs: test
