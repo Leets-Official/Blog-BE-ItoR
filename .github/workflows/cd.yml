@@ -55,4 +55,4 @@ jobs:
               -e KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }} \
               -e KAKAO_TOKEN_URI=${{ secrets.KAKAO_TOKEN_URI }} \
               -e KAKAO_USER_INFO_URI=${{ secrets.KAKAO_USER_INFO_URI }} \
-              ${{ secrets.DOCKER_USERNAME }}/blog-be:latest \
+              ${{ secrets.DOCKER_USERNAME }}/blog-be:latest
