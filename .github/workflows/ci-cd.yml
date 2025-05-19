@@ -20,8 +20,12 @@ jobs:
       - name: Grant permission to Gradle
         run: chmod +x gradlew
 
+      - name: application.yml 파일 생성
+        run: |
+          echo "${{ secrets.APPLICATION_YML }}" | base64 -d > src/main/resources/application.yml
+
       - name: Run tests
-        run: ./gradlew test --stacktrace --info
+        run: ./gradlew test
 
   build-and-push:
     needs: test
