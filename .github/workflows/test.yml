@@ -7,6 +7,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
 
     services:
       mysql:
@@ -22,11 +26,6 @@ jobs:
           --health-timeout=5s
           --health-retries=3
 
-    env:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/blog?useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-
     steps:
       - uses: actions/checkout@v4
 
@@ -36,8 +35,28 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Grant permission to Gradle
-        run: chmod +x gradlew
+      - name: application.yml 파일 설정
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
 
-      - name: Run tests
-        run: ./gradlew test
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysqladmin ping -h localhost -P 3306 --silent; do
+            echo "Waiting for MySQL to be ready..."
+            sleep 2
+          done
+          echo "MySQL is ready!"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+      - name: Test 결과 출력
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
