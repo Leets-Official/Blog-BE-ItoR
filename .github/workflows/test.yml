@@ -43,6 +43,10 @@ jobs:
           echo "===== application.yml 내용 확인 ====="
           cat src/main/resources/application.yml
 
+      - name: 플레이스홀더 확인
+        run: |
+          grep -o '\${[^}]*}' src/main/resources/application.yml || echo "No placeholders found"
+
       - name: Wait for MySQL to be ready
         run: |
           until mysqladmin ping -h localhost -P 3306 --silent; do
