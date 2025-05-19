@@ -25,6 +25,10 @@ jobs:
           mkdir -p src/main/resources
           printf "%s" "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
 
+      - name: schema.sql 파일 설정
+        run: |
+          printf "%s" "${{ secrets.SCHEMA_SQL }}" > schema.sql
+
       - name: Build jar
         run: ./gradlew build -x test
 
