@@ -8,7 +8,6 @@ on:
 
 jobs:
   deploy:
-   # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +17,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Build with Gradle
@@ -42,4 +41,18 @@ jobs:
             docker stop blog-be || true
             docker rm blog-be || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/blog-be:latest
-            docker run -d --name blog-be -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/blog-be:latest
+            docker run -d \
+              --name blog-be \
+              -p 8080:8080 \
+              -e SPRING_APPLICATION_NAME=${{ secrets.SPRING_APPLICATION_NAME }} \
+              -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
+              -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
+              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
+              -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }} \
+              -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
+              -e KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }} \
+              -e KAKAO_TOKEN_URI=${{ secrets.KAKAO_TOKEN_URI }} \
+              -e KAKAO_USER_INFO_URI=${{ secrets.KAKAO_USER_INFO_URI }} \
+              ${{ secrets.DOCKER_USERNAME }}/blog-be:latest
