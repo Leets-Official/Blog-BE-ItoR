@@ -2,8 +2,10 @@ package com.blog.workspace.adapter.out;
 
 import com.blog.workspace.adapter.out.jdbc.post.ContentBlockJdbc;
 import com.blog.workspace.adapter.out.jdbc.post.ContentBlockJdbcRepository;
+import com.blog.workspace.application.out.image.ImagePort;
 import com.blog.workspace.application.out.post.ContentBlockPort;
 import com.blog.workspace.domain.post.ContentBlock;
+import com.blog.workspace.domain.post.ContentType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.List;
 public class ContentBlockPersistenceAdapter implements ContentBlockPort {
 
     private final ContentBlockJdbcRepository repository;
+    private final ImagePort imagePort;
 
-    public ContentBlockPersistenceAdapter(ContentBlockJdbcRepository repository) {
+    public ContentBlockPersistenceAdapter(ContentBlockJdbcRepository repository, ImagePort imagePort) {
         this.repository = repository;
+        this.imagePort = imagePort;
     }
 
     @Override
@@ -40,6 +44,15 @@ public class ContentBlockPersistenceAdapter implements ContentBlockPort {
 
     @Override
     public void deleteBlockByPost(Long postId) {
+
+        /// S3에서 이미지 삭제
+        List<ContentBlock> blockList = loadBlocks(postId);
+        for (ContentBlock block : blockList) {
+            if (block.getType() == ContentType.IMAGE){
+                imagePort.deleteFile(block.getContent());
+            }
+        }
+
         repository.deleteByPostId(postId);
     }
 

@@ -2,6 +2,7 @@ package com.blog.workspace.adapter.in.web.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UserUpdateRequest {
 
@@ -16,13 +17,22 @@ public class UserUpdateRequest {
     @NotBlank(message = "passwordCheck는 반드시 입력해야하는 필수 사항입니다!")
     private String passwordCheck;
 
-    private String imageUrl;
+    private MultipartFile imageUrl;
 
     @NotBlank(message = "description는 반드시 입력해야하는 필수 사항입니다!")
     private String description;
 
     @NotBlank(message = "descripbirthdaytion는 반드시 입력해야하는 필수 사항입니다!")
     private String birthday;
+
+    public UserUpdateRequest(String nickname, String password, String passwordCheck, MultipartFile imageUrl, String description, String birthday) {
+        this.nickname = nickname;
+        this.password = password;
+        this.passwordCheck = passwordCheck;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.birthday = birthday;
+    }
 
 
     public String getNickname() {
@@ -33,7 +43,7 @@ public class UserUpdateRequest {
         return password;
     }
 
-    public String getImageUrl() {
+    public MultipartFile getImageUrl() {
         return imageUrl;
     }
 

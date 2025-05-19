@@ -8,6 +8,8 @@ import com.blog.workspace.adapter.in.web.dto.response.PostDetailResponse;
 import com.blog.workspace.adapter.in.web.dto.response.PostListResponse;
 import com.blog.workspace.domain.post.Post;
 
+import java.io.IOException;
+
 public interface PostUseCase {
 
     /*
@@ -21,7 +23,7 @@ public interface PostUseCase {
      */
 
     /// 게시글 작성
-    Post savePost(PostRequest request, Long userId);
+    Post savePost(PostRequest request, Long userId) throws IOException;
 
     /// 게시글 조회
     // 게시글 상세 조회
@@ -31,7 +33,7 @@ public interface PostUseCase {
     Page<PostListResponse> loadPosts(Pageable pageable, Long userId);
 
     /// 게시글 수정
-    Post updatePost(Long postId, Long userId, PostUpdateRequest request);
+    Post updatePost(Long postId, Long userId, PostUpdateRequest request) throws IOException;
 
     /// 게시글 삭제
     void deletePost(Long userId, Long postId);

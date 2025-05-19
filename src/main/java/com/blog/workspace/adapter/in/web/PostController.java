@@ -12,6 +12,8 @@ import com.blog.workspace.application.in.post.PostUseCase;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/posts")
 public class PostController {
@@ -24,7 +26,7 @@ public class PostController {
 
     // 게시글 작성
     @PostMapping
-    ApiResponse<String> createPost(@RequestUserId Long userId, @RequestBody @Valid PostRequest postRequest) {
+    ApiResponse<String> createPost(@RequestUserId Long userId, @ModelAttribute @Valid PostRequest postRequest) throws IOException {
 
         postService.savePost(postRequest, userId);
 
@@ -52,7 +54,7 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping("/{postId}")
-    ApiResponse<String> updatePost(@RequestUserId Long userId,  @PathVariable Long postId, @RequestBody PostUpdateRequest request) {
+    ApiResponse<String> updatePost(@RequestUserId Long userId,  @PathVariable Long postId, @ModelAttribute PostUpdateRequest request) throws IOException {
 
         postService.updatePost(postId, userId, request);
 

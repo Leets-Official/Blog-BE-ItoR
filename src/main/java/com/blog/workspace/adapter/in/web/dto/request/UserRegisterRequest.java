@@ -1,6 +1,7 @@
 package com.blog.workspace.adapter.in.web.dto.request;
 
 import jakarta.validation.constraints.*;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UserRegisterRequest {
 
@@ -22,7 +23,7 @@ public class UserRegisterRequest {
     @NotNull(message = "passwordCheck는 반드시 입력해야하는 필수 사항입니다!")
     private String passwordCheck;
 
-    private String imageUrl;
+    private MultipartFile imageUrl;
 
     @NotNull(message = "description는 반드시 입력해야하는 필수 사항입니다!")
     @Size(max = 30, message = "한 줄 소개는 최대 30글자 입니다.")
@@ -31,6 +32,17 @@ public class UserRegisterRequest {
     @NotNull(message = "birthday는 반드시 입력해야하는 필수 사항입니다!")
     // 3월 16일 이전의 경우는 입력이 안되도록 추가 설정
     private String birthday;
+
+    public UserRegisterRequest(String email, String username, String nickname, String password, String passwordCheck, MultipartFile imageUrl, String description, String birthday) {
+        this.email = email;
+        this.username = username;
+        this.nickname = nickname;
+        this.password = password;
+        this.passwordCheck = passwordCheck;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.birthday = birthday;
+    }
 
 
     // Getter
@@ -54,7 +66,7 @@ public class UserRegisterRequest {
         return passwordCheck;
     }
 
-    public String getImageUrl() {
+    public MultipartFile getImageUrl() {
         return imageUrl;
     }
 
