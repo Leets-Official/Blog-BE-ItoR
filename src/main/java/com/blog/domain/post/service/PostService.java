@@ -64,4 +64,12 @@ public class PostService {
   public void deletePost(UUID id) {
     postRepository.deleteById(id);
   }
+
+  public List<PostResponse> getPostsByAuthor(UUID authorId) {
+    return postRepository.findByAuthorId(authorId.toString())
+        .stream()
+        .map(PostResponse::from)
+        .collect(Collectors.toList());
+  }
+
 }

@@ -66,4 +66,10 @@ public class CommentRepository {
         rs.getTimestamp("updated_at").toLocalDateTime()
     );
   }
+
+  public List<Comment> findByAuthorId(UUID authorId) {
+    String sql = "SELECT * FROM comment WHERE author_id = ?";
+    return jdbcTemplate.query(sql, commentRowMapper(), authorId.toString());
+  }
+
 }
