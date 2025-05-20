@@ -1,0 +1,28 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Decode PEM key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" | base64 -d > ec2-key.pem
+          chmod 600 ec2-key.pem
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            pkill -f java || true
+            cd ${{ secrets.PROJECT_NAME }} || git clone https://github.com/${{ github.repository }} ${{ secrets.PROJECT_NAME }} && cd ${{ secrets.PROJECT_NAME }}
+            git pull origin main
+            ./gradlew bootJar --no-daemon
+            java -jar build/libs/*.jar > app.log 2>&1 &
+          EOF
