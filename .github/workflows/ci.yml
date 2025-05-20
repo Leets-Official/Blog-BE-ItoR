@@ -1,10 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-      - 문석준/*
   pull_request:
     branches:
       - main
