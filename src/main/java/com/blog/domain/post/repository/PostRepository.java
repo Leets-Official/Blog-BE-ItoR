@@ -67,4 +67,10 @@ public class PostRepository {
         rs.getTimestamp("updated_at").toLocalDateTime()
     );
   }
+
+  public List<Post> findByAuthorId(String authorId) {
+    String sql = "SELECT * FROM post WHERE author_id = ?";
+    return jdbcTemplate.query(sql, postRowMapper(), authorId);
+  }
+
 }
