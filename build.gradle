@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com'
@@ -29,13 +30,33 @@ dependencies {
 
 	// database
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'com.mysql:mysql-connector-j'
+	implementation 'mysql:mysql-connector-java:8.0.33'
+
 
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jacoco {
+	toolVersion = "0.8.10"
+}
+
+jacocoTestReport {
+	dependsOn test // 테스트 후에 리포트 생성
+
+	reports {
+		html.required.set(true)    // 브라우저에서 보는 용
+		xml.required.set(true)     // CI 도구용
+		csv.required.set(false)
+	}
+}
+
+check.dependsOn jacocoTestReport //  CI 환경에서도 리포트 포함되게
