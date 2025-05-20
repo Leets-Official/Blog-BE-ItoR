@@ -20,6 +20,10 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            sudo apt-get update
+            sudo apt-get install -y openjdk-21-jdk
+            java -version
+
             pkill -f java || true
             cd ${{ secrets.PROJECT_NAME }} || git clone https://github.com/${{ github.repository }} ${{ secrets.PROJECT_NAME }} && cd ${{ secrets.PROJECT_NAME }}
             git pull origin main
