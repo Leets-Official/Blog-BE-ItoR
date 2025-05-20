@@ -1,7 +1,11 @@
 package com.blog.comment.controller;
 
+import com.blog.comment.exception.CommentException;
+import com.blog.comment.record.CommentDeleteRecord;
 import com.blog.comment.record.CommentRecord;
 import com.blog.comment.service.CommentService;
+import com.blog.member.vo.MemberVo;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,29 +35,39 @@ public class CommentController {
     @PostMapping("/write")
     public ResponseEntity<Integer> writeComment(
             @RequestBody CommentRecord rec,
-            @RequestHeader("X-USER-ID") String userId
+            HttpSession session
     ) {
+        MemberVo loginMember = (MemberVo) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            throw new CommentException("로그인이 필요합니다.");
+        }
+
         CommentRecord toInsert = new CommentRecord(
                 rec.commentNum(),
-                userId,
+                loginMember.getId(),
                 rec.postId(),
                 rec.content(),
                 null,
                 null,
                 false
         );
-        return ResponseEntity.ok(service.createComment(toInsert));
+        int newId = service.createComment(toInsert);
+        return ResponseEntity.ok(newId);
     }
 
     // 댓글 수정 : 작성자만
     @PutMapping("/edit")
     public ResponseEntity<?> editComment(
             @RequestBody CommentRecord rec,
-            @RequestHeader("X-USER-ID") String userId
+            HttpSession session
     ) {
+        MemberVo loginMember = (MemberVo) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            throw new CommentException("로그인이 필요합니다.");
+        }
         CommentRecord toUpdate = new CommentRecord(
                 rec.commentNum(),
-                userId,
+                loginMember.getId(),
                 rec.postId(),
                 rec.content(),
                 rec.createdAt(),
@@ -66,18 +80,17 @@ public class CommentController {
 
     @DeleteMapping("/{commentNum}")
     public ResponseEntity<?> deleteComment(
-            @RequestBody CommentRecord rec,
             @PathVariable Integer commentNum,
-            @RequestHeader("X-USER-ID") String userId
+            HttpSession session
     ) {
-        CommentRecord toDelete = new CommentRecord(
+        MemberVo loginMember = (MemberVo) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            throw new CommentException("로그인이 필요합니다.");
+        }
+        CommentDeleteRecord toDelete = new CommentDeleteRecord(
                 commentNum,
-                userId,
-                rec.postId(),
-                null,
-                null,
-                null,
-                false
+                loginMember.getId(),
+                true    // isDeleted
         );
         service.deleteComment(toDelete);
         return ResponseEntity.ok("댓글 삭제 완료");

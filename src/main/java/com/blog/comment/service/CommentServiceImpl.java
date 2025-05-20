@@ -2,6 +2,7 @@ package com.blog.comment.service;
 
 import com.blog.comment.dao.CommentDao;
 import com.blog.comment.exception.CommentException;
+import com.blog.comment.record.CommentDeleteRecord;
 import com.blog.comment.record.CommentRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     @Transactional
-    public void deleteComment(CommentRecord record) {
+    public void deleteComment(CommentDeleteRecord record) {
         int no = record.commentNum();
         // 1) 작성자 조회
         String writer = dao.getWriterId(no);

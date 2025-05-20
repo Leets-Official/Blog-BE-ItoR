@@ -9,7 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		"com.blog.member.mapper",
 		"com.blog.oauth.mapper",
 		"com.blog.post.mapper",
-		"com.blog.comment.mapper"
+		"com.blog.comment.mapper",
+		"com.blog.mypage.mapper"
 })
 
 public class BlogApplication {
