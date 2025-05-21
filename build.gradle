@@ -17,6 +17,11 @@ repositories {
 	mavenCentral()
 }
 
+springBoot {
+	mainClass.set("com.blog.BlogApplication")
+}
+
+
 dependencies {
 	// web
 	implementation 'org.springframework.boot:spring-boot-starter-web'

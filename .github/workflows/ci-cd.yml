@@ -1,0 +1,160 @@
+# .github/workflows/ci-cd.yml
+name: 릿츠 블로그 CI/CD 파이프라인
+
+permissions:
+  contents: read    # 코드 읽기
+  checks: write     # Test Reporting 결과 업로드
+
+on:
+  push:
+    branches:
+      - 신은지/main
+  workflow_dispatch:
+
+jobs:
+  # 1. CI: 빌드 + 테스트
+  ci:
+    name: CI
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: application.properties 생성
+        run: |
+          # 1) 리소스 디렉토리 보장
+          mkdir -p src/main/resources
+
+          # 2) 여기-문서로 secrets 안의 프로퍼티 파일을 그대로 씀
+          cat << 'EOF' > src/main/resources/application.properties
+          ${{ secrets.APPLICATION_PROPERTIES }}
+          EOF
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Grant Gradle wrapper exec
+        run: chmod +x gradlew
+
+      - name: Cache Gradle deps
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Build & Test
+        run: ./gradlew clean build --no-daemon
+
+      - name: Expose test-results path
+        id: set-path
+        run: echo "dir=build/test-results/test" >> $GITHUB_OUTPUT
+
+  # 2. Test Results: 체크런 UI에 JUnit 리포트 게시
+  test_results:
+    name: Test Results
+    needs: ci
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Publish JUnit report
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: ${{ needs.ci.outputs.dir }}/*.xml
+
+  # 3. Build & Push Docker Image
+  build_and_push:
+    name: Build & Push Docker Image
+    needs: [ci, test_results]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+
+      - name: application.properties 생성
+        run: |
+          mkdir -p src/main/resources
+          cat << 'EOF' > src/main/resources/application.properties
+          ${{ secrets.APPLICATION_PROPERTIES }}
+          EOF
+      
+
+      - name: Grant permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Docker Hub login
+        uses: docker/login-action@v3
+        with:
+          username: belovelace
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: belovelace/blog:latest
+
+  # 4. Deploy to EC2
+  deploy:
+    name: Deploy to EC2
+    needs: build_and_push
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env
+        run: echo "${{ secrets.ENV }}" > .env
+
+      - name: Copy .env to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST  }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY  }}
+          source: ".env"
+          target: "/home/ubuntu/app/docker/"
+
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "./docker/docker-compose.yml"
+          target: "/home/ubuntu/app/docker/"
+
+      - name: Run docker-compose on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/app/docker/
+            docker compose pull spring
+            docker compose up -d spring
