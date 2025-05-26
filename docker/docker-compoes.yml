@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   blog:
-    build: .
+    image: choes0101/blog-app:latest
     container_name: blog-app
     ports:
       - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
     restart: always
